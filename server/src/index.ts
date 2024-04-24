@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import cors, { CorsOptions } from "cors";
 import dotenv from "dotenv";
-import router from "../routes/indexRoutes";
+import router from "./routes/indexRoutes";
 import bodyParser from "body-parser";
 dotenv.config();
 
@@ -21,9 +21,6 @@ const corsOptions: CorsOptions = {
 app.use(cors(corsOptions));
 
 app.use("/", router);
-// app.get("/", (req: Request, res: Response) => {
-//   res.send("Working 2");
-// });
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
