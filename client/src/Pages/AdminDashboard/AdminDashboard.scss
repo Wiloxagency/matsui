@@ -1,0 +1,22 @@
+.topSectionContainer {
+    display       : flex;
+    flex-direction: column;
+    flex          : 2;
+}
+
+.bottomSectionContainer {
+    display          : flex;
+    flex-direction   : row;
+    flex             : 1;
+    // gap           : 2rem;
+
+    .bottomHalf {
+        display       : flex;
+        flex-direction: column;
+        flex          : 1;
+    }
+
+    .bottomHalf:first-of-type {
+        margin-right: 2rem;
+    }
+}

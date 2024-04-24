@@ -1,0 +1,59 @@
+.headerContainer {
+    display         : flex;
+    flex-direction  : column;
+    position        : relative;
+    padding         : 1rem 3rem;
+    background-color: #1a242d;
+    color           : white;
+    width           : 100vw;
+    height          : 3.5rem;
+
+    .logoAndNavbar {
+        display           : flex;
+        // justify-content: space-between;
+        height            : 100%;
+
+        .logo {
+            height      : 100%;
+            width       : auto;
+            margin-right: 3rem;
+        }
+
+        ul {
+            display   : flex;
+            gap       : 2rem;
+            margin    : 0 auto 0 0;
+            padding   : 0;
+            list-style: none;
+
+            li {
+                text-underline-offset: .5rem;
+            }
+        }
+
+        .email {
+            margin-right: 3rem;
+        }
+
+        .logout {
+            color: indianred;
+        }
+
+    }
+
+    .spectrumBar {
+        position: absolute;
+        bottom  : 0;
+        left    : 0;
+        width   : 100%;
+    }
+}
+
+.outletContainer {
+    display            : flex;
+    padding            : 1rem 2rem;
+    gap                : 2rem;
+    height             : calc(100vh - 4rem);
+    // background-color: red;
+
+}

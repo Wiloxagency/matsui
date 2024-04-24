@@ -1,0 +1,24 @@
+// table {
+//     font-family    : arial, sans-serif;
+//     border-collapse: collapse;
+//     width          : 100%;
+//     margin-bottom  : 1rem;
+// }
+
+// td,
+// th {
+//     border    : 1px solid #dddddd;
+//     text-align: left;
+//     padding   : 8px;
+// }
+
+.miniSwatch {
+    display         : flex;
+    margin          : auto;
+    border-radius   : .25rem;
+    min-height      : 1.4rem;
+    min-width       : 1.4rem;
+    max-height      : 1.4rem;
+    max-width       : 1.4rem;
+    // background-color: plum;
+  }
