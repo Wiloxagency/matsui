@@ -3,12 +3,21 @@ import "./Login.scss";
 import logo from "../../assets/matsui_logo.png";
 import video from "../../assets/doesthiswork.mp4";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export function Login() {
   const navigate = useNavigate();
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    navigate("/formulas");
+
+    axios
+      .get(API_URL)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => console.log(error));
   };
 
   return (
