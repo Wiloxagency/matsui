@@ -4,14 +4,33 @@ import logo from "../../assets/matsui_logo.png";
 import video from "../../assets/doesthiswork.mp4";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useEffect, useRef, useState } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export function Login() {
-  const navigate = useNavigate();
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const emailRef = useRef<HTMLInputElement>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailErrorMessage, setEmailErrorMessage] = useState("");
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
 
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (emailRef.current !== null) {
+      emailRef.current.focus();
+    }
+  });
+
+  const handleFormSubmit = async (
+    formEvent: React.FormEvent<HTMLFormElement>
+  ) => {
+    formEvent.preventDefault();
+
+    console.log(email, password);
+
+    return;
     axios
       .get(API_URL)
       .then((response) => {
@@ -31,20 +50,35 @@ export function Login() {
         <form onSubmit={handleFormSubmit}>
           <img src={logo} />
           <div className="inputContainer">
-            <input type="text" placeholder="Email" required></input>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              ref={emailRef}
+              required
+            ></input>
             <FaUser className="icon" />
           </div>
           <div className="inputContainer">
-            <input type="password" placeholder="Password" required></input>
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+            ></input>
             <FaLock className="icon" />
           </div>
           <button type="submit">Sign in</button>
 
-          <Link to="/formulas">
-            <button type="button" className="newAccount">
-              Create new account{" "}
-            </button>
-          </Link>
+          {/* <Link to="/formulas"> */}
+          <button type="button" className="newAccount">
+            Create new account{" "}
+          </button>
+          {/* </Link> */}
 
           <div className="forgotPassword">Forgot your password?</div>
         </form>
