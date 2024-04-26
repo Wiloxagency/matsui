@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios, { AxiosResponse } from "axios";
-import { FaUser, FaLock } from "react-icons/fa";
+import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import "./Login.scss";
 import logo from "../../assets/matsui_logo.png";
 import video from "../../assets/doesthiswork.mp4";
@@ -13,6 +13,7 @@ export function Login() {
   const emailRef = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loginFormMessage, setLoginFormMessage] = useState("");
   // const [emailErrorMessage, setEmailErrorMessage] = useState("");
   // const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
@@ -58,7 +59,7 @@ export function Login() {
         // withCredentials: true,
       })
       .then((response: AxiosResponse) => {
-        navigate('/formulas')
+        navigate("/formulas");
       })
       .catch((error) => {
         if (!error.response) {
@@ -93,7 +94,7 @@ export function Login() {
           </div>
           <div className="inputContainer">
             <input
-              type="password"
+              type={isPasswordVisible ? "text" : "password"}
               name="password"
               placeholder="Password"
               value={password}
@@ -101,9 +102,28 @@ export function Login() {
               required
             ></input>
             <FaLock className="icon" />
+            {isPasswordVisible ? (
+              <FaEyeSlash
+                className="icon eyeIcons"
+                onClick={() => setIsPasswordVisible(false)}
+              />
+            ) : (
+              <FaEye
+                className="icon eyeIcons"
+                onClick={() => setIsPasswordVisible(true)}
+              />
+            )}
           </div>
 
-          <p>{loginFormMessage}</p>
+          <p
+            className={
+              loginFormMessage !== ""
+                ? "loginFormMessage active"
+                : "loginFormMessage"
+            }
+          >
+            {loginFormMessage}
+          </p>
           <button type="submit">Sign in</button>
 
           {/* <Link to="/formulas"> */}
