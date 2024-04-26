@@ -17,26 +17,34 @@ export function Login() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (emailRef.current !== null) {
-      emailRef.current.focus();
-    }
-  });
+  // useEffect(() => {
+  //   if (emailRef.current !== null) {
+  //     emailRef.current.focus();
+  //   }
+  // });
 
   const handleFormSubmit = async (
     formEvent: React.FormEvent<HTMLFormElement>
   ) => {
     formEvent.preventDefault();
 
-    console.log(email, password);
+    // console.log(email, password);
 
-    return;
     axios
-      .get(API_URL)
+      .post(API_URL + "login", JSON.stringify({ email, password }), {
+        headers: { "Content-type": "application/json" },
+        // withCredentials: true,
+      })
       .then((response) => {
         console.log(response.data);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        if (!error.response) {
+          setEmailErrorMessage("No server response");
+        } else {
+          setEmailErrorMessage("Login failed");
+        }
+      });
   };
 
   return (
@@ -56,7 +64,7 @@ export function Login() {
               placeholder="Email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              ref={emailRef}
+              // ref={emailRef}
               required
             ></input>
             <FaUser className="icon" />

@@ -1,14 +1,12 @@
-import axios from "axios";
-import dotenv from "dotenv";
-dotenv.config();
-
 import { Router, Request, Response } from "express";
-import { MongoClient } from "mongodb";
+import axios from "axios";
+import bcrypt from "bcrypt";
+import {
+  closeMongoDBClient,
+  createMongoDBConnection,
+} from "../shared/mongodbConfig";
 
 const router = Router();
-const MONGODB_URL: string = process.env.MONGODB_URL as string;
-
-const client = new MongoClient(MONGODB_URL);
 
 router.get("/", (req: Request, res: Response) => {
   //   axios
@@ -21,24 +19,28 @@ router.get("/", (req: Request, res: Response) => {
   res.json({ message: "Working" });
 });
 
-router.get("/login", (req: Request, res: Response) => {
-  async function test() {
-    try {
-      await client.connect();
-      console.log("Connected successfully to server");
-      const db = client.db("local");
-      const collection = db.collection("testing");
-      let temp = await collection.findOne();
-      res.json(temp);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+router.post("/login", async (req: Request, res: Response) => {
+  try {
+    // await client.connect();
+    // console.log("Connected successfully to server");
+    const db = await createMongoDBConnection();
+    const collection = db.collection("users");
+    let allUsers = await collection.find().toArray();
 
-  test().finally(() => client.close());
+    console.log(req.body);
+    console.log(req.body.email);
+    res.json(allUsers);
+    closeMongoDBClient();
+  } catch (error) {
+    console.log(error);
+  }
 });
 
-router.post("/register", (req: Request, res: Response) => {
+router.post("/register", async (req: Request, res: Response) => {
+  try {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+  } catch {}
+
   res.json({ message: "Register endpoint working" });
 });
 
