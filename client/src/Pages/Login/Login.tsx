@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { FaUser, FaLock } from "react-icons/fa";
 import "./Login.scss";
 import logo from "../../assets/matsui_logo.png";
 import video from "../../assets/doesthiswork.mp4";
-import bcrypt from "bcrypt";
+import { randomBytes, scryptSync } from "crypto";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -13,8 +13,9 @@ export function Login() {
   const emailRef = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [emailErrorMessage, setEmailErrorMessage] = useState("");
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+  const [loginFormMessage, setLoginFormMessage] = useState("");
+  // const [emailErrorMessage, setEmailErrorMessage] = useState("");
+  // const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
 
   const navigate = useNavigate();
 
@@ -24,28 +25,46 @@ export function Login() {
   //   }
   // });
 
-  const handleFormSubmit = async (
-    formEvent: React.FormEvent<HTMLFormElement>
-  ) => {
-    formEvent.preventDefault();
-
-    // console.log(email, password);
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
+  const handleRegister = async () => {
+    setLoginFormMessage("");
     axios
-      .post(API_URL + "login", JSON.stringify({ email, hashedPassword }), {
+      .post(API_URL + "register", JSON.stringify({ email, password }), {
         headers: { "Content-type": "application/json" },
         // withCredentials: true,
       })
-      .then((response) => {
-        console.log(response.data);
+      .then((response: AxiosResponse) => {
+        if (response.status === 200) {
+          setLoginFormMessage("Account created. You can now login");
+        }
       })
       .catch((error) => {
         if (!error.response) {
-          setEmailErrorMessage("No server response");
+          setLoginFormMessage("No server response");
+        } else if (error.response.status === 401) {
+          setLoginFormMessage("Email already registered");
         } else {
-          setEmailErrorMessage("Login failed");
+          setLoginFormMessage("Unable to register. Please try again x2");
+        }
+      });
+  };
+
+  const handleLogin = async (formEvent: React.FormEvent<HTMLFormElement>) => {
+    formEvent.preventDefault();
+    setLoginFormMessage("");
+
+    axios
+      .post(API_URL + "login", JSON.stringify({ email, password }), {
+        headers: { "Content-type": "application/json" },
+        // withCredentials: true,
+      })
+      .then((response: AxiosResponse) => {
+        navigate('/formulas')
+      })
+      .catch((error) => {
+        if (!error.response) {
+          setLoginFormMessage("No server response");
+        } else {
+          setLoginFormMessage("Wrong email or password");
         }
       });
   };
@@ -58,7 +77,7 @@ export function Login() {
       </video>
       <div className="bodyBlur"></div>
       <div className="loginFormCard">
-        <form onSubmit={handleFormSubmit}>
+        <form onSubmit={handleLogin}>
           <img src={logo} />
           <div className="inputContainer">
             <input
@@ -83,10 +102,12 @@ export function Login() {
             ></input>
             <FaLock className="icon" />
           </div>
+
+          <p>{loginFormMessage}</p>
           <button type="submit">Sign in</button>
 
           {/* <Link to="/formulas"> */}
-          <button type="button" className="newAccount">
+          <button type="button" onClick={handleRegister} className="newAccount">
             Create new account{" "}
           </button>
           {/* </Link> */}

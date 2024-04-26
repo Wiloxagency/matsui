@@ -3,6 +3,11 @@ import cors, { CorsOptions } from "cors";
 import dotenv from "dotenv";
 import router from "./routes/indexRoutes";
 import bodyParser from "body-parser";
+// import passport from "passport";
+// import session from "express-session";
+// import { initializePassport } from "./shared/passportConfig";
+// initializePassport(passport);
+
 dotenv.config();
 
 const app: Express = express();
@@ -19,6 +24,16 @@ const corsOptions: CorsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+// app.use(
+//   session({
+//     secret: "test",
+//     resave: false,
+//     saveUninitialized: false,
+//   })
+// );
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 app.use("/", router);
 

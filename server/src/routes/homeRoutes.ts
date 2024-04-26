@@ -3,6 +3,11 @@ import axios from "axios";
 import bcrypt from "bcrypt";
 import { createMongoDBConnection } from "../shared/mongodbConfig";
 import { UserInterface } from "../interfaces/interfaces";
+// import passport from "passport";
+// import { initializePassport } from "../shared/passportConfig";
+import { getUserByEmail } from "../shared/userServices";
+
+// initializePassport(passport);
 
 const router = Router();
 
@@ -19,12 +24,26 @@ router.get("/", (req: Request, res: Response) => {
 
 router.post("/login", async (req: Request, res: Response) => {
   try {
-    const db = await createMongoDBConnection();
-    const users = db.collection("users");
-    let allUsers = await users.find().toArray();
+    const fetchedUser = await getUserByEmail(req.body.email);
+    console.log(fetchedUser);
+
+    if (fetchedUser === null) {
+      res.status(401).json({ message: "No user with provided email" });
+    } else {
+      if (await bcrypt.compare(req.body.password, fetchedUser.password)) {
+        res.json({ message: "Success" });
+      } else {
+        res.status(401).json({ message: "Wrong password" });
+      }
+    }
+    // passport.authenticate("local");
+    // console.log(req.user);
+    // const db = await createMongoDBConnection();
+    // const users = db.collection("users");
+    // let allUsers = await users.find().toArray();
     // console.log(req.body);
     // console.log(req.body.email);
-    res.json(allUsers);
+    // res.json(allUsers);
   } catch (error) {
     console.log(error);
   }
@@ -32,17 +51,24 @@ router.post("/login", async (req: Request, res: Response) => {
 
 router.post("/register", async (req: Request, res: Response) => {
   try {
-    const db = await createMongoDBConnection();
-    const users = db.collection("users");
+    const fetchedUser = await getUserByEmail(req.body.email);
+    if (fetchedUser !== null) {
+      res.status(401).json({ message: "Email already registered" });
+    } else {
+      const db = await createMongoDBConnection();
+      const users = db.collection("users");
 
-    const newUser: UserInterface = {
-      email: req.body.email,
-      password: req.body.password,
-    };
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-    const insertNewUserResponse = await users.insertOne(newUser);
+      const newUser: UserInterface = {
+        email: req.body.email,
+        password: hashedPassword,
+      };
 
-    res.json(insertNewUserResponse);
+      const insertNewUserResponse = await users.insertOne(newUser);
+
+      res.json(insertNewUserResponse);
+    }
   } catch (error) {
     console.log(error);
   }
