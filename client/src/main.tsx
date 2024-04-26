@@ -11,6 +11,8 @@ import AdminDashboard from "./Pages/AdminDashboard/AdminDashboard.tsx";
 import { NextUIProvider } from "@nextui-org/system";
 
 const router = createBrowserRouter([
+  { path: "*", element: <Login /> },
+  { path: "/", element: <Login /> },
   {
     path: "/",
     element: <Header />,
