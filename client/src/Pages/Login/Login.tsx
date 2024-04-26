@@ -1,10 +1,11 @@
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import { FaUser, FaLock } from "react-icons/fa";
 import "./Login.scss";
 import logo from "../../assets/matsui_logo.png";
 import video from "../../assets/doesthiswork.mp4";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import bcrypt from "bcrypt";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -30,8 +31,10 @@ export function Login() {
 
     // console.log(email, password);
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     axios
-      .post(API_URL + "login", JSON.stringify({ email, password }), {
+      .post(API_URL + "login", JSON.stringify({ email, hashedPassword }), {
         headers: { "Content-type": "application/json" },
         // withCredentials: true,
       })

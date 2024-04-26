@@ -1,10 +1,8 @@
 import { Router, Request, Response } from "express";
 import axios from "axios";
 import bcrypt from "bcrypt";
-import {
-  closeMongoDBClient,
-  createMongoDBConnection,
-} from "../shared/mongodbConfig";
+import { createMongoDBConnection } from "../shared/mongodbConfig";
+import { UserInterface } from "../interfaces/interfaces";
 
 const router = Router();
 
@@ -21,16 +19,12 @@ router.get("/", (req: Request, res: Response) => {
 
 router.post("/login", async (req: Request, res: Response) => {
   try {
-    // await client.connect();
-    // console.log("Connected successfully to server");
     const db = await createMongoDBConnection();
-    const collection = db.collection("users");
-    let allUsers = await collection.find().toArray();
-
-    console.log(req.body);
-    console.log(req.body.email);
+    const users = db.collection("users");
+    let allUsers = await users.find().toArray();
+    // console.log(req.body);
+    // console.log(req.body.email);
     res.json(allUsers);
-    closeMongoDBClient();
   } catch (error) {
     console.log(error);
   }
@@ -38,10 +32,20 @@ router.post("/login", async (req: Request, res: Response) => {
 
 router.post("/register", async (req: Request, res: Response) => {
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-  } catch {}
+    const db = await createMongoDBConnection();
+    const users = db.collection("users");
 
-  res.json({ message: "Register endpoint working" });
+    const newUser: UserInterface = {
+      email: req.body.email,
+      password: req.body.password,
+    };
+
+    const insertNewUserResponse = await users.insertOne(newUser);
+
+    res.json(insertNewUserResponse);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 export default router;

@@ -12,7 +12,8 @@ export async function createMongoDBConnection() {
   const database = client.db(DATABASE_NAME);
   return database;
 }
-
-export async function closeMongoDBClient(){
-    client.close()
-}
+// ACCORDING TO THE RESULTS OF A VERY SHALLOW RESEARCH,
+// IT DOES NOT SEEM TO BE NECESSARY TO CLOSE THE CLIENT
+// export async function closeMongoDBClient(){
+//     client.close()
+// }
