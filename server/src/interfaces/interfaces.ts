@@ -5,3 +5,7 @@ export interface UserInterface {
   email: string;
   password: string;
 }
+
+export interface FormulaInterface{}
+
+export interface ColorInterface{}
