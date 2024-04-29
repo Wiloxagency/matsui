@@ -5,6 +5,7 @@ import Swatches from "../../Components/Swatches/Swatches";
 import "./Formulas.scss";
 
 import { Select, SelectSection, SelectItem } from "@nextui-org/select";
+import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
 
 export default function Formulas() {
   return (
@@ -65,7 +66,7 @@ export default function Formulas() {
             </span>
           </div>
           <div className="card">
-            <div className="graphPlaceholder"></div>
+            <FormulaPercentagesGraph />
             <FormulaDetailsTable />
             <div className="buttonsAndTotalRow">
               <ReusableButton
