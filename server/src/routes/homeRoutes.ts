@@ -59,10 +59,16 @@ router.post("/register", async (req: Request, res: Response) => {
       const users = db.collection("users");
 
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      const currentDate = new Date();
 
       const newUser: UserInterface = {
         email: req.body.email,
         password: hashedPassword,
+        company: "",
+        status: "active",
+        registrationDate: currentDate,
+        formulasCreated: 0,
+        lastAccess: currentDate,
       };
 
       const insertNewUserResponse = await users.insertOne(newUser);
