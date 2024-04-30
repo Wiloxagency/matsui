@@ -9,7 +9,7 @@ import {
   TableCell,
   getKeyValue,
 } from "@nextui-org/table";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { UserInterface } from "../../interfaces/interfaces";
 import { Tooltip } from "@nextui-org/tooltip";
@@ -19,6 +19,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/dropdown";
+import { Button } from "@nextui-org/button";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -57,16 +58,7 @@ const columns = [
   },
 ];
 export default function UsersTable() {
-  const [fetchedUsers, setFetchedUsers] = useState<Array<UserInterface>>([]);
-  const [indexRowToEdit, setIndexRowToEdit] = useState<number | null>(null);
-
-  const handleEditRow = (userId: string) => {
-    const indexRow = fetchedUsers.findIndex((user) => user._id == userId);
-    setIndexRowToEdit(indexRow);
-  };
-
   useEffect(() => {
-    console.log("test");
     axios
       .get(API_URL + "users", {
         headers: { "Content-type": "application/json" },
@@ -79,6 +71,30 @@ export default function UsersTable() {
         console.log(error);
       });
   }, []);
+
+  const [fetchedUsers, setFetchedUsers] = useState<Array<UserInterface>>([]);
+  const [indexRowToEdit, setIndexRowToEdit] = useState<number | null>(null);
+
+  const handleEditRow = (userId: string) => {
+    const indexRow = fetchedUsers.findIndex((user) => user._id == userId);
+    console.log("indexRowToEdit: ", indexRowToEdit, "indexRow: ", indexRow);
+    setIndexRowToEdit(indexRow), () => console.log("THIS RUNS");
+  };
+
+  const renderCell = React.useCallback(
+    (user: UserInterface, columnKey: React.Key) => {
+      const cellValue = user[columnKey as keyof UserInterface];
+
+      switch (columnKey) {
+        case "username":
+          return <span>{indexRowToEdit}</span>;
+        default:
+          return cellValue;
+      }
+    },
+    []
+  );
+
   return (
     <>
       <Table
@@ -101,9 +117,9 @@ export default function UsersTable() {
                   {columnKey === "actions" ? (
                     <Dropdown>
                       <DropdownTrigger>
-                        <span>
+                        <Button isIconOnly size="sm" variant="light">
                           <FaEllipsisV />
-                        </span>
+                        </Button>
                       </DropdownTrigger>
                       <DropdownMenu aria-label="dropdown">
                         <DropdownItem onClick={() => handleEditRow(user._id)}>
@@ -112,12 +128,7 @@ export default function UsersTable() {
                       </DropdownMenu>
                     </Dropdown>
                   ) : (
-                    // <Tooltip content="Edit">
-                    //   <span>
-                    //     <FaPen className="icon" />
-                    //   </span>
-                    // </Tooltip>
-                    getKeyValue(user, columnKey)
+                    renderCell(user, columnKey)
                   )}
                 </TableCell>
               )}
