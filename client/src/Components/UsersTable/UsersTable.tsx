@@ -1,4 +1,4 @@
-import { FaPen } from "react-icons/fa";
+import { FaEllipsisV, FaPen } from "react-icons/fa";
 import "./UsersTable.scss";
 import {
   Table,
@@ -13,6 +13,12 @@ import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { UserInterface } from "../../interfaces/interfaces";
 import { Tooltip } from "@nextui-org/tooltip";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/dropdown";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -52,7 +58,15 @@ const columns = [
 ];
 export default function UsersTable() {
   const [fetchedUsers, setFetchedUsers] = useState<Array<UserInterface>>([]);
+  const [indexRowToEdit, setIndexRowToEdit] = useState<number | null>(null);
+
+  const handleEditRow = (userId: string) => {
+    const indexRow = fetchedUsers.findIndex((user) => user._id == userId);
+    setIndexRowToEdit(indexRow);
+  };
+
   useEffect(() => {
+    console.log("test");
     axios
       .get(API_URL + "users", {
         headers: { "Content-type": "application/json" },
@@ -80,17 +94,29 @@ export default function UsersTable() {
           )}
         </TableHeader>
         <TableBody items={fetchedUsers}>
-          {(user) => (
+          {(user: UserInterface) => (
             <TableRow key={user._id}>
               {(columnKey) => (
                 <TableCell>
                   {columnKey === "actions" ? (
-                    <Tooltip content="Edit">
-                      <span>
-                        <FaPen className="icon" />
-                      </span>
-                    </Tooltip>
+                    <Dropdown>
+                      <DropdownTrigger>
+                        <span>
+                          <FaEllipsisV />
+                        </span>
+                      </DropdownTrigger>
+                      <DropdownMenu aria-label="dropdown">
+                        <DropdownItem onClick={() => handleEditRow(user._id)}>
+                          Edit
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </Dropdown>
                   ) : (
+                    // <Tooltip content="Edit">
+                    //   <span>
+                    //     <FaPen className="icon" />
+                    //   </span>
+                    // </Tooltip>
                     getKeyValue(user, columnKey)
                   )}
                 </TableCell>
