@@ -6,8 +6,13 @@
     width              : 100%;
     border-radius      : 2rem;
 
-    span {
-        height  : 100%;
-        // width: fit-content;
+    span:first-of-type {
+        border-top-left-radius   : 2rem;
+        border-bottom-left-radius: 2rem;
+    }
+
+    span:last-of-type {
+        border-top-right-radius   : 2rem;
+        border-bottom-right-radius: 2rem;
     }
 }

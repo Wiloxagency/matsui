@@ -2,9 +2,9 @@ import "./FormulaPercentagesGraph.scss";
 
 export default function FormulaPercentagesGraph() {
   let formulaColors = [
-    { hex: "#000000", percentage: 50 },
-    { hex: "#ffffff", percentage: 25 },
-    { hex: "#555555", percentage: 25 },
+    { hex: "#0066b0", percentage: 50 },
+    { hex: "#654285", percentage: 25 },
+    { hex: "#3e3d39", percentage: 25 },
   ];
   return (
     <>
@@ -17,9 +17,7 @@ export default function FormulaPercentagesGraph() {
                 backgroundColor: color.hex,
                 width: color.percentage + "%",
               }}
-            >
-              sup
-            </span>
+            ></span>
           );
         })}
       </div>
