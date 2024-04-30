@@ -20,11 +20,11 @@ export function Login() {
 
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (emailRef.current !== null) {
-  //     emailRef.current.focus();
-  //   }
-  // });
+  useEffect(() => {
+    if (emailRef.current !== null) {
+      emailRef.current.focus();
+    }
+  }, []);
 
   const handleRegister = async () => {
     setLoginFormMessage("");
@@ -87,7 +87,7 @@ export function Login() {
               placeholder="Email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              // ref={emailRef}
+              ref={emailRef}
               required
             ></input>
             <FaUser className="icon" />
