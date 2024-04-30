@@ -9,39 +9,12 @@ import {
   TableCell,
   getKeyValue,
 } from "@nextui-org/table";
+import { useEffect, useState } from "react";
+import axios, { AxiosResponse } from "axios";
+import { UserInterface } from "../../interfaces/interfaces";
+import { Tooltip } from "@nextui-org/tooltip";
 
-const rows = [
-  {
-    key: "1",
-    username: "Anthony Hopkins",
-    email: "anthopkins@email.com",
-    company: "Matsui Color",
-    status: "Active",
-    registrationDate: "04/01/24",
-    createdFormulas: "9",
-    lastAccess: "04/01/24",
-  },
-  {
-    key: "2",
-    username: "Anthony Hopkins",
-    email: "anthopkins@email.com",
-    company: "Matsui Color",
-    status: "Active",
-    registrationDate: "04/01/24",
-    createdFormulas: "9",
-    lastAccess: "04/01/24",
-  },
-  {
-    key: "3",
-    username: "Anthony Hopkins",
-    email: "anthopkins@email.com",
-    company: "Matsui Color",
-    status: "Active",
-    registrationDate: "04/01/24",
-    createdFormulas: "9",
-    lastAccess: "04/01/24",
-  },
-];
+const API_URL = import.meta.env.VITE_API_URL;
 
 const columns = [
   {
@@ -72,8 +45,26 @@ const columns = [
     key: "lastAccess",
     label: "LAST ACCESS",
   },
+  {
+    key: "actions",
+    label: "",
+  },
 ];
 export default function UsersTable() {
+  const [fetchedUsers, setFetchedUsers] = useState<Array<UserInterface>>([]);
+  useEffect(() => {
+    axios
+      .get(API_URL + "users", {
+        headers: { "Content-type": "application/json" },
+      })
+      .then((response: AxiosResponse) => {
+        console.log(response.data);
+        setFetchedUsers(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
   return (
     <>
       <Table
@@ -88,70 +79,26 @@ export default function UsersTable() {
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
-        <TableBody items={rows}>
-          {(item) => (
-            <TableRow key={item.key}>
+        <TableBody items={fetchedUsers}>
+          {(user) => (
+            <TableRow key={user._id}>
               {(columnKey) => (
-                <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+                <TableCell>
+                  {columnKey === "actions" ? (
+                    <Tooltip content="Edit">
+                      <span>
+                        <FaPen className="icon" />
+                      </span>
+                    </Tooltip>
+                  ) : (
+                    getKeyValue(user, columnKey)
+                  )}
+                </TableCell>
               )}
             </TableRow>
           )}
         </TableBody>
       </Table>
-      {/* <table>
-        <tbody>
-          <tr>
-            <th></th>
-            <th>USERNAME</th>
-            <th>EMAIL</th>
-            <th>COMPANY</th>
-            <th>STATUS</th>
-            <th>REGISTRATION DATE</th>
-            <th>FORMULAS CREATED</th>
-            <th>LAST ACCESS</th>
-            <th></th>
-          </tr>
-          <tr>
-            <td>⭕</td>
-            <td>Anthony Hopkins</td>
-            <td>anthopkins@email.com</td>
-            <td>Matsui Color</td>
-            <td>Active</td>
-            <td>04/01/24</td>
-            <td>10</td>
-            <td>04/01/24</td>
-            <td>
-              <FaPen />
-            </td>
-          </tr>
-          <tr>
-            <td>⭕</td>
-            <td>Anthony Hopkins</td>
-            <td>anthopkins@email.com</td>
-            <td>Matsui Color</td>
-            <td>Active</td>
-            <td>04/01/24</td>
-            <td>10</td>
-            <td>04/01/24</td>
-            <td>
-              <FaPen />
-            </td>
-          </tr>
-          <tr>
-            <td>⭕</td>
-            <td>Anthony Hopkins</td>
-            <td>anthopkins@email.com</td>
-            <td>Matsui Color</td>
-            <td>Active</td>
-            <td>04/01/24</td>
-            <td>10</td>
-            <td>04/01/24</td>
-            <td>
-              <FaPen />
-            </td>
-          </tr>
-        </tbody>
-      </table> */}
     </>
   );
 }

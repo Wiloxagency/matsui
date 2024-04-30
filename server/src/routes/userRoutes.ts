@@ -1,12 +1,16 @@
 import { Router, Request, Response } from "express";
+import { createMongoDBConnection } from "../shared/mongodbConfig";
 
 const router = Router();
 
-router.get("/", (req: Request, res: Response) => {
-  res.send("Users route!");
+router.get("/", async (req: Request, res: Response) => {
+  const db = await createMongoDBConnection();
+  const users = db.collection("users");
+  const allUsers = await users.find().toArray();
+  res.json(allUsers);
 });
 
-router.get("/:id", (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response) => {
   res.send(`User ${req.params.id} route!`);
 });
 
