@@ -5,7 +5,31 @@ export default function SendEmailCard() {
     <div className="card sendEmailCard">
       <span className="sendEmailCardColumn">
         <div>RECIPIENTS</div>
-        <ul>
+        <ul className="emailRecipientsContainer">
+          <li>
+            <span>Anthony Hopkins</span>
+            <span>anthopkins@email.com</span>
+          </li>
+          <li>
+            <span>Anthony Hopkins</span>
+            <span>anthopkins@email.com</span>
+          </li>
+          <li>
+            <span>Anthony Hopkins</span>
+            <span>anthopkins@email.com</span>
+          </li>
+          <li>
+            <span>Anthony Hopkins</span>
+            <span>anthopkins@email.com</span>
+          </li>
+          <li>
+            <span>Anthony Hopkins</span>
+            <span>anthopkins@email.com</span>
+          </li>
+          <li>
+            <span>Anthony Hopkins</span>
+            <span>anthopkins@email.com</span>
+          </li>
           <li>
             <span>Anthony Hopkins</span>
             <span>anthopkins@email.com</span>
