@@ -102,14 +102,20 @@ export default function UsersTable() {
         selectionMode="multiple"
         defaultSelectedKeys={["1"]}
         aria-label="Example static collection table"
+        isHeaderSticky
         removeWrapper
+        classNames={{
+          // base: "overflow-scroll",
+          base: "max-h-[40vh] overflow-scroll",
+          // table: "min-h-[420px]",
+        }}
       >
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
-        <TableBody items={fetchedUsers}>
+        <TableBody items={fetchedUsers} className="test">
           {(user: UserInterface) => (
             <TableRow key={user._id}>
               {(columnKey) => (
