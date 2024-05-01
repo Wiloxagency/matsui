@@ -5,21 +5,57 @@ import UsersTable from "../../Components/UsersTable/UsersTable";
 import "./AdminDashboard.scss";
 import SendEmailCard from "../../Components/SendEmailCard/SendEmailCard";
 import ReusableButton from "../../Components/ReusableButton/ReusableButton";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@nextui-org/modal";
 import { FaEnvelope, FaLock } from "react-icons/fa";
+import { Button } from "@nextui-org/button";
 
 export default function AdminDashboard() {
   const [isSendEmailActive, setIsSendEmailActive] = useState(false);
+  // MODAL VARIABLES 👇🏻
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   function handleClick() {
     setIsSendEmailActive((previousValue) => !previousValue);
     // console.log(isSendEmailActive);
   }
-
   return (
     <>
       <div className="topSectionContainer">
         <div className="sectionHeader">
-          <span style={{ marginRight: "auto" }}>USER</span>
+          <span style={{ marginRight: "auto" }}>USER</span>{" "}
+          <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur">
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className="flex flex-col gap-1">
+                    Reset password
+                  </ModalHeader>
+                  <ModalBody>
+                    <p>
+                      You're about to send this user an email with instructions
+                      to reset their password.
+                    </p>
+                    <p>Do you wish to proceed?</p>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="danger" variant="light" onPress={onClose}>
+                      Close
+                    </Button>
+                    <Button color="primary" onPress={onClose}>
+                      Send reset password email
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
           <ReusableButton
             style={{ marginRight: "2rem" }}
             className="underlineButton"
@@ -31,6 +67,7 @@ export default function AdminDashboard() {
             className="underlineButton"
             buttonText="RESET PASSWORD"
             Icon={FaLock}
+            onClick={onOpen}
           />
         </div>
         <div className="card">
