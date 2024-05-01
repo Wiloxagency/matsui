@@ -1,4 +1,7 @@
+import { Button } from "@nextui-org/button";
 import "./SendEmailCard.scss";
+import { FaArrowUpShortWide, FaX } from "react-icons/fa6";
+import { FaArrowUp, FaPaperPlane } from "react-icons/fa";
 
 export default function SendEmailCard() {
   return (
@@ -51,6 +54,12 @@ export default function SendEmailCard() {
       <span className="sendEmailCardColumn">
         <input type="text" />
         <textarea />
+        <Button variant="ghost" color="danger" size="sm" startContent={<FaX />}>
+          Discard
+        </Button>
+        <Button variant="ghost" size="sm" startContent={<FaPaperPlane />}>
+          Send
+        </Button>
       </span>
     </div>
   );

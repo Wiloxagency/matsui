@@ -4,8 +4,19 @@
 
     .sendEmailCardColumn {
         display       : flex;
+        position      : relative;
         flex-direction: column;
         gap           : 1rem;
+
+        button {
+            position: absolute;
+            bottom  : .5em;
+            right   : .5rem;
+        }
+
+        button:first-of-type {
+            right: 6rem;
+        }
     }
 
     .sendEmailCardColumn:nth-of-type(1) {
@@ -53,7 +64,7 @@
     }
 
     .emailRecipientsContainer {
-        max-height  : 13vh;
-        overflow: scroll;
+        max-height: 13vh;
+        overflow  : scroll;
     }
 }
