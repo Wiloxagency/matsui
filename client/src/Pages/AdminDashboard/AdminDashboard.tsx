@@ -39,8 +39,6 @@ async function getUsers(): Promise<UserInterface[]> {
 }
 
 export default function AdminDashboard() {
-  const [fetchedUsers, setFetchedUsers] = useState<Array<UserInterface>>([]);
-
   useEffect(() => {
     (async () => {
       setFetchedUsers(await getUsers());
@@ -51,9 +49,12 @@ export default function AdminDashboard() {
     };
   }, []);
 
-  const [isSendEmailActive, setIsSendEmailActive] = useState(false);
   // MODAL VARIABLES 👇🏻
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [fetchedUsers, setFetchedUsers] = useState<Array<UserInterface>>([]);
+  const [isSendEmailActive, setIsSendEmailActive] = useState(false);
+  const [selectedRowsIds, setSelectedRowsIds] = useState(new Set(""));
+  // const [selectedRowsIds, setSelectedRowsIds] = useState(new Set([""]));
 
   function handleClick() {
     setIsSendEmailActive((previousValue) => !previousValue);
@@ -91,22 +92,30 @@ export default function AdminDashboard() {
               )}
             </ModalContent>
           </Modal>
-          <ReusableButton
-            style={{ marginRight: "2rem" }}
-            className="underlineButton"
-            buttonText="SEND EMAIL"
-            Icon={FaEnvelope}
-            onClick={handleClick}
-          />
-          <ReusableButton
-            className="underlineButton"
-            buttonText="RESET PASSWORD"
-            Icon={FaLock}
-            onClick={onOpen}
-          />
+          {isSendEmailActive || selectedRowsIds.size == 0 ? null : (
+            <>
+              <ReusableButton
+                style={{ marginRight: "2rem" }}
+                className="underlineButton"
+                buttonText="SEND EMAIL"
+                Icon={FaEnvelope}
+                onClick={handleClick}
+              />
+              <ReusableButton
+                className="underlineButton"
+                buttonText="RESET PASSWORD"
+                Icon={FaLock}
+                onClick={onOpen}
+              />
+            </>
+          )}
         </div>
         <div className="card">
-          <UsersTable users={fetchedUsers} />
+          <UsersTable
+            users={fetchedUsers}
+            selectedRowsIds={selectedRowsIds}
+            setSelectedRowsIds={setSelectedRowsIds}
+          />
         </div>
       </div>
       <div

@@ -9,7 +9,7 @@ import {
   TableCell,
   getKeyValue,
 } from "@nextui-org/table";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { UserInterface } from "../../interfaces/interfaces";
 import { Tooltip } from "@nextui-org/tooltip";
@@ -61,9 +61,15 @@ const columns = [
 
 interface UsersTableProps {
   users: UserInterface[];
+  selectedRowsIds: Set<string>;
+  setSelectedRowsIds: Dispatch<SetStateAction<Set<string>>>;
 }
 
-export default function UsersTable({ users }: UsersTableProps) {
+export default function UsersTable({
+  users,
+  selectedRowsIds,
+  setSelectedRowsIds,
+}: UsersTableProps) {
   // useEffect(() => {
   //   axios
   //     .get(API_URL + "users", {
@@ -80,10 +86,10 @@ export default function UsersTable({ users }: UsersTableProps) {
 
   // const [fetchedUsers, setFetchedUsers] = useState<Array<UserInterface>>([]);
   const [indexRowToEdit, setIndexRowToEdit] = useState<number | null>(null);
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set([""]));
+  // const [selectedRowsIds, setSelectedRowsIds] = useState(new Set([""]));
 
   const handleEditRow = (userId: string) => {
-    setSelectedKeys(new Set([""]));
+    setSelectedRowsIds(new Set([""]));
 
     console.log(users);
     const indexRow = users.findIndex((user) => user._id == userId);
@@ -137,12 +143,21 @@ export default function UsersTable({ users }: UsersTableProps) {
         aria-label="Example static collection table"
         isHeaderSticky
         removeWrapper
-        selectedKeys={selectedKeys}
-        onSelectionChange={(keys) => setSelectedKeys(keys as Set<string>)}
+        selectedKeys={selectedRowsIds}
+        onSelectionChange={(keys) => setSelectedRowsIds(keys as Set<string>)}
         topContent={
           <>
             <div>INDEX ROW TO EDIT: {indexRowToEdit}</div>
-            <div>SELECTED KEYS: {selectedKeys}</div>
+            <div>SELECTED ROWS IDS: {selectedRowsIds.size}</div>
+            <div>
+              {selectedRowsIds.size ? (
+                [...selectedRowsIds].map((rowId) => {
+                  if (rowId.length > 0) return <span key={rowId}>{rowId}, </span>;
+                })
+              ) : (
+                <></>
+              )}
+            </div>
           </>
         }
         classNames={{
