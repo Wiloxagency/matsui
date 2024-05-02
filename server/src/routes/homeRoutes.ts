@@ -65,9 +65,9 @@ router.post("/register", async (req: Request, res: Response) => {
         email: req.body.email,
         password: hashedPassword,
         company: "",
-        status: "active",
+        status: "Active",
         registrationDate: currentDate,
-        formulasCreated: 0,
+        createdFormulas: 0,
         lastAccess: currentDate,
       };
 

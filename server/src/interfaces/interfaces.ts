@@ -5,9 +5,9 @@ export interface UserInterface {
   email: string;
   password: string;
   company: string;
-  status: "active" | "inactive";
+  status: "Active" | "Inactive";
   registrationDate: Date;
-  formulasCreated: number;
+  createdFormulas: number;
   lastAccess: Date;
 }
 

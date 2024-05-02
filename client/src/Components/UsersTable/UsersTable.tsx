@@ -104,21 +104,22 @@ export default function UsersTable({
   //   setIndexRowToEdit(1), () => console.log("THIS RUNS");
   // };
 
-  const renderCell = React.useCallback(
+  const renderCell =
+    // React.useCallback(
     (user: UserInterface, columnKey: React.Key) => {
       const cellValue = user[columnKey as keyof UserInterface];
 
       switch (columnKey) {
-        case "username":
-          return (
-            <>
-              {indexRowToEdit === null ? (
-                <div>Index row to edit: {indexRowToEdit}</div>
-              ) : (
-                <TextInput />
-              )}
-            </>
-          );
+        // case "username":
+        //   return (
+        //     <>
+        //       {/* {indexRowToEdit === null || indexRowToEdit === -1 ? (
+        //         <div>Index row to edit: {indexRowToEdit}</div>
+        //       ) : (
+        //         <TextInput />
+        //       )} */}
+        //     </>
+        //   );
         case "actions":
           return (
             <Dropdown>
@@ -137,9 +138,10 @@ export default function UsersTable({
         default:
           return cellValue;
       }
-    },
-    []
-  );
+    };
+  // ,
+  // []
+  // );
 
   return (
     <>

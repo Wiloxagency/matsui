@@ -16,7 +16,7 @@ export async function getUserByEmail(
       company: user.company,
       status: user.status,
       registrationDate: user.registrationDate,
-      formulasCreated: user.formulasCreated,
+      createdFormulas: user.createdFormulas,
       lastAccess: user.lastAccess,
     };
   } else {
