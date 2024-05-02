@@ -63,12 +63,18 @@ interface UsersTableProps {
   users: UserInterface[];
   selectedRowsIds: Set<string>;
   setSelectedRowsIds: Dispatch<SetStateAction<Set<string>>>;
+  indexRowToEdit: number | null;
+  // setIndexRowToEdit: Dispatch<SetStateAction<number | null>>;
+  handleEditRow: (userId: string) => void;
 }
 
 export default function UsersTable({
   users,
   selectedRowsIds,
   setSelectedRowsIds,
+  indexRowToEdit,
+  // setIndexRowToEdit,
+  handleEditRow,
 }: UsersTableProps) {
   // useEffect(() => {
   //   axios
@@ -85,18 +91,18 @@ export default function UsersTable({
   // }, []);
 
   // const [fetchedUsers, setFetchedUsers] = useState<Array<UserInterface>>([]);
-  const [indexRowToEdit, setIndexRowToEdit] = useState<number | null>(null);
+  // const [indexRowToEdit, setIndexRowToEdit] = useState<number | null>(null);
   // const [selectedRowsIds, setSelectedRowsIds] = useState(new Set([""]));
 
-  const handleEditRow = (userId: string) => {
-    setSelectedRowsIds(new Set(""));
+  // const handleEditRow = (userId: string) => {
+  //   setSelectedRowsIds(new Set(""));
 
-    console.log(users);
-    const indexRow = users.findIndex((user) => user._id == userId);
-    // console.log("indexRowToEdit: ", indexRowToEdit);
-    // console.log("indexRow: ", indexRow);
-    setIndexRowToEdit(1), () => console.log("THIS RUNS");
-  };
+  //   console.log(users);
+  //   const indexRow = users.findIndex((user) => user._id == userId);
+  //   // console.log("indexRowToEdit: ", indexRowToEdit);
+  //   // console.log("indexRow: ", indexRow);
+  //   setIndexRowToEdit(1), () => console.log("THIS RUNS");
+  // };
 
   const renderCell = React.useCallback(
     (user: UserInterface, columnKey: React.Key) => {
@@ -152,7 +158,8 @@ export default function UsersTable({
             <div>
               {selectedRowsIds.size ? (
                 [...selectedRowsIds].map((rowId) => {
-                  if (rowId.length > 0) return <span key={rowId}>{rowId}, </span>;
+                  if (rowId.length > 0)
+                    return <span key={rowId}>{rowId}, </span>;
                 })
               ) : (
                 <></>

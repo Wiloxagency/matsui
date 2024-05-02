@@ -49,16 +49,20 @@ export default function AdminDashboard() {
     };
   }, []);
 
-  // MODAL VARIABLES 👇🏻
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  // MODAL VARIABLES ☝🏻
   const [fetchedUsers, setFetchedUsers] = useState<Array<UserInterface>>([]);
   const [isSendEmailActive, setIsSendEmailActive] = useState(false);
   const [selectedRowsIds, setSelectedRowsIds] = useState(new Set(""));
-  // const [selectedRowsIds, setSelectedRowsIds] = useState(new Set([""]));
+  const [indexRowToEdit, setIndexRowToEdit] = useState<number | null>(null);
 
   function handleClick() {
     setIsSendEmailActive((previousValue) => !previousValue);
     // console.log(isSendEmailActive);
+  }
+
+  function handleEditRow() {
+    console.log(fetchedUsers);
   }
 
   return (
@@ -115,6 +119,9 @@ export default function AdminDashboard() {
             users={fetchedUsers}
             selectedRowsIds={selectedRowsIds}
             setSelectedRowsIds={setSelectedRowsIds}
+            indexRowToEdit={indexRowToEdit}
+            // setIndexRowToEdit={setIndexRowToEdit}
+            handleEditRow={handleEditRow}
           />
         </div>
       </div>
