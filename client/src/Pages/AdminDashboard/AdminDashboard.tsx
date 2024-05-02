@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
 import Swatches from "../../Components/Swatches/Swatches";
 import UsersTable from "../../Components/UsersTable/UsersTable";
@@ -15,8 +15,42 @@ import {
 } from "@nextui-org/modal";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import { Button } from "@nextui-org/button";
+import { UserInterface } from "../../interfaces/interfaces";
+import axios, { AxiosResponse } from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+async function getUsers(): Promise<UserInterface[]> {
+  const users = await axios
+    .get(API_URL + "users", {
+      headers: { "Content-type": "application/json" },
+    })
+    .then((response: AxiosResponse) => {
+      // console.log(response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  // console.log(users);
+
+  return users;
+}
 
 export default function AdminDashboard() {
+  const [fetchedUsers, setFetchedUsers] = useState<Array<UserInterface>>([]);
+
+  useEffect(() => {
+    (async () => {
+      setFetchedUsers(await getUsers());
+    })();
+
+    return () => {
+      // Component unmount code.
+    };
+  }, []);
+
   const [isSendEmailActive, setIsSendEmailActive] = useState(false);
   // MODAL VARIABLES 👇🏻
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -25,6 +59,7 @@ export default function AdminDashboard() {
     setIsSendEmailActive((previousValue) => !previousValue);
     // console.log(isSendEmailActive);
   }
+
   return (
     <>
       <div className="topSectionContainer">
@@ -71,7 +106,7 @@ export default function AdminDashboard() {
           />
         </div>
         <div className="card">
-          <UsersTable />
+          <UsersTable users={fetchedUsers} />
         </div>
       </div>
       <div

@@ -1,4 +1,4 @@
-import { FaEllipsisV, FaPen } from "react-icons/fa";
+import { FaEllipsisV } from "react-icons/fa";
 import "./UsersTable.scss";
 import {
   Table,
@@ -20,6 +20,7 @@ import {
   DropdownTrigger,
 } from "@nextui-org/dropdown";
 import { Button } from "@nextui-org/button";
+import TextInput from "./temp";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -57,27 +58,30 @@ const columns = [
     label: "",
   },
 ];
-export default function UsersTable() {
-  useEffect(() => {
-    axios
-      .get(API_URL + "users", {
-        headers: { "Content-type": "application/json" },
-      })
-      .then((response: AxiosResponse) => {
-        console.log(response.data);
-        setFetchedUsers(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+export default function UsersTable({ users }: { users: UserInterface[] }) {
+  // useEffect(() => {
+  //   axios
+  //     .get(API_URL + "users", {
+  //       headers: { "Content-type": "application/json" },
+  //     })
+  //     .then((response: AxiosResponse) => {
+  //       console.log(response.data);
+  //       setFetchedUsers(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }, []);
 
-  const [fetchedUsers, setFetchedUsers] = useState<Array<UserInterface>>([]);
+  // const [fetchedUsers, setFetchedUsers] = useState<Array<UserInterface>>([]);
   const [indexRowToEdit, setIndexRowToEdit] = useState<number | null>(null);
+  const [selectedKeys, setSelectedKeys] = React.useState(new Set([""]));
 
   const handleEditRow = (userId: string) => {
-    const indexRow = fetchedUsers.findIndex((user) => user._id == userId);
-    console.log("indexRowToEdit: ", indexRowToEdit, "indexRow: ", indexRow);
+    setSelectedKeys(new Set([""]));
+    const indexRow = users.findIndex((user) => user._id == userId);
+    console.log("indexRowToEdit: ", indexRowToEdit);
+    console.log("indexRow: ", indexRow);
     setIndexRowToEdit(indexRow), () => console.log("THIS RUNS");
   };
 
@@ -87,7 +91,27 @@ export default function UsersTable() {
 
       switch (columnKey) {
         case "username":
-          return <span>{indexRowToEdit}</span>;
+          return (
+            <>
+              <TextInput />
+              <span>{indexRowToEdit}</span>
+            </>
+          );
+        case "actions":
+          return (
+            <Dropdown>
+              <DropdownTrigger>
+                <Button isIconOnly size="sm" variant="light">
+                  <FaEllipsisV />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu aria-label="dropdown">
+                <DropdownItem onClick={() => handleEditRow(user._id)}>
+                  Edit
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          );
         default:
           return cellValue;
       }
@@ -100,10 +124,21 @@ export default function UsersTable() {
       <Table
         color="default"
         selectionMode="multiple"
-        defaultSelectedKeys={["1"]}
+        // defaultSelectedKeys={["1"]}
         aria-label="Example static collection table"
         isHeaderSticky
         removeWrapper
+        selectedKeys={selectedKeys}
+        onSelectionChange={(keys) => setSelectedKeys(keys as Set<string>)}
+        // onSelectionChange={setSelectedKeys}
+        // selectedKeys={selectedKeys}
+        // onSelectionChange={setSelectedKeys}
+        topContent={
+          <>
+            <div>INDEX ROW TO EDIT: {indexRowToEdit}</div>
+            <div>SELECTED KEYS: {selectedKeys}</div>
+          </>
+        }
         classNames={{
           // base: "overflow-scroll",
           base: "max-h-[40vh] overflow-scroll",
@@ -115,28 +150,11 @@ export default function UsersTable() {
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
-        <TableBody items={fetchedUsers} className="test">
+        <TableBody items={users} className="test">
           {(user: UserInterface) => (
             <TableRow key={user._id}>
               {(columnKey) => (
-                <TableCell>
-                  {columnKey === "actions" ? (
-                    <Dropdown>
-                      <DropdownTrigger>
-                        <Button isIconOnly size="sm" variant="light">
-                          <FaEllipsisV />
-                        </Button>
-                      </DropdownTrigger>
-                      <DropdownMenu aria-label="dropdown">
-                        <DropdownItem onClick={() => handleEditRow(user._id)}>
-                          Edit
-                        </DropdownItem>
-                      </DropdownMenu>
-                    </Dropdown>
-                  ) : (
-                    renderCell(user, columnKey)
-                  )}
-                </TableCell>
+                <TableCell>{renderCell(user, columnKey)}</TableCell>
               )}
             </TableRow>
           )}
