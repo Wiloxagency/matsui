@@ -89,7 +89,7 @@ export default function UsersTable({
   // const [selectedRowsIds, setSelectedRowsIds] = useState(new Set([""]));
 
   const handleEditRow = (userId: string) => {
-    setSelectedRowsIds(new Set([""]));
+    setSelectedRowsIds(new Set(""));
 
     console.log(users);
     const indexRow = users.findIndex((user) => user._id == userId);
