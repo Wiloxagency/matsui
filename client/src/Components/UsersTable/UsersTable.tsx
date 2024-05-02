@@ -59,7 +59,11 @@ const columns = [
   },
 ];
 
-export default function UsersTable({ users }: { users: UserInterface[] }) {
+interface UsersTableProps {
+  users: UserInterface[];
+}
+
+export default function UsersTable({ users }: UsersTableProps) {
   // useEffect(() => {
   //   axios
   //     .get(API_URL + "users", {

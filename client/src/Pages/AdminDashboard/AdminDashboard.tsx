@@ -120,7 +120,7 @@ export default function AdminDashboard() {
         {isSendEmailActive ? (
           <>
             <div className="sectionHeader">SEND EMAIL</div>
-            <SendEmailCard />
+            <SendEmailCard setIsSendEmailActive={setIsSendEmailActive} />
           </>
         ) : (
           <>

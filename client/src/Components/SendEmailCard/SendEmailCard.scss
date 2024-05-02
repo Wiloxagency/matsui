@@ -45,23 +45,18 @@
         }
     }
 
-    input,
-    textarea {
-        border-radius: 1rem;
-        outline      : none;
-        border       : none;
-        resize       : none;
-        border       : solid 1px;
-        width        : 100% !important;
-    }
+    // textarea {
+    //     border-radius: 1rem;
+    //     outline      : none;
+    //     border       : none;
+    //     resize       : none;
+    //     border       : solid 1px;
+    //     width        : 100% !important;
+    // }
 
-    input {
-        height: 2.5rem;
-    }
-
-    textarea {
-        height: 100%;
-    }
+    // textarea {
+    //     height: 100%;
+    // }
 
     .emailRecipientsContainer {
         max-height: 13vh;

@@ -2,8 +2,23 @@ import { Button } from "@nextui-org/button";
 import "./SendEmailCard.scss";
 import { FaArrowUpShortWide, FaX } from "react-icons/fa6";
 import { FaArrowUp, FaPaperPlane } from "react-icons/fa";
+import { Dispatch, SetStateAction, useState } from "react";
+import { Input, Textarea } from "@nextui-org/input";
 
-export default function SendEmailCard() {
+interface SendEmailCardProps {
+  setIsSendEmailActive: Dispatch<SetStateAction<boolean>>;
+}
+
+export default function SendEmailCard({
+  setIsSendEmailActive,
+}: SendEmailCardProps) {
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+
+  const handleSendEmail = () => {
+    console.log(subject, message);
+  };
+
   return (
     <div className="card sendEmailCard">
       <span className="sendEmailCardColumn">
@@ -48,16 +63,41 @@ export default function SendEmailCard() {
         </ul>
       </span>
       <span className="sendEmailCardColumn">
-        <div>TITLE</div>
+        <div>SUBJECT</div>
         <div>MESSAGE</div>
       </span>
       <span className="sendEmailCardColumn">
-        <input type="text" />
-        <textarea />
-        <Button variant="ghost" color="danger" size="sm" startContent={<FaX />}>
+        <Input
+          type="text"
+          variant="bordered"
+          value={subject}
+          onValueChange={setSubject}
+        />
+        <Textarea
+          variant="bordered"
+          minRows={4}
+          maxRows={4}
+          disableAnimation
+          value={message}
+          onValueChange={setMessage}
+        />
+        <Button
+          variant="ghost"
+          color="danger"
+          size="sm"
+          startContent={<FaX />}
+          onClick={() => {
+            setIsSendEmailActive(false);
+          }}
+        >
           Discard
         </Button>
-        <Button variant="ghost" size="sm" startContent={<FaPaperPlane />}>
+        <Button
+          variant="ghost"
+          size="sm"
+          startContent={<FaPaperPlane />}
+          onClick={handleSendEmail}
+        >
           Send
         </Button>
       </span>
