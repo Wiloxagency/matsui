@@ -76,36 +76,7 @@ export default function UsersTable({
   // setIndexRowToEdit,
   handleEditRow,
 }: UsersTableProps) {
-  // useEffect(() => {
-  //   axios
-  //     .get(API_URL + "users", {
-  //       headers: { "Content-type": "application/json" },
-  //     })
-  //     .then((response: AxiosResponse) => {
-  //       console.log(response.data);
-  //       setFetchedUsers(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // }, []);
-
-  // const [fetchedUsers, setFetchedUsers] = useState<Array<UserInterface>>([]);
-  // const [indexRowToEdit, setIndexRowToEdit] = useState<number | null>(null);
-  // const [selectedRowsIds, setSelectedRowsIds] = useState(new Set([""]));
-
-  // const handleEditRow = (userId: string) => {
-  //   setSelectedRowsIds(new Set(""));
-
-  //   console.log(users);
-  //   const indexRow = users.findIndex((user) => user._id == userId);
-  //   // console.log("indexRowToEdit: ", indexRowToEdit);
-  //   // console.log("indexRow: ", indexRow);
-  //   setIndexRowToEdit(1), () => console.log("THIS RUNS");
-  // };
-
-  const renderCell =
-    // React.useCallback(
+  const renderCell = React.useCallback(
     (user: UserInterface, columnKey: React.Key) => {
       const cellValue = user[columnKey as keyof UserInterface];
 
@@ -138,10 +109,9 @@ export default function UsersTable({
         default:
           return cellValue;
       }
-    };
-  // ,
-  // []
-  // );
+    },
+    []
+  );
 
   return (
     <>

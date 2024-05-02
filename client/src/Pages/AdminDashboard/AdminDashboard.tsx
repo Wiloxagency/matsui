@@ -58,9 +58,15 @@ export default function AdminDashboard() {
   function handleEditRow(userId: string) {
     // console.log(userId);
     setIdUserToEdit(userId);
-    setIndexRowToEdit(null);
+    setIndexRowToEdit(-1);
     // console.log(fetchedUsers);
     onOpen();
+  }
+
+  function handleCloseModal() {
+    console.log("test");
+    setIndexRowToEdit(null);
+    onOpenChange()
   }
 
   useEffect(() => {
@@ -76,15 +82,36 @@ export default function AdminDashboard() {
   useEffect(() => {
     setSelectedRowsIds(new Set(""));
     const indexRow = fetchedUsers.findIndex((user) => user._id == idUserToEdit);
-    setIndexRowToEdit(indexRow);
+    console.log(indexRow);
+    if (indexRow !== -1) {
+      setIndexRowToEdit(indexRow);
+    }
   }, [indexRowToEdit]);
+
+  // useEffect(() => {
+  //   setIndexRowToEdit(null);
+  // }, [selectedRowsIds]);
+  //
+  // useEffect(() => {
+  //   if (!isOpen) {
+  //     console.log("CLOSED MODAL");
+  //     // setIndexRowToEdit(null)
+  //   }
+  // }, [onOpenChange]);
 
   return (
     <>
       <div className="topSectionContainer">
         <div className="sectionHeader">
           <span style={{ marginRight: "auto" }}>USER</span>{" "}
-          <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur">
+          <Modal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            backdrop="blur"
+            isDismissable={false}
+            isKeyboardDismissDisabled={true}
+            hideCloseButton={true}
+          >
             <ModalContent>
               {(onClose) =>
                 indexRowToEdit === null || indexRowToEdit === -1 ? (
@@ -114,18 +141,27 @@ export default function AdminDashboard() {
                       Edit user
                     </ModalHeader>
                     <ModalBody>
-                      <Input label="Username" type="text" variant="bordered" />
+                      <Input
+                        label="Username"
+                        type="text"
+                        variant="bordered"
+                        autoFocus
+                      />
                       <Input label="Company" type="text" variant="bordered" />
-                      <Input label="Email" type="text" disabled/>
+                      <Input label="Email" type="text" disabled />
                       <Input label="Registration date" type="text" disabled />
-                      <Input label="Last access" type="text" disabled/>
-                      <Input label="Created formulas" type="number" disabled/>
+                      <Input label="Last access" type="text" disabled />
+                      <Input label="Created formulas" type="number" disabled />
                     </ModalBody>
                     <ModalFooter>
-                      <Button color="danger" variant="light" onPress={onClose}>
+                      <Button
+                        color="danger"
+                        variant="light"
+                        onPress={handleCloseModal}
+                      >
                         Close
                       </Button>
-                      <Button color="primary" onPress={onClose}>
+                      <Button color="primary" onPress={handleCloseModal}>
                         Save changes
                       </Button>
                     </ModalFooter>
