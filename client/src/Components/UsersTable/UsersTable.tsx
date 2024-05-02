@@ -58,6 +58,7 @@ const columns = [
     label: "",
   },
 ];
+
 export default function UsersTable({ users }: { users: UserInterface[] }) {
   // useEffect(() => {
   //   axios
@@ -79,10 +80,12 @@ export default function UsersTable({ users }: { users: UserInterface[] }) {
 
   const handleEditRow = (userId: string) => {
     setSelectedKeys(new Set([""]));
+
+    console.log(users);
     const indexRow = users.findIndex((user) => user._id == userId);
-    console.log("indexRowToEdit: ", indexRowToEdit);
-    console.log("indexRow: ", indexRow);
-    setIndexRowToEdit(indexRow), () => console.log("THIS RUNS");
+    // console.log("indexRowToEdit: ", indexRowToEdit);
+    // console.log("indexRow: ", indexRow);
+    setIndexRowToEdit(1), () => console.log("THIS RUNS");
   };
 
   const renderCell = React.useCallback(
@@ -93,8 +96,11 @@ export default function UsersTable({ users }: { users: UserInterface[] }) {
         case "username":
           return (
             <>
-              <TextInput />
-              <span>{indexRowToEdit}</span>
+              {indexRowToEdit === null ? (
+                <div>Index row to edit: {indexRowToEdit}</div>
+              ) : (
+                <TextInput />
+              )}
             </>
           );
         case "actions":
@@ -124,15 +130,11 @@ export default function UsersTable({ users }: { users: UserInterface[] }) {
       <Table
         color="default"
         selectionMode="multiple"
-        // defaultSelectedKeys={["1"]}
         aria-label="Example static collection table"
         isHeaderSticky
         removeWrapper
         selectedKeys={selectedKeys}
         onSelectionChange={(keys) => setSelectedKeys(keys as Set<string>)}
-        // onSelectionChange={setSelectedKeys}
-        // selectedKeys={selectedKeys}
-        // onSelectionChange={setSelectedKeys}
         topContent={
           <>
             <div>INDEX ROW TO EDIT: {indexRowToEdit}</div>

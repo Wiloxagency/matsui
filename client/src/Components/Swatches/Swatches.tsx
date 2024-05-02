@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./Swatches.scss";
-import { formulas } from "./tempFormulas";
+import { formulas } from "./TempFormulas";
 
 export interface FormulaInterface {
   hex: string;

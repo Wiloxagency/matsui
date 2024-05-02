@@ -1,9 +1,11 @@
 import React from "react";
 import { Input } from "@nextui-org/input";
 
+interface TextInputProps {}
+
 class TextInput extends React.Component {
   textInputRef: React.RefObject<HTMLInputElement>;
-  constructor(props: any) {
+  constructor(props: TextInputProps) {
     super(props);
     this.textInputRef = React.createRef();
     this.focusTextInput = this.focusTextInput.bind(this);
