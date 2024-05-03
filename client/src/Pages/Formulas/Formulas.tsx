@@ -24,6 +24,7 @@ export default function Formulas() {
             <label>INK SYSTEM</label>
             <span className="selectContainer">
               <Select
+                size="sm"
                 variant="bordered"
                 radius="full"
                 label="SELECT INK SYSTEM"
@@ -35,7 +36,12 @@ export default function Formulas() {
           <div className="dropdownAndLabelRow">
             <label>SERIES</label>
             <span className="selectContainer">
-              <Select variant="bordered" radius="full" label="SELECT SERIES">
+              <Select
+                size="sm"
+                variant="bordered"
+                radius="full"
+                label="SELECT SERIES"
+              >
                 <SelectItem key="test">TEST</SelectItem>
               </Select>
             </span>
