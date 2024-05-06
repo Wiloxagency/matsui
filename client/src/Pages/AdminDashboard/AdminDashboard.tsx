@@ -66,7 +66,7 @@ export default function AdminDashboard() {
   function handleCloseModal() {
     console.log("test");
     setIndexRowToEdit(null);
-    onOpenChange()
+    onOpenChange();
   }
 
   useEffect(() => {
@@ -172,18 +172,19 @@ export default function AdminDashboard() {
           </Modal>
           {isSendEmailActive || selectedRowsIds.size == 0 ? null : (
             <>
-              <ReusableButton
-                style={{ marginRight: "2rem" }}
-                className="underlineButton"
-                buttonText="SEND EMAIL"
-                Icon={FaEnvelope}
-                onClick={handleClick}
-              />
+              <span style={{ marginRight: "2rem" }}>
+                <ReusableButton
+                  className="underlineButton"
+                  buttonText="SEND EMAIL"
+                  Icon={FaEnvelope}
+                  handleClick={handleClick}
+                />
+              </span>
               <ReusableButton
                 className="underlineButton"
                 buttonText="RESET PASSWORD"
                 Icon={FaLock}
-                onClick={onOpen}
+                handleClick={onOpen}
               />
             </>
           )}

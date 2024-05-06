@@ -20,6 +20,7 @@ export interface FormulaInterface {
   reportedAsError: boolean;
   components: {
     componentCode: string[];
+    percentage: number
   };
 }
 

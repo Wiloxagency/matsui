@@ -36,6 +36,11 @@ a {
   background-color: white;
   border-radius   : 2rem;
 
+  .row {
+    display      : flex;
+    margin-bottom: 1rem;
+  }
+
   .dropdownAndLabelRow {
     display        : flex;
     justify-content: space-between;
