@@ -4,11 +4,13 @@ import logo from "../../assets/matsui_logo.png";
 import spectrum from "../../assets/spectrum.png";
 
 export default function Header() {
-  const location = useLocation();
+  const pages = [
+    { path: "/formulas", label: "FORMULAS" },
+    { path: "/admin", label: "ADMIN DASHBOARD" },
+    { path: "/import", label: "IMPORT FORMULAS" },
+  ];
 
-  // useEffect(() => {
-  //   // console.log(location);
-  // }, [location]);
+  const location = useLocation();
 
   return (
     <>
@@ -17,33 +19,20 @@ export default function Header() {
           <img src={logo} className="logo" />
           <nav>
             <ul>
-              <li
-                style={
-                  location.pathname == "/formulas"
-                    ? { textDecoration: "underline" }
-                    : { textDecoration: "none" }
-                }
-              >
-                <Link to="/formulas">FORMULAS</Link>
-              </li>
-              <li
-                style={
-                  location.pathname == "/admin"
-                    ? { textDecoration: "underline" }
-                    : { textDecoration: "none" }
-                }
-              >
-                <Link to="/admin">ADMIN DASHBOARD</Link>
-              </li>
-              <li
-                style={
-                  location.pathname == "/import"
-                    ? { textDecoration: "underline" }
-                    : { textDecoration: "none" }
-                }
-              >
-                <Link to="/import">IMPORT FORMULAS</Link>
-              </li>
+              {pages.map((page) => {
+                return (
+                  <li
+                    key={page.path}
+                    style={
+                      location.pathname === page.path
+                        ? { textDecoration: "underline" }
+                        : { textDecoration: "none" }
+                    }
+                  >
+                    <Link to={page.path}>{page.label}</Link>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
 
@@ -57,7 +46,7 @@ export default function Header() {
       <div
         className="outletContainer"
         style={
-          location.pathname == "/formulas"
+          location.pathname == "/formulas" || location.pathname == "/import"
             ? { flexDirection: "row" }
             : { flexDirection: "column" }
         }

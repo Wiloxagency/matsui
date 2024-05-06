@@ -4,7 +4,8 @@ import ReusableButton from "../../Components/ReusableButton/ReusableButton";
 import Swatches from "../../Components/Swatches/Swatches";
 import "./Formulas.scss";
 
-import { Select, SelectSection, SelectItem } from "@nextui-org/select";
+import { Input } from "@nextui-org/input";
+import { Select, SelectItem } from "@nextui-org/select";
 import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
 
 export default function Formulas() {
@@ -65,10 +66,39 @@ export default function Formulas() {
       <div className="rightSection">
         <div className="formulaDetailsContainer">
           <div className="sectionHeader">
-            <span>FORMULA DETAILS: DC NEO 285 C</span>
-            <span>
-              QUANTITY: <input type="number" className="quantityInput" />
+            <span style={{ minWidth: "fit-content" }}>
+              FORMULA DETAILS: DC NEO 285 C
+            </span>
+            {/* <span>
+              QUANTITY:
+              <input type="number" className="quantityInput" />
               <span style={{ marginLeft: "1rem" }}>g / kg/ lbs</span>
+            </span> */}
+            <span style={{width: "14rem"}}>
+              <Input
+                label="QUANTITY"
+                placeholder="0.00"
+                labelPlacement="outside-left"
+                size="sm"
+                fullWidth={false}
+                endContent={
+                  <div className="flex items-center">
+                    <label className="sr-only" htmlFor="currency">
+                      Currency
+                    </label>
+                    <select
+                      className="outline-none border-0 bg-transparent text-default-400 text-small"
+                      id="currency"
+                      name="currency"
+                    >
+                      <option>g</option>
+                      <option>kg</option>
+                      <option>lbs</option>
+                    </select>
+                  </div>
+                }
+                type="number"
+              />
             </span>
           </div>
           <div className="card">

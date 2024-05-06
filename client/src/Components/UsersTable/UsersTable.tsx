@@ -1,28 +1,22 @@
-import { FaEllipsisV } from "react-icons/fa";
-import "./UsersTable.scss";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableColumn,
-  TableRow,
-  TableCell,
-  getKeyValue,
-} from "@nextui-org/table";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
-import { UserInterface } from "../../interfaces/interfaces";
-import { Tooltip } from "@nextui-org/tooltip";
+import { Button } from "@nextui-org/button";
 import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/dropdown";
-import { Button } from "@nextui-org/button";
-import TextInput from "./temp";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow
+} from "@nextui-org/table";
+import React, { Dispatch, SetStateAction } from "react";
+import { FaEllipsisV } from "react-icons/fa";
+import { UserInterface } from "../../interfaces/interfaces";
+import "./UsersTable.scss";
 
 const columns = [
   {
@@ -141,7 +135,7 @@ export default function UsersTable({
         }
         classNames={{
           // base: "overflow-scroll",
-          base: "max-h-[40vh] overflow-scroll",
+          base: "max-h-[35vh] overflow-scroll",
           // table: "min-h-[420px]",
         }}
       >

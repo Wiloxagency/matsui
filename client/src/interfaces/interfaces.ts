@@ -12,6 +12,21 @@ export interface UserInterface {
   lastAccess: Date;
 }
 
-export interface FormulaInterface {}
+export interface FormulaInterface {
+  formulaSeries: string;
+  formulaCode: string;
+  formulaDescription: string;
+  isActive: boolean;
+  reportedAsError: boolean;
+  components: {
+    componentCode: string[];
+  };
+}
 
-export interface ColorInterface {}
+export interface ComponentInterface {
+  formulaSeries: string;
+  componentCode: string;
+  description: string;
+  cost: number;
+  isActive: boolean;
+}
