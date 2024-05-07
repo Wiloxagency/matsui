@@ -18,6 +18,7 @@ import { Button } from "@nextui-org/button";
 import { UserInterface } from "../../interfaces/interfaces";
 import axios, { AxiosResponse } from "axios";
 import { Input } from "@nextui-org/input";
+// import { useGetUsersQuery } from "../../State/services";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -43,6 +44,9 @@ export default function AdminDashboard() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   // MODAL VARIABLES ☝🏻
   const [fetchedUsers, setFetchedUsers] = useState<Array<UserInterface>>([]);
+  // REDUX 👇🏻
+  // const { data } = useGetUsersQuery();
+  // console.log(data);
   const [isSendEmailActive, setIsSendEmailActive] = useState(false);
   const [selectedRowsIds, setSelectedRowsIds] = useState(new Set(""));
   const [indexRowToEdit, setIndexRowToEdit] = useState<number | null>(null);
