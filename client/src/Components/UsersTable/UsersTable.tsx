@@ -17,6 +17,7 @@ import React, { Dispatch, SetStateAction } from "react";
 import { FaEllipsisV } from "react-icons/fa";
 import { UserInterface } from "../../interfaces/interfaces";
 import "./UsersTable.scss";
+import { Spinner } from "@nextui-org/spinner";
 
 const columns = [
   {
@@ -144,7 +145,7 @@ export default function UsersTable({
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
-        <TableBody items={users} className="test">
+        <TableBody items={users} emptyContent={<Spinner/>}>
           {(user: UserInterface) => (
             <TableRow key={user._id}>
               {(columnKey) => (

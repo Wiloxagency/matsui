@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import video from "../../assets/doesthiswork.mp4";
 import logo from "../../assets/matsui_logo.png";
 import "./Login.scss";
+import { Button } from "@nextui-org/button";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -14,8 +15,8 @@ export function Login() {
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loginFormMessage, setLoginFormMessage] = useState("");
-  // const [emailErrorMessage, setEmailErrorMessage] = useState("");
-  // const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+  const [isSignInButtonLoading, setIsSignInButtonLoading] = useState(false);
+  const [isRegisterButtonLoading, setIsRegisterButtonLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -26,6 +27,7 @@ export function Login() {
   }, []);
 
   const handleRegister = async () => {
+    setIsRegisterButtonLoading(true);
     setLoginFormMessage("");
     axios
       .post(API_URL + "register", JSON.stringify({ email, password }), {
@@ -33,11 +35,13 @@ export function Login() {
         // withCredentials: true,
       })
       .then((response: AxiosResponse) => {
+        setIsRegisterButtonLoading(false);
         if (response.status === 200) {
           setLoginFormMessage("Account created. You can now login");
         }
       })
       .catch((error) => {
+        setIsRegisterButtonLoading(false);
         if (!error.response) {
           setLoginFormMessage("No server response");
         } else if (error.response.status === 401) {
@@ -50,6 +54,7 @@ export function Login() {
 
   const handleLogin = async (formEvent: React.FormEvent<HTMLFormElement>) => {
     formEvent.preventDefault();
+    setIsSignInButtonLoading(true);
     setLoginFormMessage("");
 
     axios
@@ -58,9 +63,11 @@ export function Login() {
         // withCredentials: true,
       })
       .then((response: AxiosResponse) => {
+        setIsSignInButtonLoading(false);
         response && navigate("/formulas");
       })
       .catch((error) => {
+        setIsSignInButtonLoading(false);
         if (!error.response) {
           setLoginFormMessage("No server response");
         } else {
@@ -123,12 +130,22 @@ export function Login() {
           >
             {loginFormMessage}
           </p>
-          <button type="submit">Sign in</button>
+          <div>
+            <Button type="submit" size="lg" isLoading={isSignInButtonLoading}>
+              Sign in
+            </Button>
+          </div>
 
           {/* <Link to="/formulas"> */}
-          <button type="button" onClick={handleRegister} className="newAccount">
+          <Button
+            type="button"
+            className="newAccount"
+            size="lg"
+            isLoading={isRegisterButtonLoading}
+            onClick={handleRegister}
+          >
             Create new account{" "}
-          </button>
+          </Button>
           {/* </Link> */}
 
           <div className="forgotPassword">Forgot your password?</div>

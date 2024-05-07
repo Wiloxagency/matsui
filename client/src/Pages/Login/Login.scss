@@ -94,17 +94,18 @@
     }
 
     button {
-        display         : block;
-        margin          : 1rem auto 1rem auto;
-        width           : 63%;
-        height          : 3rem;
-        border-radius   : 3rem;
-        border          : none;
-        font-size       : 1rem;
-        cursor          : pointer;
-        background-color: #ffffff49;
-        color           : white;
-        transition      : .3s;
+        // display         : block;
+        // margin          : 1rem auto 1rem auto;
+        margin-bottom      : 1rem;
+        // width           : 63%;
+        // height          : 3rem;
+        border-radius      : 3rem;
+        // border          : none;
+        // font-size       : 1rem;
+        // cursor          : pointer;
+        background-color   : #ffffff49;
+        color              : white;
+        transition         : .3s;
     }
 
     button.newAccount {
