@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import axios, { AxiosResponse } from "axios";
-import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
-import "./Login.scss";
-import logo from "../../assets/matsui_logo.png";
+import { useEffect, useRef, useState } from "react";
+import { FaEye, FaEyeSlash, FaLock, FaUser } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import video from "../../assets/doesthiswork.mp4";
-import { randomBytes, scryptSync } from "crypto";
+import logo from "../../assets/matsui_logo.png";
+import "./Login.scss";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -59,7 +58,7 @@ export function Login() {
         // withCredentials: true,
       })
       .then((response: AxiosResponse) => {
-        navigate("/formulas");
+        response && navigate("/formulas");
       })
       .catch((error) => {
         if (!error.response) {

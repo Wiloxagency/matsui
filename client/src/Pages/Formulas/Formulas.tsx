@@ -18,6 +18,7 @@ export default function Formulas() {
             className="underlineButton"
             buttonText="CREATE NEW FORMULA"
             Icon={FaPen}
+            handleClick={() => {}}
           />
         </div>
         <div className="card">
@@ -74,7 +75,7 @@ export default function Formulas() {
               <input type="number" className="quantityInput" />
               <span style={{ marginLeft: "1rem" }}>g / kg/ lbs</span>
             </span> */}
-            <span style={{width: "14rem"}}>
+            <span style={{ width: "14rem" }}>
               <Input
                 label="QUANTITY"
                 placeholder="0.00"
@@ -109,11 +110,13 @@ export default function Formulas() {
                 className="underlineButton"
                 buttonText="DUPLICATE FORMULA"
                 Icon={FaClone}
+                handleClick={() => {}}
               />{" "}
               <ReusableButton
                 className="underlineButton"
                 buttonText="PRINT FORMULA"
                 Icon={FaPrint}
+                handleClick={() => {}}
               />
               <span>TOTAL: 97,70 $</span>
             </div>

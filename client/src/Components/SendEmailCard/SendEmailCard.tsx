@@ -1,9 +1,9 @@
 import { Button } from "@nextui-org/button";
-import "./SendEmailCard.scss";
-import { FaArrowUpShortWide, FaX } from "react-icons/fa6";
-import { FaArrowUp, FaPaperPlane } from "react-icons/fa";
-import { Dispatch, SetStateAction, useState } from "react";
 import { Input, Textarea } from "@nextui-org/input";
+import { Dispatch, SetStateAction, useState } from "react";
+import { FaPaperPlane } from "react-icons/fa";
+import { FaX } from "react-icons/fa6";
+import "./SendEmailCard.scss";
 
 interface SendEmailCardProps {
   setIsSendEmailActive: Dispatch<SetStateAction<boolean>>;
