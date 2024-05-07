@@ -1,6 +1,7 @@
 import { FormulaInterface } from "./Swatches";
 
-export const formulas: FormulaInterface[] = [
+export default function returnTemporaryFormulas(): FormulaInterface[] {
+  return [
     {
       hex: "#001489",
       title: "Reflex Blue C",
@@ -362,4 +363,4 @@ export const formulas: FormulaInterface[] = [
       ],
     },
   ];
-  
+}

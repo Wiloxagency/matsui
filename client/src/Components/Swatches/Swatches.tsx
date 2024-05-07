@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./Swatches.scss";
-import { formulas } from "./TempFormulas";
+import returnTemporaryFormulas from "./TempFormulas";
 
 export interface FormulaInterface {
   hex: string;
@@ -34,7 +34,7 @@ export default function Swatches() {
   return (
     <>
       <div className="swatchesContainer">
-        {formulas.map((formula) => {
+        {returnTemporaryFormulas().map((formula: FormulaInterface) => {
           return (
             <span
               key={formula.hex}
