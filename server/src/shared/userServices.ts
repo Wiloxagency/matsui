@@ -12,6 +12,7 @@ export async function getUserByEmail(
     return {
       _id: user._id,
       email: user.email,
+      username: user.username,
       password: user.password,
       company: user.company,
       status: user.status,

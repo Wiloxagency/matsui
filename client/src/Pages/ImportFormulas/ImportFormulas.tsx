@@ -50,40 +50,40 @@ export default function ImportFormulas() {
             <span>STEP 2: MATCH THE COLUMNS TO THE CORRESPONDING VALUES</span>
           </div>
           <div className="card" style={{ maxWidth: "35vw" }}>
-            <p className="row title">
+            <div className="row title">
               <span style={{ flex: "3" }}>HEADER</span>
               <span style={{ flex: "1" }}>COLUMN</span>
-            </p>
-            <p className="row">
+            </div>
+            <div className="row">
               <span style={{ flex: "3" }}>FORMULA CODE </span>
               <span style={{ flex: "1" }}>
                 <Input type="number" placeholder="0"></Input>
               </span>
-            </p>
-            <p className="row">
+            </div>
+            <div className="row">
               <span style={{ flex: "3" }}>FORMULA DESCRIPTION</span>
               <span style={{ flex: "1" }}>
                 <Input type="number" placeholder="0"></Input>
               </span>
-            </p>
-            <p className="row">
+            </div>
+            <div className="row">
               <span style={{ flex: "3" }}>COMPONENT CODE</span>
               <span style={{ flex: "1" }}>
                 <Input type="number" placeholder="0"></Input>
               </span>
-            </p>
-            <p className="row">
+            </div>
+            <div className="row">
               <span style={{ flex: "3" }}>COMPONENT DESCRIPTION</span>
               <span style={{ flex: "1" }}>
                 <Input type="number" placeholder="0"></Input>
               </span>
-            </p>
-            <p className="row">
+            </div>
+            <div className="row">
               <span style={{ flex: "3" }}>COMPONENT PERCENTAGE</span>
               <span style={{ flex: "1" }}>
                 <Input type="number" placeholder="0"></Input>
               </span>
-            </p>
+            </div>
           </div>
         </div>
       </div>

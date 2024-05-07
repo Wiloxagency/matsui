@@ -63,6 +63,7 @@ router.post("/register", async (req: Request, res: Response) => {
 
       const newUser: UserInterface = {
         email: req.body.email,
+        username: "",
         password: hashedPassword,
         company: "",
         status: "Active",

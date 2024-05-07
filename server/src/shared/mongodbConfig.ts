@@ -2,10 +2,10 @@ import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 dotenv.config();
 
-const MONGODB_URL: string = process.env.MONGODB_URL as string;
+const MONGODB_URI: string = process.env.MONGODB_URI as string;
 const DATABASE_NAME: string = process.env.DATABASE_NAME as string;
 
-const client = new MongoClient(MONGODB_URL);
+const client = new MongoClient(MONGODB_URI);
 
 export async function createMongoDBConnection() {
   await client.connect();

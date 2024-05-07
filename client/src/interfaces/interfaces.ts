@@ -3,6 +3,7 @@
 export interface UserInterface {
   // _id?: ObjectId;
   _id?: any;
+  username: string
   email: string;
   password: string;
   company: string;
