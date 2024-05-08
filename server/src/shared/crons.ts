@@ -2,12 +2,12 @@ import { CronJob } from "cron";
 
 export const wakeUpServerCron = CronJob.from({
   //   cronTime: "*/10 * * * * *", // 10 seconds
-  cronTime: "0 */15 * * * *",
+  cronTime: "0 */14 * * * *",
   runOnInit: true,
   onTick: function () {
     wakeUpServer();
     console.log(new Date().toLocaleTimeString());
-    console.log("You will see this message every 15 minutes.");
+    // console.log("You will see this message every 14 minutes.");
   },
 });
 
