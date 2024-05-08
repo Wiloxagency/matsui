@@ -4,24 +4,24 @@ import Formulas from "./Pages/Formulas/Formulas";
 import AdminDashboard from "./Pages/AdminDashboard/AdminDashboard";
 import Header from "./Components/HeaderAndMainLayout/Header";
 import ImportFormulas from "./Pages/ImportFormulas/ImportFormulas";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 
 export default function App() {
-  const wakeUpApi = async () => {
-    const res = await fetch(import.meta.env.VITE_API_URL  + "wakeUpServer");
-    console.log(res)
-  };
+  // const wakeUpApi = async () => {
+  //   const res = await fetch(import.meta.env.VITE_API_URL  + "wakeUpServer");
+  //   console.log(res)
+  // };
 
-  wakeUpApi();
+  // wakeUpApi();
 
-  useEffect(() => {
-    const intervalCall = setInterval(() => {
-      wakeUpApi();
-    }, 900000);
-    return () => {
-      clearInterval(intervalCall);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const intervalCall = setInterval(() => {
+  //     wakeUpApi();
+  //   }, 900000);
+  //   return () => {
+  //     clearInterval(intervalCall);
+  //   };
+  // }, []);
 
   return (
     <Routes>

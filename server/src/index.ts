@@ -3,6 +3,8 @@ import cors, { CorsOptions } from "cors";
 import dotenv from "dotenv";
 import router from "./routes/indexRoutes";
 import bodyParser from "body-parser";
+import { CronJob } from "cron";
+import { wakeUpServer, wakeUpServerCron } from "./shared/crons";
 // import passport from "passport";
 // import session from "express-session";
 // import { initializePassport } from "./shared/passportConfig";
@@ -36,6 +38,9 @@ app.use(cors(corsOptions));
 // app.use(passport.session());
 
 app.use("/", router);
+
+wakeUpServer()
+wakeUpServerCron.start();
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
