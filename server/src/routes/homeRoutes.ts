@@ -11,7 +11,7 @@ import { getUserByEmail } from "../shared/userServices";
 
 const router = Router();
 
-router.get("/", (req: Request, res: Response) => {
+router.get("/wakeUpServer", (req: Request, res: Response) => {
   //   axios
   //     .get("https://jsonplaceholder.typicode.com/posts/1")
   //     .then((response) => {
@@ -19,21 +19,7 @@ router.get("/", (req: Request, res: Response) => {
   //       res.json(response.data);
   //     })
   //     .catch((error) => console.log(error));
-  res.removeHeader("Date");
-  res.removeHeader("Transfer-Encoding");
-  res.removeHeader("Connection");
-  res.removeHeader("CF-Ray");
-  res.removeHeader("CF-Cache-Status");
-  res.removeHeader("Access-Control-Allow-Origin");
-  res.removeHeader("ETag");
-  res.removeHeader("Vary");
-  res.removeHeader("access-control-allow-credentials");
-  res.removeHeader("rndr-id");
-  res.removeHeader("x-powered-by");
-  res.removeHeader("x-render-origin-server");
-  res.removeHeader("Server");
-  res.removeHeader("alt-svc");
-  res.json({ message: "Working" });
+  res.json("ok");
 });
 
 router.post("/login", async (req: Request, res: Response) => {
