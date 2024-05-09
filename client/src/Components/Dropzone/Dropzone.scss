@@ -1,0 +1,9 @@
+.dragAndDropContainer {
+    display        : flex;
+    flex-direction : column;
+    justify-content: center;
+    align-items    : center;
+    border         : solid 1px;
+    border-radius  : 1rem;
+    height         : 30vh;
+}

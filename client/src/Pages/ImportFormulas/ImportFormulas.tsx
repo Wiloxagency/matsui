@@ -2,7 +2,7 @@ import "./ImportFormulas.scss";
 import { Input } from "@nextui-org/input";
 import { Switch } from "@nextui-org/switch";
 import { useState } from "react";
-import { FaCloudUploadAlt } from "react-icons/fa";
+import CustomDropzone from "../../Components/Dropzone/Dropzone";
 
 export default function ImportFormulas() {
   const [isSwitchSelected, setIsSwitchSelected] = useState(true);
@@ -34,13 +34,7 @@ export default function ImportFormulas() {
           >
             {isSwitchSelected ? "YES" : "NO"}
           </Switch>
-          <div className="dragAndDropContainer">
-            <FaCloudUploadAlt color="#3f3244" size={140} />
-            <p>
-              Drag and drop the file or <strong>click here</strong> to open the
-              file explorer
-            </p>
-          </div>
+          <CustomDropzone />
         </div>
       </div>
 

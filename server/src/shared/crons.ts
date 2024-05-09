@@ -17,6 +17,6 @@ export async function wakeUpServer() {
   );
   const fetchResponse = await fetchRequest.json();
   if (fetchResponse === "ok") {
-    console.log("SERVER WOKEN UP");
+    // console.log("SERVER WOKEN UP");
   }
 }
