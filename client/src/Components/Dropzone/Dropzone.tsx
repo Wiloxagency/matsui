@@ -3,17 +3,26 @@ import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { FaCloudUploadAlt } from "react-icons/fa";
 
-export default function MyDropzone() {
-  const onDrop = useCallback((acceptedFiles: Array<File>) => {
-    console.log(acceptedFiles[0]);
+import * as XLSX from "xlsx";
 
-    const file = new FileReader();
-    file.onload = function () {};
+async function parseSpreadsheet(receivedFile: File) {
+  const fileAsArrayBuffer = await receivedFile.arrayBuffer();
+  const workbook = XLSX.read(fileAsArrayBuffer);
+  const firstSpreadsheetName = workbook.SheetNames[0];
+  const firstSpreadsheet = workbook.Sheets[firstSpreadsheetName];
+  const sheetToJson = XLSX.utils.sheet_to_json(firstSpreadsheet);
+  console.log(sheetToJson);
+}
+
+export default function CustomDropzone() {
+  const onDrop = useCallback((acceptedFiles: Array<File>) => {
+    if (acceptedFiles[0] === undefined) return;
+    parseSpreadsheet(acceptedFiles[0]);
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
       "application/vnd.ms-exce": [".xls"],
-        "application/vnd.ms-excel": [".xlsx"],
+      "application/vnd.ms-excel": [".xlsx"],
     },
     maxFiles: 1,
     // 10 mb 👇🏻
