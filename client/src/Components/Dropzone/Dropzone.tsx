@@ -17,8 +17,8 @@ async function parseSpreadsheet(
 
   const headers: string[] = Object.keys(sheetToJson[0] as []);
   //   console.log(headers);
+  console.log(sheetToJson);
   setExtractedHeaders(headers);
-  //   console.log(sheetToJson);
 }
 
 export default function CustomDropzone() {
