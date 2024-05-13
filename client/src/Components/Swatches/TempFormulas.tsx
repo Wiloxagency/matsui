@@ -1,6 +1,6 @@
-import { FormulaInterface } from "./Swatches";
+import { TempFormulaInterface } from "./Swatches";
 
-export default function returnTemporaryFormulas(): FormulaInterface[] {
+export default function returnTemporaryFormulas(): TempFormulaInterface[] {
   return [
     {
       hex: "#001489",

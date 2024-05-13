@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./Swatches.scss";
 import returnTemporaryFormulas from "./TempFormulas";
 
-interface TempFormulaInterface {
+export interface TempFormulaInterface {
   hex: string;
   title: string;
   description: string;

@@ -1,12 +1,11 @@
-import "./index.scss";
-import App from "./App.tsx";
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import { api } from "./State/api.tsx";
+import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
+import App from "./App.tsx";
+import { api } from "./State/api.tsx";
+import "./index.scss";
 
 import { NextUIProvider } from "@nextui-org/system";
 
