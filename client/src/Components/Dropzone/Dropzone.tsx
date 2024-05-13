@@ -16,7 +16,7 @@ async function parseSpreadsheet(
   const sheetToJson = XLSX.utils.sheet_to_json(firstSpreadsheet);
 
   const headers: string[] = Object.keys(sheetToJson[0] as []);
-  //   console.log(headers);
+  console.log("Headers: ", headers);
   console.log(sheetToJson);
   setExtractedHeaders(headers);
 }

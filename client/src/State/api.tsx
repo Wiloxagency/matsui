@@ -1,9 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { UserInterface } from "../interfaces/interfaces";
 
-export const services = createApi({
+export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_URL }),
-  reducerPath: "services",
+  reducerPath: "api",
   tagTypes: [],
   endpoints: (build) => ({
     getUsers: build.query<Array<UserInterface>, void>({
@@ -13,4 +13,4 @@ export const services = createApi({
   }),
 });
 
-export const { useGetUsersQuery } = services;
+export const { useGetUsersQuery } = api;
