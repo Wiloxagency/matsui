@@ -1,14 +1,27 @@
+import "./Formulas.scss";
 import { FaClone, FaPen, FaPrint, FaSearch } from "react-icons/fa";
 import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
 import ReusableButton from "../../Components/ReusableButton/ReusableButton";
 import Swatches from "../../Components/Swatches/Swatches";
-import "./Formulas.scss";
 
 import { Input } from "@nextui-org/input";
 import { Select, SelectItem } from "@nextui-org/select";
 import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
+import { useGetFormulasQuery } from "../../State/api";
 
 export default function Formulas() {
+  const { data: fetchedFormulas } = useGetFormulasQuery();
+
+  const formulaSeries = Array.from(
+    new Set(
+      fetchedFormulas?.map(({ formulaSeries }) => {
+        return formulaSeries;
+      })
+    )
+  ).map((series) => {
+    return { value: series };
+  });
+
   return (
     <>
       <div className="leftSection">
@@ -26,10 +39,10 @@ export default function Formulas() {
             <label>INK SYSTEM</label>
             <span className="selectContainer">
               <Select
-                size="sm"
+                aria-label="SELECT INK SYSTEM"
                 variant="bordered"
                 radius="full"
-                label="SELECT INK SYSTEM"
+                placeholder="SELECT INK SYSTEM"
               >
                 <SelectItem key="test">TEST</SelectItem>
               </Select>
@@ -39,12 +52,15 @@ export default function Formulas() {
             <label>SERIES</label>
             <span className="selectContainer">
               <Select
-                size="sm"
+                aria-label="SELECT SERIES"
                 variant="bordered"
                 radius="full"
-                label="SELECT SERIES"
+                placeholder="SELECT SERIES"
+                items={formulaSeries}
               >
-                <SelectItem key="test">TEST</SelectItem>
+                {(series) => (
+                  <SelectItem key={series.value}>{series.value}</SelectItem>
+                )}
               </Select>
             </span>
           </div>

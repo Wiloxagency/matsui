@@ -20,9 +20,9 @@ export interface FormulaInterface {
   isActive: boolean;
   reportedAsError: boolean;
   components: {
-    componentCode: string[];
+    componentCode: string;
     percentage: number
-  };
+  }[];
 }
 
 export interface ComponentInterface {

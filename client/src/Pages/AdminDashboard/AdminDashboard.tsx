@@ -15,38 +15,38 @@ import {
 } from "@nextui-org/modal";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import { Button } from "@nextui-org/button";
-import { UserInterface } from "../../interfaces/interfaces";
-import axios, { AxiosResponse } from "axios";
+// import { UserInterface } from "../../interfaces/interfaces";
+// import axios, { AxiosResponse } from "axios";
 import { Input } from "@nextui-org/input";
-// import { useGetUsersQuery } from "../../State/services";
+import { useGetUsersQuery } from "../../State/api";
 
-const API_URL = import.meta.env.VITE_API_URL;
+// const API_URL = import.meta.env.VITE_API_URL;
 
-async function getUsers(): Promise<UserInterface[]> {
-  const users = await axios
-    .get(API_URL + "users", {
-      headers: { "Content-type": "application/json" },
-    })
-    .then((response: AxiosResponse) => {
-      // console.log(response.data);
-      return response.data;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+// async function getUsers(): Promise<UserInterface[]> {
+//   const users = await axios
+//     .get(API_URL + "users", {
+//       headers: { "Content-type": "application/json" },
+//     })
+//     .then((response: AxiosResponse) => {
+//       // console.log(response.data);
+//       return response.data;
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//     });
 
-  // console.log(users);
+//   // console.log(users);
 
-  return users;
-}
+//   return users;
+// }
 
 export default function AdminDashboard() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   // MODAL VARIABLES ☝🏻
-  const [fetchedUsers, setFetchedUsers] = useState<Array<UserInterface>>([]);
+  // const [fetchedUsers, setFetchedUsers] = useState<Array<UserInterface>>([]);
   // REDUX 👇🏻
-  // const { data } = useGetUsersQuery();
-  // console.log(data);
+  const { data: usersFromQuery } = useGetUsersQuery();
+  console.log(usersFromQuery);
   const [isSendEmailActive, setIsSendEmailActive] = useState(false);
   const [selectedRowsIds, setSelectedRowsIds] = useState(new Set(""));
   const [indexRowToEdit, setIndexRowToEdit] = useState<number | null>(null);
@@ -73,19 +73,22 @@ export default function AdminDashboard() {
     onOpenChange();
   }
 
-  useEffect(() => {
-    (async () => {
-      setFetchedUsers(await getUsers());
-    })();
+  // useEffect(() => {
+  //   (async () => {
+  //     setFetchedUsers(await getUsers());
+  //   })();
 
-    return () => {
-      // Component unmount code.
-    };
-  }, []);
+  //   return () => {
+  //     // Component unmount code.
+  //   };
+  // }, []);
 
   useEffect(() => {
     setSelectedRowsIds(new Set(""));
-    const indexRow = fetchedUsers.findIndex((user) => user._id == idUserToEdit);
+    if (usersFromQuery === undefined) return;
+    const indexRow = usersFromQuery.findIndex(
+      (user) => user._id == idUserToEdit
+    );
     console.log(indexRow);
     if (indexRow !== -1) {
       setIndexRowToEdit(indexRow);
@@ -195,7 +198,7 @@ export default function AdminDashboard() {
         </div>
         <div className="card">
           <UsersTable
-            users={fetchedUsers}
+            users={usersFromQuery != undefined ? usersFromQuery : []}
             selectedRowsIds={selectedRowsIds}
             setSelectedRowsIds={setSelectedRowsIds}
             indexRowToEdit={indexRowToEdit}

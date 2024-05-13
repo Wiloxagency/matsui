@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./Swatches.scss";
 import returnTemporaryFormulas from "./TempFormulas";
 
-export interface FormulaInterface {
+interface TempFormulaInterface {
   hex: string;
   title: string;
   description: string;
@@ -27,14 +27,14 @@ export default function Swatches() {
     ],
   });
 
-  function handleClick(clickedFormula: FormulaInterface) {
+  function handleClick(clickedFormula: TempFormulaInterface) {
     setSelectedFormula(clickedFormula);
   }
 
   return (
     <>
       <div className="swatchesContainer">
-        {returnTemporaryFormulas().map((formula: FormulaInterface) => {
+        {returnTemporaryFormulas().map((formula: TempFormulaInterface) => {
           return (
             <span
               key={formula.hex}

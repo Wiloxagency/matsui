@@ -11,7 +11,7 @@ import {
   TableCell,
   TableColumn,
   TableHeader,
-  TableRow
+  TableRow,
 } from "@nextui-org/table";
 import React, { Dispatch, SetStateAction } from "react";
 import { FaEllipsisV } from "react-icons/fa";
@@ -105,7 +105,7 @@ export default function UsersTable({
           return cellValue;
       }
     },
-    []
+    [handleEditRow]
   );
 
   return (
@@ -145,7 +145,7 @@ export default function UsersTable({
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
-        <TableBody items={users} emptyContent={<Spinner/>}>
+        <TableBody items={users} emptyContent={<Spinner />}>
           {(user: UserInterface) => (
             <TableRow key={user._id}>
               {(columnKey) => (

@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import cors, { CorsOptions } from "cors";
 import dotenv from "dotenv";
-import router from "./routes/indexRoutes";
+import router from "./routes";
 import bodyParser from "body-parser";
 import { CronJob } from "cron";
 import { wakeUpServer, wakeUpServerCron } from "./shared/crons";

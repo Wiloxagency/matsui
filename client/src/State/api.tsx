@@ -1,16 +1,20 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { UserInterface } from "../interfaces/interfaces";
+import { FormulaInterface, UserInterface } from "../interfaces/interfaces";
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_URL }),
   reducerPath: "api",
   tagTypes: [],
-  endpoints: (build) => ({
-    getUsers: build.query<Array<UserInterface>, void>({
+  endpoints: (builder) => ({
+    getUsers: builder.query<Array<UserInterface>, void>({
       query: () => "users/",
+      providesTags: [],
+    }),
+    getFormulas: builder.query<Array<FormulaInterface>, void>({
+      query: () => "formulas/",
       providesTags: [],
     }),
   }),
 });
 
-export const { useGetUsersQuery } = api;
+export const { useGetUsersQuery, useGetFormulasQuery } = api;

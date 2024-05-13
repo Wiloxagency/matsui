@@ -10,8 +10,6 @@ router.get("/", async (req: Request, res: Response) => {
   res.json(allUsers);
 });
 
-router.get("/:id", async (req: Request, res: Response) => {
-  res.send(`User ${req.params.id} route!`);
-});
+router.get("/:id", async (req: Request, res: Response) => {});
 
 export default router;
