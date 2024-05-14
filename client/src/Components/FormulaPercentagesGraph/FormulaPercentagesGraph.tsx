@@ -1,23 +1,29 @@
 import "./FormulaPercentagesGraph.scss";
+import { FormulaInterface } from "../../interfaces/interfaces";
 
-export default function FormulaPercentagesGraph() {
-  const formulaColors = [
-    { hex: "#0066b0", percentage: 50 },
-    { hex: "#654285", percentage: 25 },
-    { hex: "#3e3d39", percentage: 25 },
-  ];
+interface FormulaPercentagesGraphProps {
+  formula: FormulaInterface;
+}
+
+export default function FormulaPercentagesGraph({
+  formula,
+}: FormulaPercentagesGraphProps) {
   return (
     <>
       <div className="formulaPercentagesGraphContainer">
-        {formulaColors.map((color) => {
+        {formula.components.map((color) => {
           return (
             <span
-              key={color.hex}
+              key={color.componentCode}
               style={{
-                backgroundColor: color.hex,
+                backgroundColor: "red",
+                // backgroundColor: color.hex,
                 width: color.percentage + "%",
+                minWidth: "fit-content",
               }}
-            ></span>
+            >
+              {color.percentage}%
+            </span>
           );
         })}
       </div>

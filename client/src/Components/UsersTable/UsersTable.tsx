@@ -1,3 +1,7 @@
+import "./UsersTable.scss";
+import React, { Dispatch, SetStateAction } from "react";
+import { UserInterface } from "../../interfaces/interfaces";
+import { FaEllipsisV } from "react-icons/fa";
 import { Button } from "@nextui-org/button";
 import {
   Dropdown,
@@ -13,10 +17,6 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/table";
-import React, { Dispatch, SetStateAction } from "react";
-import { FaEllipsisV } from "react-icons/fa";
-import { UserInterface } from "../../interfaces/interfaces";
-import "./UsersTable.scss";
 import { Spinner } from "@nextui-org/spinner";
 
 const columns = [

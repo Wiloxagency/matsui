@@ -1,23 +1,29 @@
+import "./Formulas.scss";
+import { useEffect, useState } from "react";
 import { FaClone, FaPen, FaPrint, FaSearch } from "react-icons/fa";
+import { useGetFormulasQuery, useGetInkSystemsQuery } from "../../State/api";
+import { FormulaInterface } from "../../interfaces/interfaces";
+import { Input } from "@nextui-org/input";
+import { Spinner } from "@nextui-org/spinner";
+import { Select, SelectItem } from "@nextui-org/select";
 import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
 import ReusableButton from "../../Components/ReusableButton/ReusableButton";
 import Swatches from "../../Components/Swatches/Swatches";
-import "./Formulas.scss";
-
-import { Input } from "@nextui-org/input";
-import { Select, SelectItem } from "@nextui-org/select";
 import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
-import { useGetFormulasQuery, useGetInkSystemsQuery } from "../../State/api";
-import { Spinner } from "@nextui-org/spinner";
 
 export default function Formulas() {
-  const { data: fetchedFormulas, isSuccess: isGetFetchedFormulasSuccessful } =
+  const { data: fetchedFormulas, isSuccess: isGetFormulasSuccessful } =
     useGetFormulasQuery();
+
   const {
     data: fetchedInkSystems,
     isLoading: isGetInkSystemsLoading,
     isSuccess: isGetInkSystemsSuccessful,
   } = useGetInkSystemsQuery();
+
+  const [selectedFormula, setSelectedFormula] = useState<
+    FormulaInterface | undefined
+  >();
 
   const formulaSeries = Array.from(
     new Set(
@@ -28,6 +34,12 @@ export default function Formulas() {
   ).map((series) => {
     return { value: series };
   });
+
+  useEffect(() => {
+    if (isGetFormulasSuccessful) {
+      setSelectedFormula(fetchedFormulas[0]);
+    }
+  }, [fetchedFormulas, isGetFormulasSuccessful]);
 
   return (
     <>
@@ -50,6 +62,7 @@ export default function Formulas() {
                 GIVING AN ERROR WHEN THE DATA STILL HASN'T BEEN FETCHED */}
               {isGetInkSystemsLoading && (
                 <Select
+                  aria-label="SELECT INK SYSTEM"
                   variant="bordered"
                   radius="full"
                   placeholder="SELECT INK SYSTEM"
@@ -102,8 +115,12 @@ export default function Formulas() {
             <label style={{ margin: "0 1rem 0 .5rem" }}>COMPANY FORMULAS</label>
           </div>
           <div className="swatchesComponentContainer">
-            {isGetFetchedFormulasSuccessful ? (
-              <Swatches formulas={fetchedFormulas} />
+            {isGetFormulasSuccessful ? (
+              <Swatches
+                formulas={fetchedFormulas}
+                selectedFormula={selectedFormula}
+                setSelectedFormula={setSelectedFormula}
+              />
             ) : (
               <Spinner className="m-auto" />
             )}
@@ -115,7 +132,7 @@ export default function Formulas() {
         <div className="formulaDetailsContainer">
           <div className="sectionHeader">
             <span style={{ minWidth: "fit-content" }}>
-              FORMULA DETAILS: DC NEO 285 C
+              FORMULA DETAILS: {selectedFormula && selectedFormula.formulaCode}
             </span>
             {/* <span>
               QUANTITY:
@@ -150,30 +167,36 @@ export default function Formulas() {
             </span>
           </div>
           <div className="card">
-            <FormulaPercentagesGraph />
-            <FormulaDetailsTable />
-            <div className="buttonsAndTotalRow">
-              <ReusableButton
-                className="underlineButton"
-                buttonText="DUPLICATE FORMULA"
-                Icon={FaClone}
-                handleClick={() => {}}
-              />{" "}
-              <ReusableButton
-                className="underlineButton"
-                buttonText="PRINT FORMULA"
-                Icon={FaPrint}
-                handleClick={() => {}}
-              />
-              <span>TOTAL: 97,70 $</span>
-            </div>
+            {selectedFormula !== undefined ? (
+              <>
+                <FormulaPercentagesGraph formula={selectedFormula} />
+                <FormulaDetailsTable formula={selectedFormula} />
+                <div className="buttonsAndTotalRow">
+                  <ReusableButton
+                    className="underlineButton"
+                    buttonText="DUPLICATE FORMULA"
+                    Icon={FaClone}
+                    handleClick={() => {}}
+                  />{" "}
+                  <ReusableButton
+                    className="underlineButton"
+                    buttonText="PRINT FORMULA"
+                    Icon={FaPrint}
+                    handleClick={() => {}}
+                  />
+                  <span>TOTAL: 97,70 $</span>
+                </div>
+              </>
+            ) : (
+              <Spinner className="m-auto" />
+            )}
           </div>
         </div>
         <div className="similarFormulasContainer">
           <div className="sectionHeader">SIMILAR FORMULAS</div>
           <div className="card">
             <div className="swatchesComponentContainer">
-              <Swatches formulas={[]} />
+              {/* <Swatches formulas={[]} /> */}
             </div>
           </div>
         </div>

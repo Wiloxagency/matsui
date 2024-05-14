@@ -1,64 +1,48 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import "./Swatches.scss";
-import returnTemporaryFormulas from "./TempFormulas";
+// import returnTemporaryFormulas from "./TempFormulas";
 import { FormulaInterface } from "../../interfaces/interfaces";
-
-export interface TempFormulaInterface {
-  hex: string;
-  title: string;
-  description: string;
-  contents: {
-    code: string;
-    product: string;
-    percentage: number;
-  }[];
-}
 
 interface SwatchesProps {
   formulas: FormulaInterface[] | undefined;
+  selectedFormula: FormulaInterface | undefined;
+  setSelectedFormula: Dispatch<SetStateAction<FormulaInterface | undefined>>;
 }
 
-export default function Swatches({ formulas }: SwatchesProps) {
-  console.log("formulas: ", formulas);
-
-  const [selectedFormula, setSelectedFormula] = useState({
-    hex: "#001489",
-    title: "Reflex Blue C",
-    description: "DC NEO Reflex Blue C",
-    contents: [
-      {
-        code: "",
-        product: "",
-        percentage: 100,
-      },
-    ],
-  });
-
-  function handleClick(clickedFormula: TempFormulaInterface) {
+export default function Swatches({
+  formulas,
+  setSelectedFormula,
+  selectedFormula,
+}: SwatchesProps) {
+  function handleClick(clickedFormula: FormulaInterface) {
     setSelectedFormula(clickedFormula);
   }
 
-  return (
-    <>
-      <div className="swatchesContainer">
-        {returnTemporaryFormulas().map((formula: TempFormulaInterface) => {
-          return (
-            <span
-              key={formula.hex}
-              className={
-                formula.hex === selectedFormula.hex ? "swatch active" : "swatch"
-              }
-              style={{ backgroundColor: formula.hex }}
-              onClick={() => handleClick(formula)}
-            >
-              <div className="swatchLabelContainer">
-                <div className="swatchTitle">285 C</div>
-                <div>DC NEO 285 C</div>
-              </div>
-            </span>
-          );
-        })}
-      </div>
-    </>
-  );
+  if (formulas !== undefined)
+    return (
+      <>
+        <div className="swatchesContainer">
+          {formulas.map((formula: FormulaInterface) => {
+            return (
+              <span
+                key={formula.formulaCode}
+                className={
+                  formula.formulaCode === selectedFormula?.formulaCode
+                    ? "swatch active"
+                    : "swatch"
+                }
+                style={{ backgroundColor: "#000" }}
+                // style={{ backgroundColor: formula.hex }}
+                onClick={() => handleClick(formula)}
+              >
+                <div className="swatchLabelContainer">
+                  <div className="swatchTitle">{formula.formulaCode}</div>
+                  <div>{formula.formulaDescription}</div>
+                </div>
+              </span>
+            );
+          })}
+        </div>
+      </>
+    );
 }

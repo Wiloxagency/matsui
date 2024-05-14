@@ -1,3 +1,4 @@
+import { FormulaInterface } from "../../interfaces/interfaces";
 import "./FormulaDetailsTable.scss";
 import {
   Table,
@@ -9,44 +10,44 @@ import {
   getKeyValue,
 } from "@nextui-org/table";
 
-const rows = [
-  {
-    key: "1",
-    hex: "#b5b6b9",
-    code: "HM DC Base",
-    product: "High mesh discharge base",
-    percentage: "97.2940",
-    quantity: "972.9400 g",
-    price: "0.97 $",
-  },
-  {
-    key: "2",
-    hex: "#0066b0",
-    code: "HM DC Base",
-    product: "High mesh discharge base",
-    percentage: "97.2940",
-    quantity: "972.9400 g",
-    price: "0.97 $",
-  },
-  {
-    key: "3",
-    hex: "#654285",
-    code: "HM DC Base",
-    product: "High mesh discharge base",
-    percentage: "97.2940",
-    quantity: "972.9400 g",
-    price: "0.97 $",
-  },
-  {
-    key: "4",
-    hex: "#3e3d39",
-    code: "HM DC Base",
-    product: "High mesh discharge base",
-    percentage: "97.2940",
-    quantity: "972.9400 g",
-    price: "0.97 $",
-  },
-];
+// const rows = [
+//   {
+//     key: "1",
+//     hex: "#b5b6b9",
+//     code: "HM DC Base",
+//     product: "High mesh discharge base",
+//     percentage: "97.2940",
+//     quantity: "972.9400 g",
+//     price: "0.97 $",
+//   },
+//   {
+//     key: "2",
+//     hex: "#0066b0",
+//     code: "HM DC Base",
+//     product: "High mesh discharge base",
+//     percentage: "97.2940",
+//     quantity: "972.9400 g",
+//     price: "0.97 $",
+//   },
+//   {
+//     key: "3",
+//     hex: "#654285",
+//     code: "HM DC Base",
+//     product: "High mesh discharge base",
+//     percentage: "97.2940",
+//     quantity: "972.9400 g",
+//     price: "0.97 $",
+//   },
+//   {
+//     key: "4",
+//     hex: "#3e3d39",
+//     code: "HM DC Base",
+//     product: "High mesh discharge base",
+//     percentage: "97.2940",
+//     quantity: "972.9400 g",
+//     price: "0.97 $",
+//   },
+// ];
 
 const columns = [
   {
@@ -54,7 +55,7 @@ const columns = [
     label: "",
   },
   {
-    key: "code",
+    key: "componentCode",
     label: "CODE",
   },
   {
@@ -75,7 +76,14 @@ const columns = [
   },
 ];
 
-export default function FormulaDetailsTable() {
+interface FormulaDetailsTableProps {
+  formula: FormulaInterface;
+}
+
+export default function FormulaDetailsTable({
+  formula,
+}: FormulaDetailsTableProps) {
+  // console.log("formula: ", formula);
   return (
     <>
       <Table
@@ -88,9 +96,9 @@ export default function FormulaDetailsTable() {
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
-        <TableBody items={rows}>
+        <TableBody items={formula.components}>
           {(item) => (
-            <TableRow key={item.key}>
+            <TableRow key={item.componentCode}>
               {(columnKey) => (
                 <TableCell>
                   {columnKey !== "hex" ? (
@@ -98,7 +106,7 @@ export default function FormulaDetailsTable() {
                   ) : (
                     <span
                       className="miniSwatch"
-                      style={{ backgroundColor: item.hex }}
+                      style={{ backgroundColor: "blue" }}
                     ></span>
                   )}
                 </TableCell>

@@ -9,41 +9,19 @@ import {
 } from "@nextui-org/modal";
 import { useEffect, useState } from "react";
 import { FaEnvelope, FaLock } from "react-icons/fa";
-import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
+// import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
 import ReusableButton from "../../Components/ReusableButton/ReusableButton";
 import SendEmailCard from "../../Components/SendEmailCard/SendEmailCard";
-import Swatches from "../../Components/Swatches/Swatches";
+// import Swatches from "../../Components/Swatches/Swatches";
 import UsersTable from "../../Components/UsersTable/UsersTable";
 import "./AdminDashboard.scss";
-// import { UserInterface } from "../../interfaces/interfaces";
-// import axios, { AxiosResponse } from "axios";
 import { Input } from "@nextui-org/input";
 import { useGetUsersQuery } from "../../State/api";
-
-// const API_URL = import.meta.env.VITE_API_URL;
-
-// async function getUsers(): Promise<UserInterface[]> {
-//   const users = await axios
-//     .get(API_URL + "users", {
-//       headers: { "Content-type": "application/json" },
-//     })
-//     .then((response: AxiosResponse) => {
-//       // console.log(response.data);
-//       return response.data;
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//     });
-
-//   // console.log(users);
-
-//   return users;
-// }
 
 export default function AdminDashboard() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   // MODAL VARIABLES ☝🏻
-  const { data: usersFromQuery } = useGetUsersQuery();
+  const { data: fetchedUsers } = useGetUsersQuery();
   const [isSendEmailActive, setIsSendEmailActive] = useState(false);
   const [selectedRowsIds, setSelectedRowsIds] = useState(new Set(""));
   const [indexRowToEdit, setIndexRowToEdit] = useState<number | null>(null);
@@ -70,20 +48,10 @@ export default function AdminDashboard() {
     onOpenChange();
   }
 
-  // useEffect(() => {
-  //   (async () => {
-  //     setFetchedUsers(await getUsers());
-  //   })();
-
-  //   return () => {
-  //     // Component unmount code.
-  //   };
-  // }, []);
-
   useEffect(() => {
     setSelectedRowsIds(new Set(""));
-    if (usersFromQuery === undefined) return;
-    const indexRow = usersFromQuery.findIndex(
+    if (fetchedUsers === undefined) return;
+    const indexRow = fetchedUsers.findIndex(
       (user) => user._id == idUserToEdit
     );
     console.log(indexRow);
@@ -195,7 +163,7 @@ export default function AdminDashboard() {
         </div>
         <div className="card">
           <UsersTable
-            users={usersFromQuery != undefined ? usersFromQuery : []}
+            users={fetchedUsers != undefined ? fetchedUsers : []}
             selectedRowsIds={selectedRowsIds}
             setSelectedRowsIds={setSelectedRowsIds}
             indexRowToEdit={indexRowToEdit}
@@ -223,14 +191,14 @@ export default function AdminDashboard() {
               <div className="sectionHeader">USER FORMULAS</div>
               <div className="card">
                 <div className="swatchesComponentContainer">
-                  <Swatches formulas={[]} />
+                  {/* <Swatches formulas={[]} selectedFormula={selectedFormula} /> */}
                 </div>
               </div>
             </span>
             <span className="bottomHalf">
               <div className="sectionHeader">FORMULA DETAILS: DC NEO 285 C</div>
               <div className="card">
-                <FormulaDetailsTable />
+                {/* <FormulaDetailsTable /> */}
               </div>
             </span>
           </>
