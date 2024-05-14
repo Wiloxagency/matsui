@@ -3,7 +3,7 @@
 export interface UserInterface {
   // _id?: ObjectId;
   _id?: any;
-  username: string
+  username: string;
   email: string;
   password: string;
   company: string;
@@ -21,14 +21,21 @@ export interface FormulaInterface {
   reportedAsError: boolean;
   components: {
     componentCode: string;
-    percentage: number
+    percentage: number;
   }[];
+  inkSystem: string
 }
 
-export interface ComponentInterface {
+export interface FormulaComponentInterface {
   formulaSeries: string;
   componentCode: string;
   description: string;
   cost: number;
   isActive: boolean;
+}
+
+export interface InkSystemInterface {
+  code: string;
+  name: string;
+  description: string;
 }

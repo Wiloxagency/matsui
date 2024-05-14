@@ -1,4 +1,4 @@
-import { ComponentInterface, FormulaInterface } from "../interfaces/interfaces";
+import { FormulaComponentInterface, FormulaInterface } from "../interfaces/interfaces";
 
 export const tempFormulas: FormulaInterface[] = [
   {
@@ -21,6 +21,7 @@ export const tempFormulas: FormulaInterface[] = [
         percentage: 0.325,
       },
     ],
+    inkSystem: "",
   },
   {
     formulaSeries: "301 RC NEO",
@@ -46,6 +47,7 @@ export const tempFormulas: FormulaInterface[] = [
         percentage: 1,
       },
     ],
+    inkSystem: "",
   },
   {
     formulaSeries: "BRITE DC NEO",
@@ -75,10 +77,11 @@ export const tempFormulas: FormulaInterface[] = [
         percentage: 0.082,
       },
     ],
+    inkSystem: "",
   },
 ];
 
-export const tempComponents: ComponentInterface[] = [
+export const tempComponents: FormulaComponentInterface[] = [
   {
     formulaSeries: "301 RC NEO",
     componentCode: "CLR 301C",

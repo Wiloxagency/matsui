@@ -1,20 +1,20 @@
+import { Button } from "@nextui-org/button";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure,
+} from "@nextui-org/modal";
 import { useEffect, useState } from "react";
+import { FaEnvelope, FaLock } from "react-icons/fa";
 import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
+import ReusableButton from "../../Components/ReusableButton/ReusableButton";
+import SendEmailCard from "../../Components/SendEmailCard/SendEmailCard";
 import Swatches from "../../Components/Swatches/Swatches";
 import UsersTable from "../../Components/UsersTable/UsersTable";
 import "./AdminDashboard.scss";
-import SendEmailCard from "../../Components/SendEmailCard/SendEmailCard";
-import ReusableButton from "../../Components/ReusableButton/ReusableButton";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-} from "@nextui-org/modal";
-import { FaEnvelope, FaLock } from "react-icons/fa";
-import { Button } from "@nextui-org/button";
 // import { UserInterface } from "../../interfaces/interfaces";
 // import axios, { AxiosResponse } from "axios";
 import { Input } from "@nextui-org/input";
@@ -43,10 +43,7 @@ import { useGetUsersQuery } from "../../State/api";
 export default function AdminDashboard() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   // MODAL VARIABLES ☝🏻
-  // const [fetchedUsers, setFetchedUsers] = useState<Array<UserInterface>>([]);
-  // REDUX 👇🏻
   const { data: usersFromQuery } = useGetUsersQuery();
-  console.log(usersFromQuery);
   const [isSendEmailActive, setIsSendEmailActive] = useState(false);
   const [selectedRowsIds, setSelectedRowsIds] = useState(new Set(""));
   const [indexRowToEdit, setIndexRowToEdit] = useState<number | null>(null);
@@ -226,7 +223,7 @@ export default function AdminDashboard() {
               <div className="sectionHeader">USER FORMULAS</div>
               <div className="card">
                 <div className="swatchesComponentContainer">
-                  <Swatches />
+                  <Swatches formulas={[]} />
                 </div>
               </div>
             </span>

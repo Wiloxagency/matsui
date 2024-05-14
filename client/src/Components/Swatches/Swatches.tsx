@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./Swatches.scss";
 import returnTemporaryFormulas from "./TempFormulas";
+import { FormulaInterface } from "../../interfaces/interfaces";
 
 export interface TempFormulaInterface {
   hex: string;
@@ -13,7 +14,13 @@ export interface TempFormulaInterface {
   }[];
 }
 
-export default function Swatches() {
+interface SwatchesProps {
+  formulas: FormulaInterface[] | undefined;
+}
+
+export default function Swatches({ formulas }: SwatchesProps) {
+  console.log("formulas: ", formulas);
+
   const [selectedFormula, setSelectedFormula] = useState({
     hex: "#001489",
     title: "Reflex Blue C",

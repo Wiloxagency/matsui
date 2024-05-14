@@ -1,16 +1,23 @@
-import "./Formulas.scss";
 import { FaClone, FaPen, FaPrint, FaSearch } from "react-icons/fa";
 import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
 import ReusableButton from "../../Components/ReusableButton/ReusableButton";
 import Swatches from "../../Components/Swatches/Swatches";
+import "./Formulas.scss";
 
 import { Input } from "@nextui-org/input";
 import { Select, SelectItem } from "@nextui-org/select";
 import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
-import { useGetFormulasQuery } from "../../State/api";
+import { useGetFormulasQuery, useGetInkSystemsQuery } from "../../State/api";
+import { Spinner } from "@nextui-org/spinner";
 
 export default function Formulas() {
-  const { data: fetchedFormulas } = useGetFormulasQuery();
+  const { data: fetchedFormulas, isSuccess: isGetFetchedFormulasSuccessful } =
+    useGetFormulasQuery();
+  const {
+    data: fetchedInkSystems,
+    isLoading: isGetInkSystemsLoading,
+    isSuccess: isGetInkSystemsSuccessful,
+  } = useGetInkSystemsQuery();
 
   const formulaSeries = Array.from(
     new Set(
@@ -38,14 +45,34 @@ export default function Formulas() {
           <div className="dropdownAndLabelRow">
             <label>INK SYSTEM</label>
             <span className="selectContainer">
-              <Select
-                aria-label="SELECT INK SYSTEM"
-                variant="bordered"
-                radius="full"
-                placeholder="SELECT INK SYSTEM"
-              >
-                <SelectItem key="test">TEST</SelectItem>
-              </Select>
+              {/* IDEALLY YOU WOULD ONLY HAVE ONE OF THE 2 FOLLOWING SELECT TAGS.
+                I JUST COULDN'T FIGURE OUT HOW TO PREVENT THE SELECTITEM TAG FROM
+                GIVING AN ERROR WHEN THE DATA STILL HASN'T BEEN FETCHED */}
+              {isGetInkSystemsLoading && (
+                <Select
+                  variant="bordered"
+                  radius="full"
+                  placeholder="SELECT INK SYSTEM"
+                >
+                  <SelectItem key="temp">temp</SelectItem>
+                </Select>
+              )}
+
+              {isGetInkSystemsSuccessful && (
+                <Select
+                  aria-label="SELECT INK SYSTEM"
+                  variant="bordered"
+                  radius="full"
+                  placeholder="SELECT INK SYSTEM"
+                  items={fetchedInkSystems}
+                >
+                  {(inkSystem) => (
+                    <SelectItem key={inkSystem.code}>
+                      {inkSystem.name}
+                    </SelectItem>
+                  )}
+                </Select>
+              )}
             </span>
           </div>
           <div className="dropdownAndLabelRow">
@@ -75,7 +102,11 @@ export default function Formulas() {
             <label style={{ margin: "0 1rem 0 .5rem" }}>COMPANY FORMULAS</label>
           </div>
           <div className="swatchesComponentContainer">
-            <Swatches />
+            {isGetFetchedFormulasSuccessful ? (
+              <Swatches formulas={fetchedFormulas} />
+            ) : (
+              <Spinner className="m-auto" />
+            )}
           </div>
         </div>
       </div>
@@ -142,7 +173,7 @@ export default function Formulas() {
           <div className="sectionHeader">SIMILAR FORMULAS</div>
           <div className="card">
             <div className="swatchesComponentContainer">
-              <Swatches />
+              <Swatches formulas={[]} />
             </div>
           </div>
         </div>

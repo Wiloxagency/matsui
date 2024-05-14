@@ -1,0 +1,11 @@
+[
+  { "code": "PA-DC", "name": "Print Application", "description": "Discharge" },
+
+  {
+    "code": "MIS-HM",
+    "name": "Matsui Ink System",
+    "description": "HM Discharge Series (High Mesh)"
+  },
+
+  { "code": "FT-PMS", "name": "Formula Type", "description": "PMS Coated" }
+]

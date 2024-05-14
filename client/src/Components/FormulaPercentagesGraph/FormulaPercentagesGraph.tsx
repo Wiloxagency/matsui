@@ -1,7 +1,7 @@
 import "./FormulaPercentagesGraph.scss";
 
 export default function FormulaPercentagesGraph() {
-  let formulaColors = [
+  const formulaColors = [
     { hex: "#0066b0", percentage: 50 },
     { hex: "#654285", percentage: 25 },
     { hex: "#3e3d39", percentage: 25 },

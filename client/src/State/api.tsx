@@ -1,5 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { FormulaInterface, UserInterface } from "../interfaces/interfaces";
+import {
+  FormulaComponentInterface,
+  FormulaInterface,
+  InkSystemInterface,
+  UserInterface,
+} from "../interfaces/interfaces";
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_URL }),
@@ -14,7 +19,22 @@ export const api = createApi({
       query: () => "formulas/",
       providesTags: [],
     }),
+    getFormulaComponents: builder.query<Array<FormulaComponentInterface>, void>(
+      {
+        query: () => "components/",
+        providesTags: [],
+      }
+    ),
+    getInkSystems: builder.query<Array<InkSystemInterface>, void>({
+      query: () => "inkSystems/",
+      providesTags: [],
+    }),
   }),
 });
 
-export const { useGetUsersQuery, useGetFormulasQuery } = api;
+export const {
+  useGetUsersQuery,
+  useGetFormulasQuery,
+  useGetFormulaComponentsQuery,
+  useGetInkSystemsQuery,
+} = api;
