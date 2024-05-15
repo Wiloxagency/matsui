@@ -25,6 +25,14 @@ export const api = createApi({
         providesTags: [],
       }
     ),
+    getGivenComponents: builder.query<Array<FormulaComponentInterface>, string[]>({
+      query: (body) => ({
+        url: "components/",
+        method: "POST",
+        body: body,
+      }),
+      providesTags: [],
+    }),
     getInkSystems: builder.query<Array<InkSystemInterface>, void>({
       query: () => "inkSystems/",
       providesTags: [],
@@ -36,5 +44,6 @@ export const {
   useGetUsersQuery,
   useGetFormulasQuery,
   useGetFormulaComponentsQuery,
+  useGetGivenComponentsQuery,
   useGetInkSystemsQuery,
 } = api;

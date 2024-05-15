@@ -1,3 +1,4 @@
+import { useGetGivenComponentsQuery } from "../../State/api";
 import { FormulaInterface } from "../../interfaces/interfaces";
 import "./FormulaDetailsTable.scss";
 import {
@@ -83,7 +84,14 @@ interface FormulaDetailsTableProps {
 export default function FormulaDetailsTable({
   formula,
 }: FormulaDetailsTableProps) {
-  // console.log("formula: ", formula);
+  const givenComponentsList = formula.components.map(({ componentCode }) => {
+    return componentCode;
+  });
+  const { data: fetchedComponents } =
+    useGetGivenComponentsQuery(givenComponentsList);
+
+  console.log("formula: ", formula);
+  console.log("fetchedComponents: ", fetchedComponents);
   return (
     <>
       <Table

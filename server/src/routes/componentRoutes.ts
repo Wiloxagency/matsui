@@ -10,4 +10,13 @@ router.get("/", async (req: Request, res: Response) => {
   res.json(allComponents);
 });
 
+router.post("/", async (req: Request, res: Response) => {
+  const db = await createMongoDBConnection();
+  const components = db.collection("components");
+  const componentList = await components
+    .find({ componentCode: { $in: req.body } })
+    .toArray();
+  res.json(componentList);
+});
+
 export default router;
