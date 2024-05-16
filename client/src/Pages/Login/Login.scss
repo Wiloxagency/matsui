@@ -35,24 +35,38 @@
 }
 
 .loginFormCard {
-    z-index            : 2;
-    position           : absolute;
-    top                : 50%;
-    left               : 50%;
-    transform          : translate3d(-50%, -50%, 0);
-    padding            : 1rem;
+
+    form {
+        width: 100%;
+    }
+
+    z-index               : 2;
+    position              : absolute;
+    top                   : 50%;
+    left                  : 50%;
+    transform             : translate3d(-50%, -50%, 0);
+    padding               : 1rem;
     // box-sizing      : border-box;
-    width              : 28rem;
-    background-color   : #0c3d69;
-    color              : whitesmoke;
-    text-align         : center;
-    border-radius      : 3rem;
-    box-shadow         : 7px 7px 21px #00000049;
-    transition         : .3s;
+    // width              : 28rem;
+    max-width             : 28rem;
+    height                : 100%;
+
+    width                    : 100%;
+    background-color         : #0c3d69;
+    color                    : whitesmoke;
+    text-align               : center;
+    border-radius            : 0;
+    // border-radius         : 3rem;
+    box-shadow               : 7px 7px 21px #00000049;
+    transition               : .3s;
+
+    display    : grid;
+    place-items: center;
 
     img {
-        margin: 2rem;
-        width : 14rem;
+        margin       : 2rem;
+        width        : 14rem;
+        margin-inline: auto;
     }
 
     .inputContainer {
@@ -139,4 +153,11 @@
 .loginFormCard:hover {
     box-shadow: 7px 7px 28px #00000070;
 
+}
+
+@media (min-width: 28rem) {
+    .loginFormCard {
+        height       : auto;
+        border-radius: 3rem;
+    }
 }

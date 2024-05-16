@@ -6,7 +6,7 @@ import video from "../../assets/doesthiswork.mp4";
 import logo from "../../assets/matsui_logo.png";
 import "./Login.scss";
 import { Button } from "@nextui-org/button";
-
+import { useMediaQuery } from "react-responsive";
 const API_URL = import.meta.env.VITE_API_URL;
 
 export function Login() {
@@ -17,6 +17,9 @@ export function Login() {
   const [loginFormMessage, setLoginFormMessage] = useState("");
   const [isSignInButtonLoading, setIsSignInButtonLoading] = useState(false);
   const [isRegisterButtonLoading, setIsRegisterButtonLoading] = useState(false);
+
+  const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
+  console.log("isMobile: ", isMobile);
 
   const navigate = useNavigate();
 
@@ -79,10 +82,14 @@ export function Login() {
   return (
     <>
       <div className="backgroundColor"></div>
-      <video id="myVideo" autoPlay loop muted>
-        <source src={video} type="video/mp4" />
-      </video>
-      <div className="bodyBlur"></div>
+      {!isMobile && (
+        <>
+          <video id="myVideo" autoPlay loop muted>
+            <source src={video} type="video/mp4" />
+          </video>
+          <div className="bodyBlur"></div>
+        </>
+      )}
       <div className="loginFormCard">
         <form onSubmit={handleLogin}>
           <img src={logo} />
