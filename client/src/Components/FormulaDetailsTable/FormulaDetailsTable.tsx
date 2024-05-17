@@ -1,3 +1,6 @@
+import React from "react";
+import "./FormulaDetailsTable.scss";
+import { FormulaInterface } from "../../interfaces/interfaces";
 import {
   Table,
   TableBody,
@@ -6,48 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/table";
-import { FormulaInterface } from "../../interfaces/interfaces";
-import "./FormulaDetailsTable.scss";
-import React from "react";
-
-// const rows = [
-//   {
-//     key: "1",
-//     hex: "#b5b6b9",
-//     code: "HM DC Base",
-//     product: "High mesh discharge base",
-//     percentage: "97.2940",
-//     quantity: "972.9400 g",
-//     price: "0.97 $",
-//   },
-//   {
-//     key: "2",
-//     hex: "#0066b0",
-//     code: "HM DC Base",
-//     product: "High mesh discharge base",
-//     percentage: "97.2940",
-//     quantity: "972.9400 g",
-//     price: "0.97 $",
-//   },
-//   {
-//     key: "3",
-//     hex: "#654285",
-//     code: "HM DC Base",
-//     product: "High mesh discharge base",
-//     percentage: "97.2940",
-//     quantity: "972.9400 g",
-//     price: "0.97 $",
-//   },
-//   {
-//     key: "4",
-//     hex: "#3e3d39",
-//     code: "HM DC Base",
-//     product: "High mesh discharge base",
-//     percentage: "97.2940",
-//     quantity: "972.9400 g",
-//     price: "0.97 $",
-//   },
-// ];
 
 const columns = [
   {

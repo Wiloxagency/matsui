@@ -100,6 +100,26 @@ router.get("/GetSeries", async (req: Request, res: Response) => {
   res.json(allSeries);
 });
 
+router.get(
+  "/GetSeriesFormulaCodes/:seriesName",
+  async (req: Request, res: Response) => {
+    const db = await createMongoDBConnection();
+    const components = db.collection("components");
+    const filteredComponents = await components
+      .find({ FormulaSerie: req.params.seriesName })
+      .toArray();
+
+    const formulaCodes = Array.from(
+      new Set(
+        filteredComponents?.map(({ FormulaCode }) => {
+          return FormulaCode;
+        })
+      )
+    );
+    res.json(formulaCodes);
+  }
+);
+
 // router.post("/", async (req: Request, res: Response) => {
 //   const db = await createMongoDBConnection();
 //   const components = db.collection("components");

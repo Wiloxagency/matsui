@@ -49,6 +49,10 @@ export const api = createApi({
       query: () => "components/GetSeries",
       providesTags: [],
     }),
+    getSeriesFormulaCodes: builder.query<Array<string>, string>({
+      query: (seriesName) => "components/GetSeriesFormulaCodes/" + seriesName,
+      providesTags: [],
+    }),
   }),
 });
 
@@ -58,4 +62,5 @@ export const {
   useGetGivenComponentsQuery,
   useGetSeriesQuery,
   useGetInkSystemsQuery,
+  useGetSeriesFormulaCodesQuery
 } = api;

@@ -1,20 +1,25 @@
-import { Input } from "@nextui-org/input";
-import { Select, SelectItem } from "@nextui-org/select";
-import { useState } from "react";
-import { FaClone, FaPen, FaPrint, FaSearch } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import "./Formulas.scss";
 import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
 import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
 import ReusableButton from "../../Components/ReusableButton/ReusableButton";
 import Swatches from "../../Components/Swatches/Swatches";
-import { useGetInkSystemsQuery, useGetSeriesQuery } from "../../State/api";
-import "./Formulas.scss";
-// import { tempFormulaSwatches } from "../../State/sampleData";
-import { useMediaQuery } from "react-responsive";
-import { formulaNames } from "../../State/formulaNames";
+import { api, useGetInkSystemsQuery, useGetSeriesQuery } from "../../State/api";
 import { FormulaInterface } from "../../interfaces/interfaces";
+import { Input } from "@nextui-org/input";
+import { Select, SelectItem } from "@nextui-org/select";
+import { FaClone, FaPen, FaPrint, FaSearch } from "react-icons/fa";
+// import { tempFormulaSwatches } from "../../State/sampleData";
 import { Spinner } from "@nextui-org/spinner";
+import { useMediaQuery } from "react-responsive";
 
 export default function Formulas() {
+  const [formulasInSeries, setFormulasInSeries] = useState<
+    string[] | undefined
+  >(undefined);
+
+  const [selectedSeries, setSelectedSeries] = useState<string>("301");
+
   const [formulaQuantityAsString, setFormulaQuantityAsString] =
     useState<string>("1000");
   // const [formulaQuantity, setFormulaQuantity] = useState<number>(1000);
@@ -74,10 +79,22 @@ export default function Formulas() {
   "c"
   `;
 
+  const [trigger, { data }] =
+    api.endpoints.getSeriesFormulaCodes.useLazyQuery();
+
   const handleFormulaUnitSelectionChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setFormulaUnit(e.target.value);
+  };
+
+  const handleSelectSeries = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedSeries(e.target.value);
+
+    trigger(selectedSeries).then((response) => {
+      console.log("response: ", response.data);
+      console.log("data: ", data);
+    });
   };
 
   // useEffect(() => {
@@ -85,6 +102,17 @@ export default function Formulas() {
   //     setSelectedFormula(fetchedFormulas[0]);
   //   }
   // }, [fetchedFormulas, isGetFormulasSuccessful]);
+
+  useEffect(() => {
+    setFormulasInSeries(undefined);
+
+    trigger(selectedSeries).then((response) => {
+      console.log("response: ", response.data);
+      console.log("data: ", data);
+      if (response.data === undefined) return;
+      setFormulasInSeries(response.data);
+    });
+  }, [selectedSeries]);
 
   return (
     <div
@@ -159,14 +187,23 @@ export default function Formulas() {
                   aria-label="SELECT SERIES"
                   variant="bordered"
                   radius="full"
-                  placeholder="SELECT SERIES"
-                  items={fetchedSeries}
+                  placeholder="301"
+                  value={selectedSeries}
+                  onChange={(e) => handleSelectSeries(e)}
                 >
-                  {(series) => (
+                  {fetchedSeries.map((series) => (
+                    <SelectItem
+                      key={series.seriesName}
+                      value={series.seriesName}
+                    >
+                      {series.seriesName}
+                    </SelectItem>
+                  ))}
+                  {/* {(series) => (
                     <SelectItem key={series.seriesName}>
                       {series.seriesName}
                     </SelectItem>
-                  )}
+                  )} */}
                 </Select>
               )}
               {isGetSeriesLoading && <Spinner className="m-auto" />}
@@ -183,14 +220,15 @@ export default function Formulas() {
             <label style={{ margin: "0 1rem 0 .5rem" }}>COMPANY FORMULAS</label>
           </div>
           <div className="swatchesComponentContainer">
-            <Swatches
-              // formulas={fetchedFormulas}
-              formulas={formulaNames}
-              selectedFormula={selectedFormula}
-              setSelectedFormula={setSelectedFormula}
-            />
-
-            {/* <Spinner className="m-auto" /> */}
+            {formulasInSeries !== undefined ? (
+              <Swatches
+                formulas={formulasInSeries}
+                selectedFormula={selectedFormula}
+                setSelectedFormula={setSelectedFormula}
+              />
+            ) : (
+              <Spinner className="m-auto" />
+            )}
           </div>
         </div>
       </div>
