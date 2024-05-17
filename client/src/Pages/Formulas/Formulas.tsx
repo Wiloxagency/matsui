@@ -1,16 +1,17 @@
+import "./Formulas.scss";
+import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
+import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
+import ReusableButton from "../../Components/ReusableButton/ReusableButton";
+import Swatches from "../../Components/Swatches/Swatches";
 import { Input } from "@nextui-org/input";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Spinner } from "@nextui-org/spinner";
 import { useEffect, useState } from "react";
 import { FaClone, FaPen, FaPrint, FaSearch } from "react-icons/fa";
-import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
-import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
-import ReusableButton from "../../Components/ReusableButton/ReusableButton";
-import Swatches from "../../Components/Swatches/Swatches";
 import { useGetFormulasQuery, useGetInkSystemsQuery } from "../../State/api";
-import { tempFormulaSwatches } from "../../State/sampleData";
+// import { tempFormulaSwatches } from "../../State/sampleData";
 import { FormulaInterface } from "../../interfaces/interfaces";
-import "./Formulas.scss";
+import { formulaNames } from "../../State/formulaNames";
 
 export default function Formulas() {
   const [formulaQuantity, setFormulaQuantity] = useState<number>(1000);
@@ -132,7 +133,7 @@ export default function Formulas() {
             {isGetFormulasSuccessful ? (
               <Swatches
                 // formulas={fetchedFormulas}
-                formulas={tempFormulaSwatches}
+                formulas={formulaNames}
                 selectedFormula={selectedFormula}
                 setSelectedFormula={setSelectedFormula}
               />

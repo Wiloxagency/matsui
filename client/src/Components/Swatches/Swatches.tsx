@@ -3,13 +3,14 @@ import "./Swatches.scss";
 // import returnTemporaryFormulas from "./TempFormulas";
 import {
   FormulaInterface,
-  FormulaSwatchInterface,
+  // FormulaSwatchInterface,
 } from "../../interfaces/interfaces";
 import { formulaColors, formulaNames } from "../../State/formulaNames";
 import { api } from "../../State/api";
 
 interface SwatchesProps {
-  formulas: FormulaSwatchInterface[] | undefined;
+  // formulas: FormulaSwatchInterface[] | undefined;
+  formulas: string[] | undefined;
   selectedFormula: FormulaInterface | undefined;
   setSelectedFormula: Dispatch<SetStateAction<FormulaInterface | undefined>>;
 }
@@ -29,10 +30,12 @@ export default function Swatches({
 }: SwatchesProps) {
   const [trigger, { data }] = api.endpoints.getFormula.useLazyQuery();
 
-  function handleClick(clickedFormula: FormulaSwatchInterface) {
+  // function handleClick(clickedFormula: FormulaSwatchInterface) {
+  function handleClick(clickedFormula: string) {
     trigger({
-      formulaSeries: clickedFormula.formulaSeries,
-      formulaCode: clickedFormula.formulaCode,
+      // formulaSeries: clickedFormula.formulaSeries,
+      formulaSeries: "301",
+      formulaCode: clickedFormula,
     }).then((response) => {
       console.log("response: ", response.data);
       console.log("data: ", data);
@@ -78,26 +81,27 @@ export default function Swatches({
     return (
       <>
         <div className="swatchesContainer">
-          {formulas.map((formula: FormulaSwatchInterface) => {
+          {/* {formulas.map((formula: FormulaSwatchInterface) => { */}
+          {formulas.map((formulaCode: string) => {
             return (
               <span
-                key={formula.formulaCode}
+                key={formulaCode}
                 className={
-                  formula.formulaCode === selectedFormula?.formulaCode
+                  formulaCode === selectedFormula?.formulaCode
                     ? "swatch active"
                     : "swatch"
                 }
                 style={{
                   backgroundColor: returnHexColorBasedOnFormulaName(
-                    formula.formulaCode
+                    formulaCode
                   ),
                 }}
                 // style={{ backgroundColor: formula.hex }}
-                onClick={() => handleClick(formula)}
+                onClick={() => handleClick(formulaCode)}
               >
                 <div className="swatchLabelContainer">
-                  <div className="swatchTitle">{formula.formulaCode}</div>
-                  <div>{formula.formulaDescription}</div>
+                  <div className="swatchTitle">{formulaCode}</div>
+                  {/* <div>{formula.formulaDescription}</div> */}
                 </div>
               </span>
             );
