@@ -1,3 +1,14 @@
+.adminDashboardLayout {
+    display       : flex;
+    flex-direction: column;
+    width         : 100%;
+    gap           : 1rem;
+
+    .card {
+        min-height: 14rem;
+    }
+}
+
 .topSectionContainer {
     display       : flex;
     flex-direction: column;

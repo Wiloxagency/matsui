@@ -7,6 +7,7 @@
   text-rendering         : optimizeLegibility;
   -webkit-font-smoothing : antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #e2edf6;
 }
 
 * {
@@ -18,7 +19,6 @@
 body {
   display         : flex;
   // min-height      : 100vh;
-  background-color: #e2edf6;
 }
 
 a {

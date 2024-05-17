@@ -12,6 +12,7 @@ import { useGetFormulasQuery, useGetInkSystemsQuery } from "../../State/api";
 // import { tempFormulaSwatches } from "../../State/sampleData";
 import { FormulaInterface } from "../../interfaces/interfaces";
 import { formulaNames } from "../../State/formulaNames";
+import { useMediaQuery } from "react-responsive";
 
 export default function Formulas() {
   const [formulaQuantityAsString, setFormulaQuantityAsString] =
@@ -43,6 +44,30 @@ export default function Formulas() {
     return { value: series };
   });
 
+  const isSmallScreen = useMediaQuery({ query: "(max-width: 1200px)" });
+
+  const gridTemplateFormulas = `
+  "a b"
+  "a b"
+  "a b"
+  "a c"
+  "a c"
+  `;
+
+  const gridTemplateFormulasSmall = `
+  "a"
+  "a"
+  "a"
+  "a"
+  "a"
+  "b"
+  "b"
+  "b"
+  "b"
+  "c"
+  "c"
+  `;
+
   const handleFormulaUnitSelectionChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -56,8 +81,23 @@ export default function Formulas() {
   }, [fetchedFormulas, isGetFormulasSuccessful]);
 
   return (
-    <>
-      <div className="leftSection">
+    <div
+      className="formulaPageLayout"
+      style={
+        isSmallScreen
+          ? {
+              gridTemplateAreas: gridTemplateFormulasSmall,
+              gridAutoColumns: "1fr",
+              gridTemplateRows: "repeat(3, minmax(1rem, 10rem))",
+            }
+          : {
+              gridTemplateAreas: gridTemplateFormulas,
+              gridTemplateColumns: "repeat(2, minmax(375px, 1fr))",
+              gridTemplateRows: "repeat(5, minmax(8rem, 1fr))",
+            }
+      }
+    >
+      <div className="formulasSection" style={{ gridArea: "a" }}>
         <div className="sectionHeader">
           <span>FORMULAS</span>
           <ReusableButton
@@ -146,91 +186,94 @@ export default function Formulas() {
         </div>
       </div>
 
-      <div className="rightSection">
-        <div className="formulaDetailsContainer">
-          <div className="sectionHeader">
-            <span style={{ minWidth: "fit-content" }}>
-              FORMULA DETAILS: {selectedFormula && selectedFormula.formulaCode}
-            </span>
-            {/* <span>
+      <div className="formulaDetailsSection" style={{ gridArea: "b" }}>
+        <div className="sectionHeader">
+          <span style={{ minWidth: "fit-content" }}>
+            FORMULA DETAILS: {selectedFormula && selectedFormula.formulaCode}
+          </span>
+          {/* <span>
               QUANTITY:
               <input type="number" className="quantityInput" />
               <span style={{ marginLeft: "1rem" }}>g / kg/ lbs</span>
             </span> */}
-            <span style={{ width: "14rem" }}>
-              <Input
-                label="QUANTITY"
-                labelPlacement="outside-left"
-                size="sm"
-                fullWidth={false}
-                type="number"
-                value={formulaQuantityAsString}
-                onValueChange={setFormulaQuantityAsString}
-                endContent={
-                  <div className="flex items-center">
-                    <label className="sr-only" htmlFor="currency">
-                      Currency
-                    </label>
-                    <select
-                      className="outline-none border-0 bg-transparent text-default-400 text-small"
-                      id="currency"
-                      name="currency"
-                      value={formulaUnit}
-                      onChange={handleFormulaUnitSelectionChange}
-                    >
-                      <option value="g">g</option>
-                      <option value="kg">kg</option>
-                      <option value="lb">lb</option>
-                    </select>
-                  </div>
-                }
-              />
-            </span>
-          </div>
-          <div className="card">
-            {selectedFormula !== undefined ? (
-              <>
-                <FormulaPercentagesGraph formula={selectedFormula} />
-                <FormulaDetailsTable
-                  formula={selectedFormula}
-                  formulaQuantity={parseFloat(formulaQuantityAsString)}
-                  formulaUnit={formulaUnit}
-                />
-                <div className="buttonsAndTotalRow">
-                  <ReusableButton
-                    className="underlineButton"
-                    buttonText="DUPLICATE FORMULA"
-                    Icon={FaClone}
-                    handleClick={() => {}}
-                  />{" "}
-                  <ReusableButton
-                    className="underlineButton"
-                    buttonText="PRINT FORMULA"
-                    Icon={FaPrint}
-                    handleClick={() => {}}
-                  />
-                  <span>TOTAL: 97,70 $</span>
+          <span style={{ width: "14rem" }}>
+            <Input
+              label="QUANTITY"
+              labelPlacement="outside-left"
+              size="sm"
+              fullWidth={false}
+              type="number"
+              value={formulaQuantityAsString}
+              onValueChange={setFormulaQuantityAsString}
+              endContent={
+                <div className="flex items-center">
+                  <label className="sr-only" htmlFor="currency">
+                    Currency
+                  </label>
+                  <select
+                    className="outline-none border-0 bg-transparent text-default-400 text-small"
+                    id="currency"
+                    name="currency"
+                    value={formulaUnit}
+                    onChange={handleFormulaUnitSelectionChange}
+                  >
+                    <option value="g">g</option>
+                    <option value="kg">kg</option>
+                    <option value="lb">lb</option>
+                  </select>
                 </div>
-              </>
-            ) : (
-              <>
-                {/* <Spinner className="m-auto" /> */}
-                <span className="m-auto">
-                  Click on a formula to see its details
-                </span>
-              </>
-            )}
-          </div>
+              }
+            />
+          </span>
         </div>
-        <div className="similarFormulasContainer">
-          <div className="sectionHeader">SIMILAR FORMULAS</div>
-          <div className="card">
-            <div className="swatchesComponentContainer">
-              {/* <Swatches formulas={[]} /> */}
-            </div>
-          </div>
+        <div className="card">
+          {selectedFormula !== undefined ? (
+            <>
+              <FormulaPercentagesGraph formula={selectedFormula} />
+              <FormulaDetailsTable
+                formula={selectedFormula}
+                formulaQuantity={parseFloat(formulaQuantityAsString)}
+                formulaUnit={formulaUnit}
+              />
+              <div className="buttonsAndTotalRow">
+                <ReusableButton
+                  className="underlineButton"
+                  buttonText="DUPLICATE FORMULA"
+                  Icon={FaClone}
+                  handleClick={() => {}}
+                />{" "}
+                <ReusableButton
+                  className="underlineButton"
+                  buttonText="PRINT FORMULA"
+                  Icon={FaPrint}
+                  handleClick={() => {}}
+                />
+                <span>TOTAL: 97,70 $</span>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* <Spinner className="m-auto" /> */}
+              <span className="m-auto">
+                Click on a formula to see its details
+              </span>
+            </>
+          )}
         </div>
       </div>
-    </>
+      <div className="similarFormulasSection" style={{ gridArea: "c" }}>
+        <div className="sectionHeader">SIMILAR FORMULAS</div>
+        <div className="card">
+          {/* <div className="swatchesComponentContainer"> */}
+          {/* <img
+              src="src/assets/underConstruction.jpg"
+              className="m-auto rounded-lg"
+              // style={{ height: "100%" }}
+            ></img> */}
+          {/* <Swatches formulas={[]} /> */}
+          {/* </div> */}
+        </div>
+      </div>
+    </div>
   );
 }

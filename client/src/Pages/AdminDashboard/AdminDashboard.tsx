@@ -51,9 +51,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     setSelectedRowsIds(new Set(""));
     if (fetchedUsers === undefined) return;
-    const indexRow = fetchedUsers.findIndex(
-      (user) => user._id == idUserToEdit
-    );
+    const indexRow = fetchedUsers.findIndex((user) => user._id == idUserToEdit);
     console.log(indexRow);
     if (indexRow !== -1) {
       setIndexRowToEdit(indexRow);
@@ -72,7 +70,7 @@ export default function AdminDashboard() {
   // }, [onOpenChange]);
 
   return (
-    <>
+    <div className="adminDashboardLayout">
       <div className="topSectionContainer">
         <div className="sectionHeader">
           <span style={{ marginRight: "auto" }}>USER</span>{" "}
@@ -197,13 +195,11 @@ export default function AdminDashboard() {
             </span>
             <span className="bottomHalf">
               <div className="sectionHeader">FORMULA DETAILS: DC NEO 285 C</div>
-              <div className="card">
-                {/* <FormulaDetailsTable /> */}
-              </div>
+              <div className="card">{/* <FormulaDetailsTable /> */}</div>
             </span>
           </>
         )}
       </div>
-    </>
+    </div>
   );
 }

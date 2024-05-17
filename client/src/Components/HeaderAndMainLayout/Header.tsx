@@ -45,11 +45,11 @@ export default function Header() {
       </div>
       <div
         className="outletContainer"
-        style={
-          location.pathname == "/formulas" || location.pathname == "/import"
-            ? { flexDirection: "row" }
-            : { flexDirection: "column" }
-        }
+        // style={
+        //   location.pathname == "/formulas" || location.pathname == "/import"
+        //     ? { flexDirection: "row" }
+        //     : { flexDirection: "column" }
+        // }
       >
         <Outlet />
       </div>

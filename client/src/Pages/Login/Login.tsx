@@ -19,7 +19,7 @@ export function Login() {
   const [isRegisterButtonLoading, setIsRegisterButtonLoading] = useState(false);
 
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
-  console.log("isMobile: ", isMobile);
+  // console.log("isMobile: ", isMobile);
 
   const navigate = useNavigate();
 

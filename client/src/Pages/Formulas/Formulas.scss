@@ -1,49 +1,47 @@
-.leftSection {
+.formulaPageLayout {
+    display              : grid;
+    gap                  : 1rem;
+}
+
+.formulasSection {
     display       : flex;
     flex-direction: column;
     flex          : 1;
     height        : 100%;
 }
 
-.rightSection {
+.formulaDetailsSection {
     display       : flex;
     flex-direction: column;
-    flex          : 1;
-    gap           : 1rem;
 
-    .formulaDetailsContainer {
-        display       : flex;
-        flex-direction: column;
-        flex          : 2;
+    .buttonsAndTotalRow {
+        display           : flex;
+        margin-top        : auto;
+        // justify-content: space-between;
 
-        .buttonsAndTotalRow {
-            display           : flex;
-            margin-top        : auto;
-            // justify-content: space-between;
-
-            button {
-                margin-right: 2rem;
-            }
-
-            span {
-                margin-left: auto;
-            }
+        button {
+            margin-right: 2rem;
         }
-    }
 
-    .similarFormulasContainer {
-        display       : flex;
-        flex-direction: column;
-        flex          : 1;
-
-        .swatchesComponentContainer {
-            display   : flex;
-            flex-grow : 1;
-            height    : 0;
-            overflow-y: scroll;
+        span {
+            margin-left: auto;
         }
     }
 }
+
+.similarFormulasSection {
+    display       : flex;
+    flex-direction: column;
+    flex          : 1;
+
+    .swatchesComponentContainer {
+        display   : flex;
+        flex-grow : 1;
+        height    : 0;
+        overflow-y: scroll;
+    }
+}
+
 
 .dropdownAndLabelRow {
     display: flex;
