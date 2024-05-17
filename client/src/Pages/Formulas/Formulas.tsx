@@ -14,7 +14,9 @@ import { FormulaInterface } from "../../interfaces/interfaces";
 import { formulaNames } from "../../State/formulaNames";
 
 export default function Formulas() {
-  const [formulaQuantity, setFormulaQuantity] = useState<number>(1000);
+  const [formulaQuantityAsString, setFormulaQuantityAsString] =
+    useState<string>("1000");
+  // const [formulaQuantity, setFormulaQuantity] = useState<number>(1000);
   const [formulaUnit, setFormulaUnit] = useState<"g" | "kg" | "lb" | string>(
     "g"
   );
@@ -162,8 +164,8 @@ export default function Formulas() {
                 size="sm"
                 fullWidth={false}
                 type="number"
-                value={formulaQuantity}
-                onValueChange={setFormulaQuantity}
+                value={formulaQuantityAsString}
+                onValueChange={setFormulaQuantityAsString}
                 endContent={
                   <div className="flex items-center">
                     <label className="sr-only" htmlFor="currency">
@@ -191,7 +193,7 @@ export default function Formulas() {
                 <FormulaPercentagesGraph formula={selectedFormula} />
                 <FormulaDetailsTable
                   formula={selectedFormula}
-                  formulaQuantity={formulaQuantity}
+                  formulaQuantity={parseFloat(formulaQuantityAsString)}
                   formulaUnit={formulaUnit}
                 />
                 <div className="buttonsAndTotalRow">
