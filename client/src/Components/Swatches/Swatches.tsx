@@ -28,7 +28,7 @@ export default function Swatches({
   setSelectedFormula,
   selectedFormula,
 }: SwatchesProps) {
-  const [trigger, { data }] = api.endpoints.getFormula.useLazyQuery();
+  const [trigger, { data }] = api.endpoints.getFormulaComponents.useLazyQuery();
 
   // function handleClick(clickedFormula: FormulaSwatchInterface) {
   function handleClick(clickedFormula: string) {

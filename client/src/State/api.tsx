@@ -15,11 +15,7 @@ export const api = createApi({
       query: () => "users/",
       providesTags: [],
     }),
-    getFormulas: builder.query<Array<FormulaInterface>, void>({
-      query: () => "formulas/",
-      providesTags: [],
-    }),
-    getFormula: builder.query<
+    getFormulaComponents: builder.query<
       FormulaInterface,
       { formulaSeries: string; formulaCode: string }
     >({
@@ -28,18 +24,12 @@ export const api = createApi({
 
         return {
           method: "POST",
-          url: "formulas/",
+          url: "components/",
           params: { formulaSeries, formulaCode },
         };
       },
       providesTags: [],
     }),
-    getFormulaComponents: builder.query<Array<FormulaComponentInterface>, void>(
-      {
-        query: () => "components/",
-        providesTags: [],
-      }
-    ),
     getGivenComponents: builder.query<
       Array<FormulaComponentInterface>,
       string[]
@@ -55,14 +45,17 @@ export const api = createApi({
       query: () => "inkSystems/",
       providesTags: [],
     }),
+    getSeries: builder.query<Array<{ seriesName: string }>, void>({
+      query: () => "components/GetSeries",
+      providesTags: [],
+    }),
   }),
 });
 
 export const {
   useGetUsersQuery,
-  useGetFormulasQuery,
-  useGetFormulaQuery,
   useGetFormulaComponentsQuery,
   useGetGivenComponentsQuery,
+  useGetSeriesQuery,
   useGetInkSystemsQuery,
 } = api;

@@ -1,18 +1,18 @@
-import "./Formulas.scss";
+import { Input } from "@nextui-org/input";
+import { Select, SelectItem } from "@nextui-org/select";
+import { useState } from "react";
+import { FaClone, FaPen, FaPrint, FaSearch } from "react-icons/fa";
 import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
 import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
 import ReusableButton from "../../Components/ReusableButton/ReusableButton";
 import Swatches from "../../Components/Swatches/Swatches";
-import { Input } from "@nextui-org/input";
-import { Select, SelectItem } from "@nextui-org/select";
-import { Spinner } from "@nextui-org/spinner";
-import { useEffect, useState } from "react";
-import { FaClone, FaPen, FaPrint, FaSearch } from "react-icons/fa";
-import { useGetFormulasQuery, useGetInkSystemsQuery } from "../../State/api";
+import { useGetInkSystemsQuery, useGetSeriesQuery } from "../../State/api";
+import "./Formulas.scss";
 // import { tempFormulaSwatches } from "../../State/sampleData";
-import { FormulaInterface } from "../../interfaces/interfaces";
-import { formulaNames } from "../../State/formulaNames";
 import { useMediaQuery } from "react-responsive";
+import { formulaNames } from "../../State/formulaNames";
+import { FormulaInterface } from "../../interfaces/interfaces";
+import { Spinner } from "@nextui-org/spinner";
 
 export default function Formulas() {
   const [formulaQuantityAsString, setFormulaQuantityAsString] =
@@ -21,8 +21,8 @@ export default function Formulas() {
   const [formulaUnit, setFormulaUnit] = useState<"g" | "kg" | "lb" | string>(
     "g"
   );
-  const { data: fetchedFormulas, isSuccess: isGetFormulasSuccessful } =
-    useGetFormulasQuery();
+  // const { data: fetchedFormulas, isSuccess: isGetFormulasSuccessful } =
+  //   useGetFormulasQuery();
 
   const {
     data: fetchedInkSystems,
@@ -30,19 +30,25 @@ export default function Formulas() {
     isSuccess: isGetInkSystemsSuccessful,
   } = useGetInkSystemsQuery();
 
+  const {
+    data: fetchedSeries,
+    isLoading: isGetSeriesLoading,
+    isSuccess: isGetSeriesSuccessful,
+  } = useGetSeriesQuery();
+
   const [selectedFormula, setSelectedFormula] = useState<
     FormulaInterface | undefined
   >();
 
-  const formulaSeries = Array.from(
-    new Set(
-      fetchedFormulas?.map(({ formulaSeries }) => {
-        return formulaSeries;
-      })
-    )
-  ).map((series) => {
-    return { value: series };
-  });
+  // const formulaSeries = Array.from(
+  //   new Set(
+  //     fetchedFormulas?.map(({ formulaSeries }) => {
+  //       return formulaSeries;
+  //     })
+  //   )
+  // ).map((series) => {
+  //   return { value: series };
+  // });
 
   const isSmallScreen = useMediaQuery({ query: "(max-width: 1200px)" });
 
@@ -74,11 +80,11 @@ export default function Formulas() {
     setFormulaUnit(e.target.value);
   };
 
-  useEffect(() => {
-    if (isGetFormulasSuccessful) {
-      setSelectedFormula(fetchedFormulas[0]);
-    }
-  }, [fetchedFormulas, isGetFormulasSuccessful]);
+  // useEffect(() => {
+  //   if (isGetFormulasSuccessful) {
+  //     setSelectedFormula(fetchedFormulas[0]);
+  //   }
+  // }, [fetchedFormulas, isGetFormulasSuccessful]);
 
   return (
     <div
@@ -148,17 +154,22 @@ export default function Formulas() {
           <div className="dropdownAndLabelRow">
             <label>SERIES</label>
             <span className="selectContainer">
-              <Select
-                aria-label="SELECT SERIES"
-                variant="bordered"
-                radius="full"
-                placeholder="SELECT SERIES"
-                items={formulaSeries}
-              >
-                {(series) => (
-                  <SelectItem key={series.value}>{series.value}</SelectItem>
-                )}
-              </Select>
+              {isGetSeriesSuccessful && (
+                <Select
+                  aria-label="SELECT SERIES"
+                  variant="bordered"
+                  radius="full"
+                  placeholder="SELECT SERIES"
+                  items={fetchedSeries}
+                >
+                  {(series) => (
+                    <SelectItem key={series.seriesName}>
+                      {series.seriesName}
+                    </SelectItem>
+                  )}
+                </Select>
+              )}
+              {isGetSeriesLoading && <Spinner className="m-auto" />}
             </span>
           </div>
           <div className="searchBarRow">
@@ -172,16 +183,14 @@ export default function Formulas() {
             <label style={{ margin: "0 1rem 0 .5rem" }}>COMPANY FORMULAS</label>
           </div>
           <div className="swatchesComponentContainer">
-            {isGetFormulasSuccessful ? (
-              <Swatches
-                // formulas={fetchedFormulas}
-                formulas={formulaNames}
-                selectedFormula={selectedFormula}
-                setSelectedFormula={setSelectedFormula}
-              />
-            ) : (
-              <Spinner className="m-auto" />
-            )}
+            <Swatches
+              // formulas={fetchedFormulas}
+              formulas={formulaNames}
+              selectedFormula={selectedFormula}
+              setSelectedFormula={setSelectedFormula}
+            />
+
+            {/* <Spinner className="m-auto" /> */}
           </div>
         </div>
       </div>
