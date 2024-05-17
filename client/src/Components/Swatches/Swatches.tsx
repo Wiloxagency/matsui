@@ -13,6 +13,7 @@ interface SwatchesProps {
   formulas: string[] | undefined;
   selectedFormula: FormulaInterface | undefined;
   setSelectedFormula: Dispatch<SetStateAction<FormulaInterface | undefined>>;
+  selectedSeries: string;
 }
 
 function returnHexColorBasedOnFormulaName(formulaName: string): string {
@@ -27,14 +28,14 @@ export default function Swatches({
   formulas,
   setSelectedFormula,
   selectedFormula,
+  selectedSeries,
 }: SwatchesProps) {
+  
   const [trigger, { data }] = api.endpoints.getFormulaComponents.useLazyQuery();
 
-  // function handleClick(clickedFormula: FormulaSwatchInterface) {
-  function handleClick(clickedFormula: string) {
+  function handleSelectFormula(clickedFormula: string) {
     trigger({
-      // formulaSeries: clickedFormula.formulaSeries,
-      formulaSeries: "301",
+      formulaSeries: selectedSeries,
       formulaCode: clickedFormula,
     }).then((response) => {
       console.log("response: ", response.data);
@@ -43,8 +44,8 @@ export default function Swatches({
       if (response.data === undefined) return;
 
       const fullFormula: FormulaInterface = {
-        formulaSeries: "",
-        formulaCode: "",
+        formulaSeries: selectedSeries,
+        formulaCode: clickedFormula,
         formulaDescription: "",
         isActive: true,
         reportedAsError: false,
@@ -53,35 +54,12 @@ export default function Swatches({
       };
       setSelectedFormula(fullFormula);
     });
-
-    //   trigger({
-    //     formulaSeries: clickedFormula.formulaSeries,
-    //     formulaCode: clickedFormula.formulaCode,
-    //   }).then(
-    //     data => {
-    //     console.log("data: ", data);
-
-    //     if (data !== undefined) {
-    //       const fullFormula: FormulaInterface = {
-    //         formulaSeries: "",
-    //         formulaCode: "",
-    //         formulaDescription: "",
-    //         isActive: true,
-    //         reportedAsError: false,
-    //         inkSystem: "",
-    //         components: data.components,
-    //       };
-    //       setSelectedFormula(fullFormula);
-    //     }
-    //   }
-    // );
   }
 
   if (formulas !== undefined)
     return (
       <>
         <div className="swatchesContainer">
-          {/* {formulas.map((formula: FormulaSwatchInterface) => { */}
           {formulas.map((formulaCode: string) => {
             return (
               <span
@@ -92,12 +70,10 @@ export default function Swatches({
                     : "swatch"
                 }
                 style={{
-                  backgroundColor: returnHexColorBasedOnFormulaName(
-                    formulaCode
-                  ),
+                  backgroundColor:
+                    returnHexColorBasedOnFormulaName(formulaCode),
                 }}
-                // style={{ backgroundColor: formula.hex }}
-                onClick={() => handleClick(formulaCode)}
+                onClick={() => handleSelectFormula(formulaCode)}
               >
                 <div className="swatchLabelContainer">
                   <div className="swatchTitle">{formulaCode}</div>

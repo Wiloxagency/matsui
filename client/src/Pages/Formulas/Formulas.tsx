@@ -107,8 +107,8 @@ export default function Formulas() {
     setFormulasInSeries(undefined);
 
     trigger(selectedSeries).then((response) => {
-      console.log("response: ", response.data);
-      console.log("data: ", data);
+      // console.log("response: ", response.data);
+      // console.log("data: ", data);
       if (response.data === undefined) return;
       setFormulasInSeries(response.data);
     });
@@ -225,6 +225,7 @@ export default function Formulas() {
                 formulas={formulasInSeries}
                 selectedFormula={selectedFormula}
                 setSelectedFormula={setSelectedFormula}
+                selectedSeries={selectedSeries}
               />
             ) : (
               <Spinner className="m-auto" />
