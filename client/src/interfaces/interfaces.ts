@@ -12,6 +12,12 @@ export interface UserInterface {
   lastAccess: Date;
 }
 
+export interface FormulaSwatchInterface {
+  formulaCode: string;
+  formulaSeries: string;
+  formulaDescription: string;
+}
+
 export interface FormulaInterface {
   formulaSeries: string;
   formulaCode: string;
@@ -20,9 +26,11 @@ export interface FormulaInterface {
   reportedAsError: boolean;
   components: {
     componentCode: string;
+    componentDescription: string;
     percentage: number;
+    hex?: string;
   }[];
-  inkSystem: string
+  inkSystem: string;
 }
 
 export interface FormulaComponentInterface {

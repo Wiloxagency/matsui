@@ -1,15 +1,16 @@
-import "./Formulas.scss";
+import { Input } from "@nextui-org/input";
+import { Select, SelectItem } from "@nextui-org/select";
+import { Spinner } from "@nextui-org/spinner";
 import { useEffect, useState } from "react";
 import { FaClone, FaPen, FaPrint, FaSearch } from "react-icons/fa";
-import { useGetFormulasQuery, useGetInkSystemsQuery } from "../../State/api";
-import { FormulaInterface } from "../../interfaces/interfaces";
-import { Input } from "@nextui-org/input";
-import { Spinner } from "@nextui-org/spinner";
-import { Select, SelectItem } from "@nextui-org/select";
 import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
+import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
 import ReusableButton from "../../Components/ReusableButton/ReusableButton";
 import Swatches from "../../Components/Swatches/Swatches";
-import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
+import { useGetFormulasQuery, useGetInkSystemsQuery } from "../../State/api";
+import { tempFormulaSwatches } from "../../State/sampleData";
+import { FormulaInterface } from "../../interfaces/interfaces";
+import "./Formulas.scss";
 
 export default function Formulas() {
   const { data: fetchedFormulas, isSuccess: isGetFormulasSuccessful } =
@@ -54,40 +55,43 @@ export default function Formulas() {
           />
         </div>
         <div className="card">
-          <div className="dropdownAndLabelRow">
-            <label>INK SYSTEM</label>
-            <span className="selectContainer">
-              {/* IDEALLY YOU WOULD ONLY HAVE ONE OF THE 2 FOLLOWING SELECT TAGS.
+          {false && (
+            <div className="dropdownAndLabelRow">
+              <label>INK SYSTEM</label>
+              <span className="selectContainer">
+                {/* IDEALLY YOU WOULD ONLY HAVE ONE OF THE 2 FOLLOWING SELECT TAGS.
                 I JUST COULDN'T FIGURE OUT HOW TO PREVENT THE SELECTITEM TAG FROM
                 GIVING AN ERROR WHEN THE DATA STILL HASN'T BEEN FETCHED */}
-              {isGetInkSystemsLoading && (
-                <Select
-                  aria-label="SELECT INK SYSTEM"
-                  variant="bordered"
-                  radius="full"
-                  placeholder="SELECT INK SYSTEM"
-                >
-                  <SelectItem key="temp">temp</SelectItem>
-                </Select>
-              )}
+                {isGetInkSystemsLoading && (
+                  <Select
+                    aria-label="SELECT INK SYSTEM"
+                    variant="bordered"
+                    radius="full"
+                    placeholder="SELECT INK SYSTEM"
+                  >
+                    <SelectItem key="temp">temp</SelectItem>
+                  </Select>
+                )}
 
-              {isGetInkSystemsSuccessful && (
-                <Select
-                  aria-label="SELECT INK SYSTEM"
-                  variant="bordered"
-                  radius="full"
-                  placeholder="SELECT INK SYSTEM"
-                  items={fetchedInkSystems}
-                >
-                  {(inkSystem) => (
-                    <SelectItem key={inkSystem.code}>
-                      {inkSystem.name}
-                    </SelectItem>
-                  )}
-                </Select>
-              )}
-            </span>
-          </div>
+                {isGetInkSystemsSuccessful && (
+                  <Select
+                    aria-label="SELECT INK SYSTEM"
+                    variant="bordered"
+                    radius="full"
+                    placeholder="SELECT INK SYSTEM"
+                    items={fetchedInkSystems}
+                  >
+                    {(inkSystem) => (
+                      <SelectItem key={inkSystem.code}>
+                        {inkSystem.name}
+                      </SelectItem>
+                    )}
+                  </Select>
+                )}
+              </span>
+            </div>
+          )}
+
           <div className="dropdownAndLabelRow">
             <label>SERIES</label>
             <span className="selectContainer">
@@ -117,7 +121,8 @@ export default function Formulas() {
           <div className="swatchesComponentContainer">
             {isGetFormulasSuccessful ? (
               <Swatches
-                formulas={fetchedFormulas}
+                // formulas={fetchedFormulas}
+                formulas={tempFormulaSwatches}
                 selectedFormula={selectedFormula}
                 setSelectedFormula={setSelectedFormula}
               />

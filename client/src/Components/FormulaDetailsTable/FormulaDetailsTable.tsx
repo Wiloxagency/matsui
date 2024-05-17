@@ -1,15 +1,14 @@
-import { useGetGivenComponentsQuery } from "../../State/api";
-import { FormulaInterface } from "../../interfaces/interfaces";
-import "./FormulaDetailsTable.scss";
 import {
   Table,
-  TableHeader,
   TableBody,
-  TableColumn,
-  TableRow,
   TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
   getKeyValue,
 } from "@nextui-org/table";
+import { FormulaInterface } from "../../interfaces/interfaces";
+import "./FormulaDetailsTable.scss";
 
 // const rows = [
 //   {
@@ -84,14 +83,11 @@ interface FormulaDetailsTableProps {
 export default function FormulaDetailsTable({
   formula,
 }: FormulaDetailsTableProps) {
-  const givenComponentsList = formula.components.map(({ componentCode }) => {
-    return componentCode;
-  });
-  const { data: fetchedComponents } =
-    useGetGivenComponentsQuery(givenComponentsList);
+  // const givenComponentsList = formula.components.map(({ componentCode }) => {
+  //   return componentCode;
+  // });
+  // const { data: fetchedComponents } = useGetGivenComponentsQuery(givenComponentsList);
 
-  console.log("formula: ", formula);
-  console.log("fetchedComponents: ", fetchedComponents);
   return (
     <>
       <Table
@@ -105,16 +101,16 @@ export default function FormulaDetailsTable({
           )}
         </TableHeader>
         <TableBody items={formula.components}>
-          {(item) => (
-            <TableRow key={item.componentCode}>
+          {(component) => (
+            <TableRow key={component.componentCode}>
               {(columnKey) => (
                 <TableCell>
                   {columnKey !== "hex" ? (
-                    getKeyValue(item, columnKey)
+                    getKeyValue(component, columnKey)
                   ) : (
                     <span
                       className="miniSwatch"
-                      style={{ backgroundColor: "blue" }}
+                      style={{ backgroundColor: "#" + component.hex }}
                     ></span>
                   )}
                 </TableCell>

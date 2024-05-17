@@ -11,18 +11,18 @@ export default function FormulaPercentagesGraph({
   return (
     <>
       <div className="formulaPercentagesGraphContainer">
-        {formula.components.map((color) => {
+        {formula.components.map((component) => {
           return (
             <span
-              key={color.componentCode}
+              key={component.componentCode}
               style={{
-                backgroundColor: "red",
+                backgroundColor: "#" + component.hex,
                 // backgroundColor: color.hex,
-                width: color.percentage + "%",
+                width: component.percentage + "%",
                 minWidth: "fit-content",
               }}
             >
-              {color.percentage}%
+              {component.percentage}%
             </span>
           );
         })}

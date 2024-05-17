@@ -7,7 +7,10 @@
     border-radius      : 2rem;
 
     span {
-        padding: 0 1rem;
+        padding    : 0 1rem;
+        border     : 1px solid rgba(0, 0, 0, 0.14);
+        display    : grid;
+        place-items: center;
     }
 
     span:first-of-type {

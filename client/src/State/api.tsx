@@ -19,13 +19,31 @@ export const api = createApi({
       query: () => "formulas/",
       providesTags: [],
     }),
+    getFormula: builder.query<
+      FormulaInterface,
+      { formulaSeries: string; formulaCode: string }
+    >({
+      query: (arg) => {
+        const { formulaSeries, formulaCode } = arg;
+
+        return {
+          method: "POST",
+          url: "formulas/",
+          params: { formulaSeries, formulaCode },
+        };
+      },
+      providesTags: [],
+    }),
     getFormulaComponents: builder.query<Array<FormulaComponentInterface>, void>(
       {
         query: () => "components/",
         providesTags: [],
       }
     ),
-    getGivenComponents: builder.query<Array<FormulaComponentInterface>, string[]>({
+    getGivenComponents: builder.query<
+      Array<FormulaComponentInterface>,
+      string[]
+    >({
       query: (body) => ({
         url: "components/",
         method: "POST",
@@ -43,6 +61,7 @@ export const api = createApi({
 export const {
   useGetUsersQuery,
   useGetFormulasQuery,
+  useGetFormulaQuery,
   useGetFormulaComponentsQuery,
   useGetGivenComponentsQuery,
   useGetInkSystemsQuery,

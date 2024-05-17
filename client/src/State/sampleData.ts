@@ -1,85 +1,101 @@
-import { FormulaComponentInterface, FormulaInterface } from "../interfaces/interfaces";
+import {
+  FormulaComponentInterface,
+  // FormulaInterface,
+  FormulaSwatchInterface,
+} from "../interfaces/interfaces";
 
-export const tempFormulas: FormulaInterface[] = [
+export const tempFormulaSwatches: FormulaSwatchInterface[] = [
   {
-    formulaSeries: "301 RC NEO",
+    formulaSeries: "301",
     formulaCode: "100 C",
-    formulaDescription: "301 RC NEO 100 C",
-    isActive: true,
-    reportedAsError: false,
-    components: [
-      {
-        componentCode: "CLR 301C",
-        percentage: 89.025,
-      },
-      {
-        componentCode: "MAT 301M",
-        percentage: 10.65,
-      },
-      {
-        componentCode: "YEL M3G",
-        percentage: 0.325,
-      },
-    ],
-    inkSystem: "",
-  },
-  {
-    formulaSeries: "301 RC NEO",
-    formulaCode: "BLUE 072 C",
-    formulaDescription: "301 RC NEO BLUE 072 C",
-    isActive: true,
-    reportedAsError: false,
-    components: [
-      {
-        componentCode: "CLR 301C",
-        percentage: 94.25,
-      },
-      {
-        componentCode: "MAT 301M",
-        percentage: 3,
-      },
-      {
-        componentCode: "BLU MB",
-        percentage: 1.75,
-      },
-      {
-        componentCode: "VLT MFB",
-        percentage: 1,
-      },
-    ],
-    inkSystem: "",
-  },
-  {
-    formulaSeries: "BRITE DC NEO",
-    formulaCode: "7439 C",
-    formulaDescription: "BRITE DC NEO 7439 C",
-    isActive: true,
-    reportedAsError: false,
-    components: [
-      {
-        componentCode: "BRT DC BASE",
-        percentage: 90.322,
-      },
-      {
-        componentCode: "AP TRS WHT",
-        percentage: 9.301,
-      },
-      {
-        componentCode: "PNK MB",
-        percentage: 0.195,
-      },
-      {
-        componentCode: "RED MFB",
-        percentage: 0.082,
-      },
-      {
-        componentCode: "GRN MB",
-        percentage: 0.082,
-      },
-    ],
-    inkSystem: "",
+    formulaDescription: "301 OW NEO 100 C",
   },
 ];
+
+// export const tempFormulas: FormulaInterface[] = [
+//   {
+//     formulaSeries: "301",
+//     formulaCode: "100 C",
+//     formulaDescription: "301 OW NEO 100 C",
+//     isActive: true,
+//     reportedAsError: false,
+//     components: [
+//       {
+//         componentCode: "WHT 301W",
+//         percentage: 94.286,
+//       },
+//       {
+//         componentCode: "YEL M3G",
+//         percentage: 5.657,
+//       },
+//       {
+//         componentCode: "ORNG MGD",
+//         percentage: 0.038,
+//       },
+//       {
+//         componentCode: "GRN MB",
+//         percentage: 0.019,
+//       },
+//     ],
+//     inkSystem: "",
+//   },
+//   {
+//     formulaSeries: "301 RC NEO",
+//     formulaCode: "BLUE 072 C",
+//     formulaDescription: "301 RC NEO BLUE 072 C",
+//     isActive: true,
+//     reportedAsError: false,
+//     components: [
+//       {
+//         componentCode: "CLR 301C",
+//         percentage: 94.25,
+//       },
+//       {
+//         componentCode: "MAT 301M",
+//         percentage: 3,
+//       },
+//       {
+//         componentCode: "BLU MB",
+//         percentage: 1.75,
+//       },
+//       {
+//         componentCode: "VLT MFB",
+//         percentage: 1,
+//       },
+//     ],
+//     inkSystem: "",
+//   },
+//   {
+//     formulaSeries: "BRITE DC NEO",
+//     formulaCode: "7439 C",
+//     formulaDescription: "BRITE DC NEO 7439 C",
+//     isActive: true,
+//     reportedAsError: false,
+//     components: [
+//       {
+//         componentCode: "BRT DC BASE",
+//         percentage: 90.322,
+//       },
+//       {
+//         componentCode: "AP TRS WHT",
+//         percentage: 9.301,
+//       },
+//       {
+//         componentCode: "PNK MB",
+//         percentage: 0.195,
+//       },
+//       {
+//         componentCode: "RED MFB",
+//         percentage: 0.082,
+//       },
+//       {
+//         componentCode: "GRN MB",
+//         percentage: 0.082,
+//       },
+//     ],
+//     inkSystem: "",
+//   },
+// ];
 
 export const tempComponents: FormulaComponentInterface[] = [
   {
