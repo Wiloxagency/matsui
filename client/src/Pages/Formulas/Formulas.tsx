@@ -13,6 +13,10 @@ import { FormulaInterface } from "../../interfaces/interfaces";
 import "./Formulas.scss";
 
 export default function Formulas() {
+  const [formulaQuantity, setFormulaQuantity] = useState<number>(1000);
+  const [formulaUnit, setFormulaUnit] = useState<"g" | "kg" | "lb" | string>(
+    "g"
+  );
   const { data: fetchedFormulas, isSuccess: isGetFormulasSuccessful } =
     useGetFormulasQuery();
 
@@ -35,6 +39,12 @@ export default function Formulas() {
   ).map((series) => {
     return { value: series };
   });
+
+  const handleFormulaUnitSelectionChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setFormulaUnit(e.target.value);
+  };
 
   useEffect(() => {
     if (isGetFormulasSuccessful) {
@@ -147,10 +157,12 @@ export default function Formulas() {
             <span style={{ width: "14rem" }}>
               <Input
                 label="QUANTITY"
-                placeholder="0.00"
                 labelPlacement="outside-left"
                 size="sm"
                 fullWidth={false}
+                type="number"
+                value={formulaQuantity}
+                onValueChange={setFormulaQuantity}
                 endContent={
                   <div className="flex items-center">
                     <label className="sr-only" htmlFor="currency">
@@ -160,14 +172,15 @@ export default function Formulas() {
                       className="outline-none border-0 bg-transparent text-default-400 text-small"
                       id="currency"
                       name="currency"
+                      value={formulaUnit}
+                      onChange={handleFormulaUnitSelectionChange}
                     >
-                      <option>g</option>
-                      <option>kg</option>
-                      <option>lbs</option>
+                      <option value="g">g</option>
+                      <option value="kg">kg</option>
+                      <option value="lb">lb</option>
                     </select>
                   </div>
                 }
-                type="number"
               />
             </span>
           </div>
@@ -175,7 +188,11 @@ export default function Formulas() {
             {selectedFormula !== undefined ? (
               <>
                 <FormulaPercentagesGraph formula={selectedFormula} />
-                <FormulaDetailsTable formula={selectedFormula} />
+                <FormulaDetailsTable
+                  formula={selectedFormula}
+                  formulaQuantity={formulaQuantity}
+                  formulaUnit={formulaUnit}
+                />
                 <div className="buttonsAndTotalRow">
                   <ReusableButton
                     className="underlineButton"
@@ -193,7 +210,12 @@ export default function Formulas() {
                 </div>
               </>
             ) : (
-              <Spinner className="m-auto" />
+              <>
+                {/* <Spinner className="m-auto" /> */}
+                <span className="m-auto">
+                  Click on a formula to see its details
+                </span>
+              </>
             )}
           </div>
         </div>

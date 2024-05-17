@@ -5,10 +5,10 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  getKeyValue,
 } from "@nextui-org/table";
 import { FormulaInterface } from "../../interfaces/interfaces";
 import "./FormulaDetailsTable.scss";
+import React from "react";
 
 // const rows = [
 //   {
@@ -59,7 +59,7 @@ const columns = [
     label: "CODE",
   },
   {
-    key: "product",
+    key: "componentDescription",
     label: "PRODUCT",
   },
   {
@@ -76,17 +76,55 @@ const columns = [
   },
 ];
 
+type TableComponent = {
+  componentCode: string;
+  componentDescription: string;
+  percentage: number;
+  hex?: string;
+};
+
 interface FormulaDetailsTableProps {
   formula: FormulaInterface;
+  formulaQuantity: number;
+  formulaUnit: "g" | "kg" | "lb" | string;
 }
 
 export default function FormulaDetailsTable({
   formula,
+  formulaQuantity,
+  formulaUnit,
 }: FormulaDetailsTableProps) {
   // const givenComponentsList = formula.components.map(({ componentCode }) => {
   //   return componentCode;
   // });
   // const { data: fetchedComponents } = useGetGivenComponentsQuery(givenComponentsList);
+
+  const renderCell = React.useCallback(
+    (component: TableComponent, columnKey: React.Key) => {
+      const cellValue = component[columnKey as keyof TableComponent];
+
+      switch (columnKey) {
+        case "hex":
+          return (
+            <>
+              <span
+                className="miniSwatch"
+                style={{ backgroundColor: "#" + component.hex }}
+              ></span>
+            </>
+          );
+        case "quantity":
+          return (
+            <div>
+              {(formulaQuantity * component.percentage) / 100} {formulaUnit}
+            </div>
+          );
+        default:
+          return cellValue;
+      }
+    },
+    [formulaQuantity, formulaUnit]
+  );
 
   return (
     <>
@@ -104,16 +142,7 @@ export default function FormulaDetailsTable({
           {(component) => (
             <TableRow key={component.componentCode}>
               {(columnKey) => (
-                <TableCell>
-                  {columnKey !== "hex" ? (
-                    getKeyValue(component, columnKey)
-                  ) : (
-                    <span
-                      className="miniSwatch"
-                      style={{ backgroundColor: "#" + component.hex }}
-                    ></span>
-                  )}
-                </TableCell>
+                <TableCell>{renderCell(component, columnKey)}</TableCell>
               )}
             </TableRow>
           )}
