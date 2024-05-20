@@ -12,6 +12,8 @@ import { FaClone, FaPen, FaPrint, FaSearch } from "react-icons/fa";
 // import { tempFormulaSwatches } from "../../State/sampleData";
 import { Spinner } from "@nextui-org/spinner";
 import { useMediaQuery } from "react-responsive";
+import CreateFormulaModal from "../../Components/CreateFormulaModal/CreateFormulaModal";
+import { useDisclosure } from "@nextui-org/modal";
 
 export default function Formulas() {
   const [formulasInSeries, setFormulasInSeries] = useState<
@@ -79,6 +81,12 @@ export default function Formulas() {
   "c"
   `;
 
+  const {
+    isOpen: isOpenCreateFormulaModal,
+    onOpen: onOpenCreateFormulaModal,
+    onOpenChange: onOpenChangeCreateFormulaModal,
+  } = useDisclosure();
+
   const [trigger, { data }] =
     api.endpoints.getSeriesFormulaCodes.useLazyQuery();
 
@@ -112,7 +120,7 @@ export default function Formulas() {
       if (response.data === undefined) return;
       setFormulasInSeries(response.data);
     });
-  }, [selectedSeries]);
+  }, [selectedSeries, trigger]);
 
   return (
     <div
@@ -131,6 +139,11 @@ export default function Formulas() {
             }
       }
     >
+      <CreateFormulaModal
+        isOpenCreateFormulaModal={isOpenCreateFormulaModal}
+        onOpenChangeCreateFormulaModal={onOpenChangeCreateFormulaModal}
+        fetchedSeries={fetchedSeries}
+      />
       <div className="formulasSection" style={{ gridArea: "a" }}>
         <div className="sectionHeader">
           <span>FORMULAS</span>
@@ -138,7 +151,7 @@ export default function Formulas() {
             className="underlineButton"
             buttonText="CREATE NEW FORMULA"
             Icon={FaPen}
-            handleClick={() => {}}
+            handleClick={onOpenCreateFormulaModal}
           />
         </div>
         <div className="card">
