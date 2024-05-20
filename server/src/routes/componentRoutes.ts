@@ -129,4 +129,11 @@ router.get(
 //   res.json(componentList);
 // });
 
+router.get("/GetPigments", async (req: Request, res: Response) => {
+  const db = await createMongoDBConnection();
+  const pigments = db.collection("pigments");
+  const allPigments = await pigments.find().toArray();
+  res.json(allPigments);
+});
+
 export default router;

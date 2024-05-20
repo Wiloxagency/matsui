@@ -3,6 +3,7 @@ import {
   FormulaComponentInterface,
   FormulaInterface,
   InkSystemInterface,
+  PigmentInterface,
   UserInterface,
 } from "../interfaces/interfaces";
 
@@ -13,7 +14,6 @@ export const api = createApi({
   endpoints: (builder) => ({
     getUsers: builder.query<Array<UserInterface>, void>({
       query: () => "users/",
-      providesTags: [],
     }),
     getFormulaComponents: builder.query<
       FormulaInterface,
@@ -21,14 +21,12 @@ export const api = createApi({
     >({
       query: (arg) => {
         const { formulaSeries, formulaCode } = arg;
-
         return {
           method: "POST",
           url: "components/",
           params: { formulaSeries, formulaCode },
         };
       },
-      providesTags: [],
     }),
     getGivenComponents: builder.query<
       Array<FormulaComponentInterface>,
@@ -39,19 +37,18 @@ export const api = createApi({
         method: "POST",
         body: body,
       }),
-      providesTags: [],
     }),
     getInkSystems: builder.query<Array<InkSystemInterface>, void>({
       query: () => "inkSystems/",
-      providesTags: [],
     }),
     getSeries: builder.query<Array<{ seriesName: string }>, void>({
       query: () => "components/GetSeries",
-      providesTags: [],
     }),
     getSeriesFormulaCodes: builder.query<Array<string>, string>({
       query: (seriesName) => "components/GetSeriesFormulaCodes/" + seriesName,
-      providesTags: [],
+    }),
+    getPigments: builder.query<Array<PigmentInterface>, void>({
+      query: () => "components/GetPigments",
     }),
   }),
 });
@@ -62,5 +59,6 @@ export const {
   useGetGivenComponentsQuery,
   useGetSeriesQuery,
   useGetInkSystemsQuery,
-  useGetSeriesFormulaCodesQuery
+  useGetSeriesFormulaCodesQuery,
+  useGetPigmentsQuery,
 } = api;

@@ -1,19 +1,18 @@
-import { useEffect, useState } from "react";
 import "./Formulas.scss";
-import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
-import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
-import ReusableButton from "../../Components/ReusableButton/ReusableButton";
-import Swatches from "../../Components/Swatches/Swatches";
-import { api, useGetInkSystemsQuery, useGetSeriesQuery } from "../../State/api";
+import { useEffect, useState } from "react";
+import { useMediaQuery } from "react-responsive";
+import { api, useGetInkSystemsQuery, useGetPigmentsQuery, useGetSeriesQuery } from "../../State/api";
 import { FormulaInterface } from "../../interfaces/interfaces";
 import { Input } from "@nextui-org/input";
 import { Select, SelectItem } from "@nextui-org/select";
 import { FaClone, FaPen, FaPrint, FaSearch } from "react-icons/fa";
-// import { tempFormulaSwatches } from "../../State/sampleData";
 import { Spinner } from "@nextui-org/spinner";
-import { useMediaQuery } from "react-responsive";
-import CreateFormulaModal from "../../Components/CreateFormulaModal/CreateFormulaModal";
 import { useDisclosure } from "@nextui-org/modal";
+import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
+import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
+import ReusableButton from "../../Components/ReusableButton/ReusableButton";
+import Swatches from "../../Components/Swatches/Swatches";
+import CreateFormulaModal from "../../Components/CreateFormulaModal/CreateFormulaModal";
 
 export default function Formulas() {
   const [formulasInSeries, setFormulasInSeries] = useState<
@@ -36,6 +35,10 @@ export default function Formulas() {
     isLoading: isGetInkSystemsLoading,
     isSuccess: isGetInkSystemsSuccessful,
   } = useGetInkSystemsQuery();
+  
+  const {
+    data: fetchedPigments
+  } = useGetPigmentsQuery();
 
   const {
     data: fetchedSeries,
@@ -143,6 +146,7 @@ export default function Formulas() {
         isOpenCreateFormulaModal={isOpenCreateFormulaModal}
         onOpenChangeCreateFormulaModal={onOpenChangeCreateFormulaModal}
         fetchedSeries={fetchedSeries}
+        fetchedPigments={fetchedPigments}
       />
       <div className="formulasSection" style={{ gridArea: "a" }}>
         <div className="sectionHeader">

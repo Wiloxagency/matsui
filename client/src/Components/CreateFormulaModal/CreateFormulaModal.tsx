@@ -12,18 +12,21 @@ import {
 import { Select, SelectItem } from "@nextui-org/select";
 import { Spinner } from "@nextui-org/spinner";
 import { useState } from "react";
+import { PigmentInterface } from "../../interfaces/interfaces";
 // import { FaEnvelope, FaLock } from "react-icons/fa";
 
 interface CreateFormulaModalProps {
   isOpenCreateFormulaModal: boolean;
   onOpenChangeCreateFormulaModal: () => void;
   fetchedSeries: { seriesName: string }[] | undefined;
+  fetchedPigments: PigmentInterface[] | undefined;
 }
 
 export default function CreateFormulaModal({
   isOpenCreateFormulaModal,
   onOpenChangeCreateFormulaModal,
   fetchedSeries,
+  fetchedPigments,
 }: CreateFormulaModalProps) {
   const [selectedNewFormulaSeries, setSelectedNewFormulaSeries] =
     useState<string>("301");
@@ -88,13 +91,33 @@ export default function CreateFormulaModal({
                   placeholder="Ex: 301 OW NEO 100 C"
                   variant="bordered"
                 />
+                <Select
+                  label="Select pigment"
+                  variant="bordered"
+                  radius="full"
+                  //   placeholder="301"
+                  isRequired={true}
+                  required
+                  //   value={selectedNewFormulaSeries}
+                  //   onChange={(e) => handleSelectNewFormulaSeries(e)}
+                >
+                  {fetchedPigments !== undefined ? (
+                    fetchedPigments.map((pigment) => (
+                      <SelectItem key={pigment.code} value={pigment.code}>
+                        {pigment.code}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <Spinner className="m-auto" />
+                  )}
+                </Select>
                 <div className="flex py-2 px-1 justify-between">
                   <Checkbox
                     classNames={{
                       label: "text-small",
                     }}
                   >
-                    Remember me
+                    Is formula active?
                   </Checkbox>
                   {/* <a color="primary" href="#">
                     Forgot password?

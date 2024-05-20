@@ -46,3 +46,16 @@ export interface InkSystemInterface {
   name: string;
   description: string;
 }
+
+export interface PigmentInterface {
+  _id: {
+    $oid: string;
+  };
+  code: string;
+  description: string;
+  serie: string;
+  lab: number[];
+  hex: string;
+  cmyk: number[];
+  rgb: number[];
+}
