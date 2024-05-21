@@ -79,6 +79,18 @@ export default function CreateFormulaModal({
   };
 
   function handleAddFormulaComponent() {
+    console.log(newFormulaComponents);
+    setValidationMessage("");
+
+    if (
+      newFormulaComponents.some(
+        (formulaComponent) => formulaComponent.ComponentCode === ""
+      )
+    ) {
+      setValidationMessage("Assign all pigments before adding a new component");
+      return;
+    }
+
     setNewFormulaComponents((newFormulaComponents) => [
       ...newFormulaComponents,
       {
@@ -95,23 +107,29 @@ export default function CreateFormulaModal({
   function handleDeleteFormulaComponent(
     receivedComponent: FormulaComponentInterface
   ) {
-    // const splicedArray = newFormulaComponents.splice(receivedIndexFormula, 1);
     const filteredArray = newFormulaComponents.filter(
-      (formula) => formula.ComponentCode !== receivedComponent.ComponentCode
+      (component) => component.ComponentCode !== receivedComponent.ComponentCode
     );
     setNewFormulaComponents(filteredArray);
   }
 
   function handleComponentPigmentSelectChange(
-    event: React.ChangeEvent<HTMLSelectElement>,
+    receivedComponentCode: string,
     receivedIndexComponent: number
   ) {
+    const matchingPigment = fetchedPigments?.find(
+      (pigment) => pigment.code === receivedComponentCode
+    );
+
     const componentsShallowCopy: FormulaComponentInterface[] =
       newFormulaComponents;
     const componentShallowCopy = {
       ...componentsShallowCopy[receivedIndexComponent],
     };
-    componentShallowCopy.ComponentCode = event.target.value;
+    componentShallowCopy.ComponentCode = receivedComponentCode;
+    // THE RECEIVED COMPONENT CODE COMES FROM THE fetchedPigments ARRAY.
+    // THEREFORE, matchingPigment WILL NEVER BE UNDEFINED 👇🏻
+    componentShallowCopy.ComponentDescription = matchingPigment!.description;
     componentsShallowCopy[receivedIndexComponent] = componentShallowCopy;
     setNewFormulaComponents(componentsShallowCopy);
   }
@@ -132,12 +150,6 @@ export default function CreateFormulaModal({
 
   function handleSubmit() {
     setValidationMessage("");
-    // console.log("selectedSeries: ", selectedNewFormulaSeries);
-    // console.log("newFormulaCode: ", newFormulaCode);
-    // console.log("newFormulaDescription: ", newFormulaDescription);
-    // console.log("newFormulaColor: ", newFormulaColor);
-    // console.log("isNewFormulaActive: ", isNewFormulaActive);
-    console.log("newFormulaComponents: ", newFormulaComponents);
 
     if (
       selectedNewFormulaSeries === "" ||
@@ -146,6 +158,15 @@ export default function CreateFormulaModal({
       newFormulaColor === ""
     ) {
       setValidationMessage("Fill out all fields");
+      return;
+    }
+
+    if (
+      newFormulaComponents.some(
+        (formulaComponent) => formulaComponent.ComponentCode === ""
+      )
+    ) {
+      setValidationMessage("Select all pigments");
       return;
     }
 
@@ -158,6 +179,20 @@ export default function CreateFormulaModal({
       );
       return;
     }
+    console.log("newFormulaComponents: ", newFormulaComponents);
+
+    const filledNewFormulaComponents = newFormulaComponents.map((component) => {
+      return {
+        FormulaSerie: selectedNewFormulaSeries,
+        FormulaCode: newFormulaCode,
+        FormulaDescription: newFormulaDescription,
+        ComponentCode: component.ComponentCode,
+        ComponentDescription: component.ComponentDescription,
+        Percentage: component.Percentage,
+        isFormulaActive: isNewFormulaActive,
+      };
+    });
+    console.log("filledNewFormulaComponents: ", filledNewFormulaComponents);
   }
 
   return (
@@ -280,7 +315,10 @@ export default function CreateFormulaModal({
                 {newFormulaComponents.map(
                   (formulaComponent, indexComponent) => {
                     return (
-                      <div key={indexComponent} style={{ display: "flex" }}>
+                      <div
+                        key={formulaComponent.ComponentCode}
+                        style={{ display: "flex" }}
+                      >
                         <Button
                           className="my-auto mr-1"
                           variant="light"
@@ -304,7 +342,7 @@ export default function CreateFormulaModal({
                             value={formulaComponent.ComponentCode}
                             onChange={(event) =>
                               handleComponentPigmentSelectChange(
-                                event,
+                                event.target.value,
                                 indexComponent
                               )
                             }

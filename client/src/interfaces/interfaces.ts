@@ -45,6 +45,7 @@ export interface FormulaComponentInterface {
   ComponentCode: string;
   ComponentDescription: string;
   Percentage: number;
+  isFormulaActive?: boolean;
 }
 
 export interface InkSystemInterface {
