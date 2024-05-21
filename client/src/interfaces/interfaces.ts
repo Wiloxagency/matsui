@@ -1,7 +1,11 @@
 import { ObjectId } from "mongodb";
 
 export interface UserInterface {
-  _id?: ObjectId | any;
+  _id?:
+    | ObjectId
+    | {
+        $oid: string;
+      };
   username: string;
   email: string;
   password: string;
@@ -34,11 +38,12 @@ export interface FormulaInterface {
 }
 
 export interface FormulaComponentInterface {
-  formulaSeries: string;
-  componentCode: string;
-  description: string;
-  cost: number;
-  isActive: boolean;
+  FormulaSerie: string;
+  FormulaCode: string;
+  FormulaDescription: string;
+  ComponentCode: string;
+  ComponentDescription: string;
+  Percentage: number;
 }
 
 export interface InkSystemInterface {
@@ -48,9 +53,11 @@ export interface InkSystemInterface {
 }
 
 export interface PigmentInterface {
-  _id: {
-    $oid: string;
-  };
+  _id:
+    | ObjectId
+    | {
+        $oid: string;
+      };
   code: string;
   description: string;
   serie: string;

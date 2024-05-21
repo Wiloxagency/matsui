@@ -12,10 +12,14 @@ import {
 import { Select, SelectItem } from "@nextui-org/select";
 import { Spinner } from "@nextui-org/spinner";
 import { useState } from "react";
-import { PigmentInterface } from "../../interfaces/interfaces";
+import {
+  FormulaComponentInterface,
+  PigmentInterface,
+} from "../../interfaces/interfaces";
 import "./CreateFormulaModal.scss";
 // import { FaEnvelope, FaLock } from "react-icons/fa";
 import { ChromePicker, ColorResult } from "react-color";
+import { FaTrash } from "react-icons/fa";
 
 interface CreateFormulaModalProps {
   isOpenCreateFormulaModal: boolean;
@@ -38,6 +42,19 @@ export default function CreateFormulaModal({
 
   const [formulaColor, setFormulaColor] = useState<string>("#2dacb8");
 
+  const [newFormulaComponents, setNewFormulaComponents] = useState<
+    FormulaComponentInterface[]
+  >([
+    {
+      FormulaSerie: "",
+      FormulaCode: "",
+      FormulaDescription: "",
+      ComponentCode: "",
+      ComponentDescription: "",
+      Percentage: 0,
+    },
+  ]);
+
   const handleColorPickerChange = (color: ColorResult) => {
     setFormulaColor(color.hex);
   };
@@ -48,6 +65,28 @@ export default function CreateFormulaModal({
     setSelectedNewFormulaSeries(e.target.value);
   };
 
+  function handleAddFormulaComponent() {
+    setNewFormulaComponents((newFormulaComponents) => [
+      ...newFormulaComponents,
+      {
+        FormulaSerie: "",
+        FormulaCode: "",
+        FormulaDescription: "",
+        ComponentCode: "",
+        ComponentDescription: "",
+        Percentage: 0,
+      },
+    ]);
+  }
+
+  function handleDeleteFormulaComponent(receivedIndexFormula: number) {
+    // const splicedArray = newFormulaComponents.splice(receivedIndexFormula, 1);
+    const filteredArray = newFormulaComponents.filter(
+      (formula, indexFormula) => indexFormula !== receivedIndexFormula
+    );
+    setNewFormulaComponents(filteredArray);
+  }
+
   return (
     <>
       <Modal
@@ -55,6 +94,7 @@ export default function CreateFormulaModal({
         onOpenChange={onOpenChangeCreateFormulaModal}
         placement="top-center"
         backdrop="blur"
+        scrollBehavior="outside"
       >
         <ModalContent>
           {(onClose: () => void) => (
@@ -139,45 +179,71 @@ export default function CreateFormulaModal({
 
                 <p className="mx-auto">Components</p>
                 <Divider className="my-1" />
-                <div style={{ display: "flex" }}>
-                  <span style={{ flex: "3", marginRight: "1rem" }}>
-                    <Select
-                      label="Select pigment"
-                      variant="bordered"
-                      radius="full"
-                      //   placeholder="301"
-                      isRequired={true}
-                      required
-                      //   value={selectedNewFormulaSeries}
-                      //   onChange={(e) => handleSelectNewFormulaSeries(e)}
-                    >
-                      {fetchedPigments !== undefined ? (
-                        fetchedPigments.map((pigment) => (
-                          <SelectItem key={pigment.code} value={pigment.code}>
-                            {pigment.code}
-                          </SelectItem>
-                        ))
-                      ) : (
-                        <Spinner className="m-auto" />
-                      )}
-                    </Select>
-                  </span>
-                  <span style={{ flex: "1" }}>
-                    <Input
-                      label="Percentage"
-                      placeholder="0.00"
-                      labelPlacement="inside"
-                      endContent={
-                        <div className="pointer-events-none flex items-center">
-                          <span className="text-default-400 text-small">%</span>
-                        </div>
-                      }
-                      type="number"
-                    />
-                  </span>
-                </div>
 
-                <Button variant="light" color="primary">
+                {newFormulaComponents.map((formulaComponent, indexFormula) => {
+                  return (
+                    <div key={indexFormula} style={{ display: "flex" }}>
+                      <Button
+                        className="my-auto mr-1"
+                        variant="light"
+                        color="danger"
+                        isIconOnly={true}
+                        isDisabled={indexFormula === 0}
+                        onPress={() =>
+                          handleDeleteFormulaComponent(indexFormula)
+                        }
+                      >
+                        <FaTrash></FaTrash>
+                      </Button>
+                      <span style={{ flex: "3", marginRight: "1rem" }}>
+                        <Select
+                          label="Select pigment"
+                          variant="bordered"
+                          radius="full"
+                          //   placeholder="301"
+                          isRequired={true}
+                          required
+                          //   value={selectedNewFormulaSeries}
+                          //   onChange={(e) => handleSelectNewFormulaSeries(e)}
+                        >
+                          {fetchedPigments !== undefined ? (
+                            fetchedPigments.map((pigment) => (
+                              <SelectItem
+                                key={pigment.code}
+                                value={pigment.code}
+                              >
+                                {pigment.code}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <Spinner className="m-auto" />
+                          )}
+                        </Select>
+                      </span>
+                      <span style={{ flex: "1" }}>
+                        <Input
+                          label="Percentage"
+                          placeholder="0.00"
+                          labelPlacement="inside"
+                          endContent={
+                            <div className="pointer-events-none flex items-center">
+                              <span className="text-default-400 text-small">
+                                %
+                              </span>
+                            </div>
+                          }
+                          type="number"
+                        />
+                      </span>
+                    </div>
+                  );
+                })}
+
+                <Button
+                  variant="light"
+                  color="primary"
+                  onPress={handleAddFormulaComponent}
+                >
                   + Add component
                 </Button>
 
