@@ -21,6 +21,7 @@ import "./CreateFormulaModal.scss";
 import { ChromePicker, ColorResult } from "react-color";
 import { FaTrash } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
+import { useMediaQuery } from "react-responsive";
 
 interface CreateFormulaModalProps {
   isOpenCreateFormulaModal: boolean;
@@ -35,6 +36,8 @@ export default function CreateFormulaModal({
   fetchedSeries,
   fetchedPigments,
 }: CreateFormulaModalProps) {
+  const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
+
   const [selectedNewFormulaSeries, setSelectedNewFormulaSeries] =
     useState<string>("301");
 
@@ -168,25 +171,30 @@ export default function CreateFormulaModal({
                 </div>
                 {isColorPickerVisible ? (
                   <div className={"colorPickerPopover"}>
-                    <div
-                      className={"colorPickerCover"}
-                      onClick={() => setIsColorPickerVisible(false)}
-                    />
+                    {!isMobile && (
+                      <div
+                        className={"colorPickerCover"}
+                        onClick={() => setIsColorPickerVisible(false)}
+                      />
+                    )}
+
                     <ChromePicker
                       color={formulaColor}
                       disableAlpha={true}
                       onChange={handleColorPickerChange}
                     />
-                    <span className="closeColorPickerButton">
-                      <Button
-                        isIconOnly={true}
-                        color="danger"
-                        size="sm"
-                        onPress={() => setIsColorPickerVisible(false)}
-                      >
-                        <FaX></FaX>
-                      </Button>
-                    </span>
+                    {isMobile && (
+                      <span className="closeColorPickerButton">
+                        <Button
+                          isIconOnly={true}
+                          color="danger"
+                          size="sm"
+                          onPress={() => setIsColorPickerVisible(false)}
+                        >
+                          <FaX></FaX>
+                        </Button>
+                      </span>
+                    )}
                   </div>
                 ) : null}
 
