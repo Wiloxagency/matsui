@@ -20,6 +20,7 @@ import "./CreateFormulaModal.scss";
 // import { FaEnvelope, FaLock } from "react-icons/fa";
 import { ChromePicker, ColorResult } from "react-color";
 import { FaTrash } from "react-icons/fa";
+import { FaX } from "react-icons/fa6";
 
 interface CreateFormulaModalProps {
   isOpenCreateFormulaModal: boolean;
@@ -176,6 +177,16 @@ export default function CreateFormulaModal({
                       disableAlpha={true}
                       onChange={handleColorPickerChange}
                     />
+                    <span className="closeColorPickerButton">
+                      <Button
+                        isIconOnly={true}
+                        color="danger"
+                        size="sm"
+                        onPress={() => setIsColorPickerVisible(false)}
+                      >
+                        <FaX></FaX>
+                      </Button>
+                    </span>
                   </div>
                 ) : null}
 
