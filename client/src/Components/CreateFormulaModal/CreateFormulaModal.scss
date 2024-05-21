@@ -1,0 +1,31 @@
+.colorPickerPopover {
+    position : absolute;
+    z-index  : 10;
+    left     : 50%;
+    top      : 40%;
+    transform: translate3d(-50%, -50%, 0)
+}
+
+.colorPickerCover {
+    position: absolute;
+    width   : 100vw;
+    height  : 100vh;
+    left    : -250%;
+    top     : -250px;
+}
+
+.formulaColorPreview {
+    margin-block : auto;
+    margin-right : 1rem;
+    width        : 2.25rem;
+    height       : 2.25rem;
+    border-radius: .7rem;
+    border       : 2px solid rgba(128, 128, 128, 0.49);
+    padding      : .14rem;
+    cursor       : pointer;
+    transition   : .2s;
+}
+
+.formulaColorPreview:hover {
+    border-radius: .1rem;
+}

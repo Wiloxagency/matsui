@@ -1,19 +1,21 @@
 import { Button } from "@nextui-org/button";
 import { Checkbox } from "@nextui-org/checkbox";
+import { Divider } from "@nextui-org/divider";
 import { Input } from "@nextui-org/input";
 import {
   Modal,
-  ModalContent,
-  ModalHeader,
   ModalBody,
+  ModalContent,
   ModalFooter,
-  //   useDisclosure,
+  ModalHeader,
 } from "@nextui-org/modal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Spinner } from "@nextui-org/spinner";
 import { useState } from "react";
 import { PigmentInterface } from "../../interfaces/interfaces";
+import "./CreateFormulaModal.scss";
 // import { FaEnvelope, FaLock } from "react-icons/fa";
+import { ChromePicker, ColorResult } from "react-color";
 
 interface CreateFormulaModalProps {
   isOpenCreateFormulaModal: boolean;
@@ -30,6 +32,15 @@ export default function CreateFormulaModal({
 }: CreateFormulaModalProps) {
   const [selectedNewFormulaSeries, setSelectedNewFormulaSeries] =
     useState<string>("301");
+
+  const [isColorPickerVisible, setIsColorPickerVisible] =
+    useState<boolean>(false);
+
+  const [formulaColor, setFormulaColor] = useState<string>("#2dacb8");
+
+  const handleColorPickerChange = (color: ColorResult) => {
+    setFormulaColor(color.hex);
+  };
 
   const handleSelectNewFormulaSeries = (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -58,7 +69,6 @@ export default function CreateFormulaModal({
                   radius="full"
                   //   placeholder="301"
                   isRequired={true}
-                  required
                   value={selectedNewFormulaSeries}
                   onChange={(e) => handleSelectNewFormulaSeries(e)}
                 >
@@ -82,6 +92,7 @@ export default function CreateFormulaModal({
                   label="Formula code"
                   placeholder="Ex: 100 C"
                   variant="bordered"
+                  isRequired={true}
                 />
                 <Input
                   //   endContent={
@@ -90,27 +101,86 @@ export default function CreateFormulaModal({
                   label="Formula description"
                   placeholder="Ex: 301 OW NEO 100 C"
                   variant="bordered"
-                />
-                <Select
-                  label="Select pigment"
-                  variant="bordered"
-                  radius="full"
-                  //   placeholder="301"
                   isRequired={true}
-                  required
-                  //   value={selectedNewFormulaSeries}
-                  //   onChange={(e) => handleSelectNewFormulaSeries(e)}
-                >
-                  {fetchedPigments !== undefined ? (
-                    fetchedPigments.map((pigment) => (
-                      <SelectItem key={pigment.code} value={pigment.code}>
-                        {pigment.code}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <Spinner className="m-auto" />
-                  )}
-                </Select>
+                />
+
+                <div style={{ display: "flex" }}>
+                  <span
+                    className="formulaColorPreview"
+                    style={{ background: `${formulaColor} content-box` }}
+                    onClick={() =>
+                      setIsColorPickerVisible(!isColorPickerVisible)
+                    }
+                  ></span>
+
+                  <Button
+                    color="primary"
+                    variant="light"
+                    onPress={() =>
+                      setIsColorPickerVisible(!isColorPickerVisible)
+                    }
+                  >
+                    Choose formula color
+                  </Button>
+                </div>
+                {isColorPickerVisible ? (
+                  <div className={"colorPickerPopover"}>
+                    <div
+                      className={"colorPickerCover"}
+                      onClick={() => setIsColorPickerVisible(false)}
+                    />
+                    <ChromePicker
+                      color={formulaColor}
+                      disableAlpha={true}
+                      onChange={handleColorPickerChange}
+                    />
+                  </div>
+                ) : null}
+
+                <p className="mx-auto">Components</p>
+                <Divider className="my-1" />
+                <div style={{ display: "flex" }}>
+                  <span style={{ flex: "3", marginRight: "1rem" }}>
+                    <Select
+                      label="Select pigment"
+                      variant="bordered"
+                      radius="full"
+                      //   placeholder="301"
+                      isRequired={true}
+                      required
+                      //   value={selectedNewFormulaSeries}
+                      //   onChange={(e) => handleSelectNewFormulaSeries(e)}
+                    >
+                      {fetchedPigments !== undefined ? (
+                        fetchedPigments.map((pigment) => (
+                          <SelectItem key={pigment.code} value={pigment.code}>
+                            {pigment.code}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <Spinner className="m-auto" />
+                      )}
+                    </Select>
+                  </span>
+                  <span style={{ flex: "1" }}>
+                    <Input
+                      label="Percentage"
+                      placeholder="0.00"
+                      labelPlacement="inside"
+                      endContent={
+                        <div className="pointer-events-none flex items-center">
+                          <span className="text-default-400 text-small">%</span>
+                        </div>
+                      }
+                      type="number"
+                    />
+                  </span>
+                </div>
+
+                <Button variant="light" color="primary">
+                  + Add component
+                </Button>
+
                 <div className="flex py-2 px-1 justify-between">
                   <Checkbox
                     classNames={{
