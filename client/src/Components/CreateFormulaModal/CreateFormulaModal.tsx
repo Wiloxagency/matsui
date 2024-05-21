@@ -39,12 +39,17 @@ export default function CreateFormulaModal({
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
   const [selectedNewFormulaSeries, setSelectedNewFormulaSeries] =
-    useState<string>("301");
+    useState<string>("");
+
+  const [newFormulaCode, setNewFormulaCode] = useState<string>("");
+
+  const [newFormulaDescription, setNewFormulaDescription] =
+    useState<string>("");
 
   const [isColorPickerVisible, setIsColorPickerVisible] =
     useState<boolean>(false);
 
-  const [formulaColor, setFormulaColor] = useState<string>("#2dacb8");
+  const [newFormulaColor, setNewFormulaColor] = useState<string>("#2dacb8");
 
   const [newFormulaComponents, setNewFormulaComponents] = useState<
     FormulaComponentInterface[]
@@ -59,8 +64,12 @@ export default function CreateFormulaModal({
     },
   ]);
 
+  const [isNewFormulaActive, setIsNewFormulaActive] = useState<boolean>(true);
+
+  const [validationMessage, setValidationMessage] = useState<string>("");
+
   const handleColorPickerChange = (color: ColorResult) => {
-    setFormulaColor(color.hex);
+    setNewFormulaColor(color.hex);
   };
 
   const handleSelectNewFormulaSeries = (
@@ -93,6 +102,64 @@ export default function CreateFormulaModal({
     setNewFormulaComponents(filteredArray);
   }
 
+  function handleComponentPigmentSelectChange(
+    event: React.ChangeEvent<HTMLSelectElement>,
+    receivedIndexComponent: number
+  ) {
+    const componentsShallowCopy: FormulaComponentInterface[] =
+      newFormulaComponents;
+    const componentShallowCopy = {
+      ...componentsShallowCopy[receivedIndexComponent],
+    };
+    componentShallowCopy.ComponentCode = event.target.value;
+    componentsShallowCopy[receivedIndexComponent] = componentShallowCopy;
+    setNewFormulaComponents(componentsShallowCopy);
+  }
+
+  function handleComponentPercentageChange(
+    value: number,
+    receivedIndexComponent: number
+  ) {
+    const componentsShallowCopy: FormulaComponentInterface[] =
+      newFormulaComponents;
+    const componentShallowCopy = {
+      ...componentsShallowCopy[receivedIndexComponent],
+    };
+    componentShallowCopy.Percentage = value;
+    componentsShallowCopy[receivedIndexComponent] = componentShallowCopy;
+    setNewFormulaComponents(componentsShallowCopy);
+  }
+
+  function handleSubmit() {
+    setValidationMessage("");
+    // console.log("selectedSeries: ", selectedNewFormulaSeries);
+    // console.log("newFormulaCode: ", newFormulaCode);
+    // console.log("newFormulaDescription: ", newFormulaDescription);
+    // console.log("newFormulaColor: ", newFormulaColor);
+    // console.log("isNewFormulaActive: ", isNewFormulaActive);
+    console.log("newFormulaComponents: ", newFormulaComponents);
+
+    if (
+      selectedNewFormulaSeries === "" ||
+      newFormulaCode === "" ||
+      newFormulaDescription === "" ||
+      newFormulaColor === ""
+    ) {
+      setValidationMessage("Fill out all fields");
+      return;
+    }
+
+    const totalPercentages = newFormulaComponents
+      .map((component) => component.Percentage)
+      .reduce((a, b) => a + b);
+    if (totalPercentages !== 100) {
+      setValidationMessage(
+        `Component percentages must add up to exactly 100. Current value is ${totalPercentages}`
+      );
+      return;
+    }
+  }
+
   return (
     <>
       <Modal
@@ -109,6 +176,7 @@ export default function CreateFormulaModal({
                 Create new formula
               </ModalHeader>
               <ModalBody>
+                {/* <form> */}
                 <Select
                   label="Select series"
                   variant="bordered"
@@ -139,6 +207,10 @@ export default function CreateFormulaModal({
                   placeholder="Ex: 100 C"
                   variant="bordered"
                   isRequired={true}
+                  value={newFormulaCode}
+                  onChange={(event) => {
+                    setNewFormulaCode(event.target.value);
+                  }}
                 />
                 <Input
                   //   endContent={
@@ -148,12 +220,16 @@ export default function CreateFormulaModal({
                   placeholder="Ex: 301 OW NEO 100 C"
                   variant="bordered"
                   isRequired={true}
+                  value={newFormulaDescription}
+                  onChange={(event) => {
+                    setNewFormulaDescription(event.target.value);
+                  }}
                 />
 
                 <div style={{ display: "flex" }}>
                   <span
                     className="formulaColorPreview"
-                    style={{ background: `${formulaColor} content-box` }}
+                    style={{ background: `${newFormulaColor} content-box` }}
                     onClick={() =>
                       setIsColorPickerVisible(!isColorPickerVisible)
                     }
@@ -179,7 +255,7 @@ export default function CreateFormulaModal({
                     )}
 
                     <ChromePicker
-                      color={formulaColor}
+                      color={newFormulaColor}
                       disableAlpha={true}
                       onChange={handleColorPickerChange}
                     />
@@ -201,64 +277,81 @@ export default function CreateFormulaModal({
                 <p className="mx-auto">Components</p>
                 <Divider className="my-1" />
 
-                {newFormulaComponents.map((formulaComponent, indexFormula) => {
-                  return (
-                    <div key={indexFormula} style={{ display: "flex" }}>
-                      <Button
-                        className="my-auto mr-1"
-                        variant="light"
-                        color="danger"
-                        isIconOnly={true}
-                        isDisabled={indexFormula === 0}
-                        onPress={() =>
-                          handleDeleteFormulaComponent(formulaComponent)
-                        }
-                      >
-                        <FaTrash></FaTrash>
-                      </Button>
-                      <span style={{ flex: "3", marginRight: "1rem" }}>
-                        <Select
-                          label="Select pigment"
-                          variant="bordered"
-                          radius="full"
-                          //   placeholder="301"
-                          isRequired={true}
-                          required
-                          value={formulaComponent.ComponentCode}
-                          //   onChange={(e) => handleSelectNewFormulaSeries(e)}
-                        >
-                          {fetchedPigments !== undefined ? (
-                            fetchedPigments.map((pigment) => (
-                              <SelectItem
-                                key={pigment.code}
-                                value={pigment.code}
-                              >
-                                {pigment.code}
-                              </SelectItem>
-                            ))
-                          ) : (
-                            <Spinner className="m-auto" />
-                          )}
-                        </Select>
-                      </span>
-                      <span style={{ flex: "1" }}>
-                        <Input
-                          label="Percentage"
-                          placeholder="0.00"
-                          labelPlacement="inside"
-                          endContent={
-                            <div className="pointer-events-none flex items-center">
-                              <span className="text-default-400 text-small">
-                                %
-                              </span>
-                            </div>
+                {newFormulaComponents.map(
+                  (formulaComponent, indexComponent) => {
+                    return (
+                      <div key={indexComponent} style={{ display: "flex" }}>
+                        <Button
+                          className="my-auto mr-1"
+                          variant="light"
+                          color="danger"
+                          isIconOnly={true}
+                          isDisabled={indexComponent === 0}
+                          onPress={() =>
+                            handleDeleteFormulaComponent(formulaComponent)
                           }
-                          type="number"
-                        />
-                      </span>
-                    </div>
-                  );
-                })}
+                        >
+                          <FaTrash></FaTrash>
+                        </Button>
+                        <span style={{ flex: "3", marginRight: "1rem" }}>
+                          <Select
+                            label="Select pigment"
+                            variant="bordered"
+                            radius="full"
+                            //   placeholder="301"
+                            isRequired={true}
+                            required
+                            value={formulaComponent.ComponentCode}
+                            onChange={(event) =>
+                              handleComponentPigmentSelectChange(
+                                event,
+                                indexComponent
+                              )
+                            }
+                          >
+                            {fetchedPigments !== undefined ? (
+                              fetchedPigments.map((pigment) => (
+                                <SelectItem
+                                  key={pigment.code}
+                                  value={pigment.code}
+                                >
+                                  {pigment.code}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <Spinner className="m-auto" />
+                            )}
+                          </Select>
+                        </span>
+                        <span style={{ flex: "1.4" }}>
+                          <Input
+                            type="number"
+                            min={0}
+                            max={100}
+                            step={0.001}
+                            label="Percentage"
+                            placeholder="0.000"
+                            labelPlacement="inside"
+                            // value={formulaComponent.Percentage.toString()}
+                            onValueChange={(value) => {
+                              handleComponentPercentageChange(
+                                Number(value),
+                                indexComponent
+                              );
+                            }}
+                            endContent={
+                              <div className="pointer-events-none flex items-center">
+                                <span className="text-default-400 text-small">
+                                  %
+                                </span>
+                              </div>
+                            }
+                          />
+                        </span>
+                      </div>
+                    );
+                  }
+                )}
 
                 <Button
                   variant="light"
@@ -273,6 +366,11 @@ export default function CreateFormulaModal({
                     classNames={{
                       label: "text-small",
                     }}
+                    radius="full"
+                    isSelected={isNewFormulaActive}
+                    onValueChange={(value) => {
+                      setIsNewFormulaActive(value);
+                    }}
                   >
                     Is formula active?
                   </Checkbox>
@@ -280,16 +378,23 @@ export default function CreateFormulaModal({
                     Forgot password?
                   </a> */}
                 </div>
+                {/* </form> */}
+                <p
+                  style={{ color: "red", textAlign: "center" }}
+                  className={
+                    validationMessage !== ""
+                      ? "validationErrorMessage active"
+                      : "validationErrorMessage"
+                  }
+                >
+                  {validationMessage}
+                </p>
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="flat" onPress={onClose}>
                   Close
                 </Button>
-                <Button
-                  color="primary"
-                  //  type="submit"
-                  onPress={onClose}
-                >
+                <Button color="primary" type="submit" onPress={handleSubmit}>
                   Create
                 </Button>
               </ModalFooter>

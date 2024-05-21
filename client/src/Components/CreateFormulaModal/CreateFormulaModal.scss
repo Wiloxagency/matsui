@@ -35,3 +35,15 @@
     top     : -2rem;
     right   : -2rem;
 }
+
+.validationErrorMessage {
+    min-height    : 0;
+    max-height    : 0;
+    overflow  : hidden;
+    transition: .3s;
+}
+
+.validationErrorMessage.active {
+    min-height: 2rem;
+    max-height: 3rem;
+}
