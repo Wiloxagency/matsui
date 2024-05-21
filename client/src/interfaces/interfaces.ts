@@ -5,7 +5,8 @@ export interface UserInterface {
     | ObjectId
     | {
         $oid: string;
-      };
+      }
+    | any;
   username: string;
   email: string;
   password: string;
@@ -57,7 +58,8 @@ export interface PigmentInterface {
     | ObjectId
     | {
         $oid: string;
-      };
+      }
+    | any;
   code: string;
   description: string;
   serie: string;

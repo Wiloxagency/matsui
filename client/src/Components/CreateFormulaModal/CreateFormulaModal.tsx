@@ -79,10 +79,12 @@ export default function CreateFormulaModal({
     ]);
   }
 
-  function handleDeleteFormulaComponent(receivedIndexFormula: number) {
+  function handleDeleteFormulaComponent(
+    receivedComponent: FormulaComponentInterface
+  ) {
     // const splicedArray = newFormulaComponents.splice(receivedIndexFormula, 1);
     const filteredArray = newFormulaComponents.filter(
-      (formula, indexFormula) => indexFormula !== receivedIndexFormula
+      (formula) => formula.ComponentCode !== receivedComponent.ComponentCode
     );
     setNewFormulaComponents(filteredArray);
   }
@@ -190,7 +192,7 @@ export default function CreateFormulaModal({
                         isIconOnly={true}
                         isDisabled={indexFormula === 0}
                         onPress={() =>
-                          handleDeleteFormulaComponent(indexFormula)
+                          handleDeleteFormulaComponent(formulaComponent)
                         }
                       >
                         <FaTrash></FaTrash>
@@ -203,7 +205,7 @@ export default function CreateFormulaModal({
                           //   placeholder="301"
                           isRequired={true}
                           required
-                          //   value={selectedNewFormulaSeries}
+                          value={formulaComponent.ComponentCode}
                           //   onChange={(e) => handleSelectNewFormulaSeries(e)}
                         >
                           {fetchedPigments !== undefined ? (
