@@ -11,7 +11,7 @@ import {
 } from "@nextui-org/modal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Spinner } from "@nextui-org/spinner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FormulaComponentInterface,
   PigmentInterface,
@@ -22,6 +22,7 @@ import { ChromePicker, ColorResult } from "react-color";
 import { FaTrash } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import { useMediaQuery } from "react-responsive";
+import { Tooltip } from "@nextui-org/tooltip";
 
 interface CreateFormulaModalProps {
   isOpenCreateFormulaModal: boolean;
@@ -78,41 +79,6 @@ export default function CreateFormulaModal({
     setSelectedNewFormulaSeries(e.target.value);
   };
 
-  function handleAddFormulaComponent() {
-    console.log(newFormulaComponents);
-    setValidationMessage("");
-
-    if (
-      newFormulaComponents.some(
-        (formulaComponent) => formulaComponent.ComponentCode === ""
-      )
-    ) {
-      setValidationMessage("Assign all pigments before adding a new component");
-      return;
-    }
-
-    setNewFormulaComponents((newFormulaComponents) => [
-      ...newFormulaComponents,
-      {
-        FormulaSerie: "",
-        FormulaCode: "",
-        FormulaDescription: "",
-        ComponentCode: "",
-        ComponentDescription: "",
-        Percentage: 0,
-      },
-    ]);
-  }
-
-  function handleDeleteFormulaComponent(
-    receivedComponent: FormulaComponentInterface
-  ) {
-    const filteredArray = newFormulaComponents.filter(
-      (component) => component.ComponentCode !== receivedComponent.ComponentCode
-    );
-    setNewFormulaComponents(filteredArray);
-  }
-
   function handleComponentPigmentSelectChange(
     receivedComponentCode: string,
     receivedIndexComponent: number
@@ -131,7 +97,7 @@ export default function CreateFormulaModal({
     // THEREFORE, matchingPigment WILL NEVER BE UNDEFINED 👇🏻
     componentShallowCopy.ComponentDescription = matchingPigment!.description;
     componentsShallowCopy[receivedIndexComponent] = componentShallowCopy;
-    setNewFormulaComponents(componentsShallowCopy);
+    setNewFormulaComponents([...componentsShallowCopy]);
   }
 
   function handleComponentPercentageChange(
@@ -146,6 +112,63 @@ export default function CreateFormulaModal({
     componentShallowCopy.Percentage = value;
     componentsShallowCopy[receivedIndexComponent] = componentShallowCopy;
     setNewFormulaComponents(componentsShallowCopy);
+  }
+
+  function handleAddFormulaComponent() {
+    setValidationMessage("");
+
+    if (
+      newFormulaComponents.some(
+        (formulaComponent) => formulaComponent.ComponentCode === ""
+      )
+    ) {
+      setValidationMessage("Assign all pigments before adding a new component");
+      return;
+    }
+    console.log("BEFORE newFormulaComponents: ", newFormulaComponents);
+
+    setNewFormulaComponents((newFormulaComponents) => [
+      ...newFormulaComponents,
+      {
+        FormulaSerie: "",
+        FormulaCode: "",
+        FormulaDescription: "",
+        ComponentCode: "",
+        ComponentDescription: "",
+        Percentage: 0,
+      },
+    ]);
+  }
+
+  useEffect(() => {
+    console.log(newFormulaComponents);
+  }, [newFormulaComponents]);
+
+  function handleDeleteFormulaComponent(
+    receivedComponent: FormulaComponentInterface
+  ) {
+    const filteredArray = newFormulaComponents.filter(
+      (component) => component.ComponentCode !== receivedComponent.ComponentCode
+    );
+    setNewFormulaComponents(filteredArray);
+  }
+
+  function handleReset() {
+    setValidationMessage("");
+    setSelectedNewFormulaSeries("");
+    setNewFormulaCode("");
+    setNewFormulaDescription("");
+    setNewFormulaColor("#2dacb8");
+    setNewFormulaComponents([
+      {
+        FormulaSerie: "",
+        FormulaCode: "",
+        FormulaDescription: "",
+        ComponentCode: "",
+        ComponentDescription: "",
+        Percentage: 0,
+      },
+    ]);
   }
 
   function handleSubmit() {
@@ -339,7 +362,7 @@ export default function CreateFormulaModal({
                             //   placeholder="301"
                             isRequired={true}
                             required
-                            value={formulaComponent.ComponentCode}
+                            selectedKeys={[formulaComponent.ComponentCode]}
                             onChange={(event) =>
                               handleComponentPigmentSelectChange(
                                 event.target.value,
@@ -429,7 +452,28 @@ export default function CreateFormulaModal({
                 </p>
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="flat" onPress={onClose}>
+                <Tooltip
+                  content={
+                    <div className="px-1 py-2 text-center">
+                      <div className="text-small font-bold ml-auto">
+                        ARE YOU SURE?
+                      </div>
+                      <div className="text-tiny">
+                        Clicking this button will revert all changes made
+                      </div>
+                    </div>
+                  }
+                >
+                  <Button
+                    color="danger"
+                    variant="light"
+                    className="mr-auto"
+                    onPress={handleReset}
+                  >
+                    Reset fields
+                  </Button>
+                </Tooltip>
+                <Button color="default" variant="flat" onPress={onClose}>
                   Close
                 </Button>
                 <Button color="primary" type="submit" onPress={handleSubmit}>
