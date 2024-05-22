@@ -55,6 +55,13 @@ export const api = createApi({
     getFormulaSwatchColors: builder.query<Array<FormulaSwatchInterface>, void>({
       query: () => "components/GetFormulaSwatchColors",
     }),
+    addFormula: builder.mutation<void, FormulaComponentInterface[]>({
+      query: (payload) => ({
+        url: "components/CreateFormula",
+        method: "POST",
+        body: payload,
+      }),
+    }),
   }),
 });
 
@@ -67,4 +74,5 @@ export const {
   useGetCodesOfFormulasInSeriesQuery,
   useGetPigmentsQuery,
   useGetFormulaSwatchColorsQuery,
+  useAddFormulaMutation,
 } = api;

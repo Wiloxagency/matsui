@@ -23,6 +23,7 @@ import { FaTrash } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import { useMediaQuery } from "react-responsive";
 import { Tooltip } from "@nextui-org/tooltip";
+import { useAddFormulaMutation } from "../../State/api";
 
 interface CreateFormulaModalProps {
   isOpenCreateFormulaModal: boolean;
@@ -68,6 +69,8 @@ export default function CreateFormulaModal({
   const [isNewFormulaActive, setIsNewFormulaActive] = useState<boolean>(true);
 
   const [validationMessage, setValidationMessage] = useState<string>("");
+
+  const [addFormula] = useAddFormulaMutation();
 
   const handleColorPickerChange = (color: ColorResult) => {
     setNewFormulaColor(color.hex);
@@ -167,7 +170,7 @@ export default function CreateFormulaModal({
     ]);
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     setValidationMessage("");
 
     if (
@@ -208,10 +211,12 @@ export default function CreateFormulaModal({
         ComponentDescription: component.ComponentDescription,
         Percentage: component.Percentage,
         isFormulaActive: isNewFormulaActive,
-        swatchColor: newFormulaColor
+        swatchColor: newFormulaColor,
       };
     });
     console.log("filledNewFormulaComponents: ", filledNewFormulaComponents);
+
+    await addFormula(filledNewFormulaComponents);
   }
 
   useEffect(() => {

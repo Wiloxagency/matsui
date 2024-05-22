@@ -15,3 +15,8 @@ export interface UserInterface {
 export interface FormulaInterface {}
 
 export interface ColorInterface {}
+
+export interface FormulaSwatchInterface {
+  formulaCode: string;
+  formulaColor: string;
+}

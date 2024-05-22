@@ -1,5 +1,6 @@
 import { Request, Response, Router } from "express";
 import { createMongoDBConnection } from "../shared/mongodbConfig";
+import { FormulaSwatchInterface } from "../interfaces/interfaces";
 
 const router = Router();
 
@@ -145,6 +146,19 @@ router.get("/GetFormulaSwatchColors", async (req: Request, res: Response) => {
     .limit(20)
     .toArray();
   res.json(allFormulaSwatchColors);
+});
+
+router.post("/CreateFormula", async (req: Request, res: Response) => {
+  const db = await createMongoDBConnection();
+  const formulaSwatchColors = db.collection("formulaSwatchColors");
+  const components = db.collection("components");
+  const newFormulaSwatch: FormulaSwatchInterface = {
+    formulaCode: req.body[0].FormulaCode,
+    formulaColor: req.body[0].swatchColor.replace("#",""),
+  };
+  await formulaSwatchColors.insertOne(newFormulaSwatch);
+  await components.insertMany(req.body);
+  res.json("Received");
 });
 
 export default router;
