@@ -40,6 +40,7 @@ export default function Formulas() {
   const {
     data: fetchedFormulaSwatchColors,
     isSuccess: isGetFormulaSwatchColorsSuccessful,
+    refetch: refetchFormulaSwatchColors
   } = useGetFormulaSwatchColorsQuery();
 
   const {
@@ -159,6 +160,7 @@ export default function Formulas() {
         onOpenChangeCreateFormulaModal={onOpenChangeCreateFormulaModal}
         fetchedSeries={fetchedSeries}
         fetchedPigments={fetchedPigments}
+        refetchFormulaSwatchColors={refetchFormulaSwatchColors}
       />
       <div className="formulasSection" style={{ gridArea: "a" }}>
         <div className="sectionHeader">

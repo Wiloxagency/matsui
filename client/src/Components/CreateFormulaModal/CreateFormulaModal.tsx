@@ -24,12 +24,15 @@ import { FaX } from "react-icons/fa6";
 import { useMediaQuery } from "react-responsive";
 import { Tooltip } from "@nextui-org/tooltip";
 import { useAddFormulaMutation } from "../../State/api";
+import { Flip, ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface CreateFormulaModalProps {
   isOpenCreateFormulaModal: boolean;
-  onOpenChangeCreateFormulaModal: () => void;
+  onOpenChangeCreateFormulaModal: (value: boolean) => void;
   fetchedSeries: { seriesName: string }[] | undefined;
   fetchedPigments: PigmentInterface[] | undefined;
+  refetchFormulaSwatchColors: () => void;
 }
 
 export default function CreateFormulaModal({
@@ -37,6 +40,7 @@ export default function CreateFormulaModal({
   onOpenChangeCreateFormulaModal,
   fetchedSeries,
   fetchedPigments,
+  refetchFormulaSwatchColors,
 }: CreateFormulaModalProps) {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
@@ -71,6 +75,8 @@ export default function CreateFormulaModal({
   const [validationMessage, setValidationMessage] = useState<string>("");
 
   const [addFormula] = useAddFormulaMutation();
+
+  const triggerAddedFormulaNotification = () => toast("🎨 Formula added!");
 
   const handleColorPickerChange = (color: ColorResult) => {
     setNewFormulaColor(color.hex);
@@ -214,9 +220,13 @@ export default function CreateFormulaModal({
         swatchColor: newFormulaColor,
       };
     });
-    console.log("filledNewFormulaComponents: ", filledNewFormulaComponents);
+    // console.log("filledNewFormulaComponents: ", filledNewFormulaComponents);
 
     await addFormula(filledNewFormulaComponents);
+    refetchFormulaSwatchColors();
+    handleReset();
+    onOpenChangeCreateFormulaModal(false);
+    triggerAddedFormulaNotification();
   }
 
   useEffect(() => {
@@ -225,6 +235,7 @@ export default function CreateFormulaModal({
 
   return (
     <>
+      <ToastContainer transition={Flip} />
       <Modal
         isOpen={isOpenCreateFormulaModal}
         onOpenChange={onOpenChangeCreateFormulaModal}
