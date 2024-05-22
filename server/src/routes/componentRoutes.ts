@@ -101,7 +101,7 @@ router.get("/GetSeries", async (req: Request, res: Response) => {
 });
 
 router.get(
-  "/GetSeriesFormulaCodes/:seriesName",
+  "/GetCodesOfFormulasInSeries/:seriesName",
   async (req: Request, res: Response) => {
     const db = await createMongoDBConnection();
     const components = db.collection("components");
@@ -134,6 +134,17 @@ router.get("/GetPigments", async (req: Request, res: Response) => {
   const pigments = db.collection("pigments");
   const allPigments = await pigments.find().toArray();
   res.json(allPigments);
+});
+
+router.get("/GetFormulaSwatchColors", async (req: Request, res: Response) => {
+  const db = await createMongoDBConnection();
+  const formulaSwatchColors = db.collection("formulaSwatchColors");
+  const allFormulaSwatchColors = await formulaSwatchColors
+    .find()
+    .sort({ _id: -1 })
+    .limit(20)
+    .toArray();
+  res.json(allFormulaSwatchColors);
 });
 
 export default router;

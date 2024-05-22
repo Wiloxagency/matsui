@@ -1,7 +1,13 @@
 import "./Formulas.scss";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { api, useGetInkSystemsQuery, useGetPigmentsQuery, useGetSeriesQuery } from "../../State/api";
+import {
+  api,
+  useGetFormulaSwatchColorsQuery,
+  useGetInkSystemsQuery,
+  useGetPigmentsQuery,
+  useGetSeriesQuery,
+} from "../../State/api";
 import { FormulaInterface } from "../../interfaces/interfaces";
 import { Input } from "@nextui-org/input";
 import { Select, SelectItem } from "@nextui-org/select";
@@ -18,6 +24,7 @@ export default function Formulas() {
   const [formulasInSeries, setFormulasInSeries] = useState<
     string[] | undefined
   >(undefined);
+  formulasInSeries;
 
   const [selectedSeries, setSelectedSeries] = useState<string>("301");
 
@@ -31,14 +38,17 @@ export default function Formulas() {
   //   useGetFormulasQuery();
 
   const {
+    data: fetchedFormulaSwatchColors,
+    isSuccess: isGetFormulaSwatchColorsSuccessful,
+  } = useGetFormulaSwatchColorsQuery();
+
+  const {
     data: fetchedInkSystems,
     isLoading: isGetInkSystemsLoading,
     isSuccess: isGetInkSystemsSuccessful,
   } = useGetInkSystemsQuery();
-  
-  const {
-    data: fetchedPigments
-  } = useGetPigmentsQuery();
+
+  const { data: fetchedPigments } = useGetPigmentsQuery();
 
   const {
     data: fetchedSeries,
@@ -91,7 +101,7 @@ export default function Formulas() {
   } = useDisclosure();
 
   const [trigger, { data }] =
-    api.endpoints.getSeriesFormulaCodes.useLazyQuery();
+    api.endpoints.getCodesOfFormulasInSeries.useLazyQuery();
 
   const handleFormulaUnitSelectionChange = (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -100,11 +110,12 @@ export default function Formulas() {
   };
 
   const handleSelectSeries = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    return;
     setSelectedSeries(e.target.value);
 
     trigger(selectedSeries).then((response) => {
-      console.log("response: ", response.data);
-      console.log("data: ", data);
+      response;
+      data;
     });
   };
 
@@ -115,6 +126,7 @@ export default function Formulas() {
   // }, [fetchedFormulas, isGetFormulasSuccessful]);
 
   useEffect(() => {
+    return;
     setFormulasInSeries(undefined);
 
     trigger(selectedSeries).then((response) => {
@@ -237,9 +249,10 @@ export default function Formulas() {
             <label style={{ margin: "0 1rem 0 .5rem" }}>COMPANY FORMULAS</label>
           </div>
           <div className="swatchesComponentContainer">
-            {formulasInSeries !== undefined ? (
+            {isGetFormulaSwatchColorsSuccessful ? (
               <Swatches
-                formulas={formulasInSeries}
+                // formulas={formulasInSeries}
+                formulaSwatches={fetchedFormulaSwatchColors}
                 selectedFormula={selectedFormula}
                 setSelectedFormula={setSelectedFormula}
                 selectedSeries={selectedSeries}

@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
   FormulaComponentInterface,
   FormulaInterface,
+  FormulaSwatchInterface,
   InkSystemInterface,
   PigmentInterface,
   UserInterface,
@@ -44,11 +45,15 @@ export const api = createApi({
     getSeries: builder.query<Array<{ seriesName: string }>, void>({
       query: () => "components/GetSeries",
     }),
-    getSeriesFormulaCodes: builder.query<Array<string>, string>({
-      query: (seriesName) => "components/GetSeriesFormulaCodes/" + seriesName,
+    getCodesOfFormulasInSeries: builder.query<Array<string>, string>({
+      query: (seriesName) =>
+        "components/GetCodesOfFormulasInSeries/" + seriesName,
     }),
     getPigments: builder.query<Array<PigmentInterface>, void>({
       query: () => "components/GetPigments",
+    }),
+    getFormulaSwatchColors: builder.query<Array<FormulaSwatchInterface>, void>({
+      query: () => "components/GetFormulaSwatchColors",
     }),
   }),
 });
@@ -59,6 +64,7 @@ export const {
   useGetGivenComponentsQuery,
   useGetSeriesQuery,
   useGetInkSystemsQuery,
-  useGetSeriesFormulaCodesQuery,
+  useGetCodesOfFormulasInSeriesQuery,
   useGetPigmentsQuery,
+  useGetFormulaSwatchColorsQuery,
 } = api;

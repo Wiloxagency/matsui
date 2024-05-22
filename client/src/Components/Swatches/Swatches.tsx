@@ -3,43 +3,44 @@ import "./Swatches.scss";
 // import returnTemporaryFormulas from "./TempFormulas";
 import {
   FormulaInterface,
+  FormulaSwatchInterface,
   // FormulaSwatchInterface,
 } from "../../interfaces/interfaces";
-import { formulaColors, formulaNames } from "../../State/formulaNames";
+// import { formulaColors, formulaNames } from "../../State/formulaNames";
 import { api } from "../../State/api";
 
 interface SwatchesProps {
   // formulas: FormulaSwatchInterface[] | undefined;
-  formulas: string[] | undefined;
+  formulaSwatches: FormulaSwatchInterface[] | undefined;
   selectedFormula: FormulaInterface | undefined;
   setSelectedFormula: Dispatch<SetStateAction<FormulaInterface | undefined>>;
   selectedSeries: string;
 }
 
-function returnHexColorBasedOnFormulaName(formulaName: string): string {
-  const indexFormula = formulaNames.findIndex(
-    (formula) => formulaName.toLowerCase() === formula.toLowerCase()
-  );
-  const colorFormula = "#" + formulaColors[indexFormula];
-  return colorFormula;
-}
+// function returnHexColorBasedOnFormulaName(formulaName: string): string {
+//   const indexFormula = formulaNames.findIndex(
+//     (formula) => formulaName.toLowerCase() === formula.toLowerCase()
+//   );
+//   const colorFormula = "#" + formulaColors[indexFormula];
+//   return colorFormula;
+// }
 
 export default function Swatches({
-  formulas,
+  formulaSwatches,
   setSelectedFormula,
   selectedFormula,
   selectedSeries,
 }: SwatchesProps) {
-  
   const [trigger, { data }] = api.endpoints.getFormulaComponents.useLazyQuery();
+  data;
 
   function handleSelectFormula(clickedFormula: string) {
     trigger({
       formulaSeries: selectedSeries,
-      formulaCode: clickedFormula,
+      formulaCode: clickedFormula.toUpperCase(),
     }).then((response) => {
-      console.log("response: ", response.data);
-      console.log("data: ", data);
+      // console.log("response: ", response.data);
+      // console.log("data: ", data);
 
       if (response.data === undefined) return;
 
@@ -56,27 +57,26 @@ export default function Swatches({
     });
   }
 
-  if (formulas !== undefined)
+  if (formulaSwatches !== undefined)
     return (
       <>
         <div className="swatchesContainer">
-          {formulas.map((formulaCode: string) => {
+          {formulaSwatches.map((formulaSwatch) => {
             return (
               <span
-                key={formulaCode}
+                key={formulaSwatch.formulaCode}
                 className={
-                  formulaCode === selectedFormula?.formulaCode
+                  formulaSwatch.formulaCode === selectedFormula?.formulaCode
                     ? "swatch active"
                     : "swatch"
                 }
                 style={{
-                  backgroundColor:
-                    returnHexColorBasedOnFormulaName(formulaCode),
+                  backgroundColor: "#" + formulaSwatch.formulaColor,
                 }}
-                onClick={() => handleSelectFormula(formulaCode)}
+                onClick={() => handleSelectFormula(formulaSwatch.formulaCode)}
               >
                 <div className="swatchLabelContainer">
-                  <div className="swatchTitle">{formulaCode}</div>
+                  <div className="swatchTitle">{formulaSwatch.formulaCode}</div>
                   {/* <div>{formula.formulaDescription}</div> */}
                 </div>
               </span>

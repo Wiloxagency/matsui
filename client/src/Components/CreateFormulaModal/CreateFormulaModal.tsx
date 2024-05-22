@@ -140,10 +140,6 @@ export default function CreateFormulaModal({
     ]);
   }
 
-  useEffect(() => {
-    console.log(newFormulaComponents);
-  }, [newFormulaComponents]);
-
   function handleDeleteFormulaComponent(
     receivedComponent: FormulaComponentInterface
   ) {
@@ -202,7 +198,6 @@ export default function CreateFormulaModal({
       );
       return;
     }
-    console.log("newFormulaComponents: ", newFormulaComponents);
 
     const filledNewFormulaComponents = newFormulaComponents.map((component) => {
       return {
@@ -213,10 +208,15 @@ export default function CreateFormulaModal({
         ComponentDescription: component.ComponentDescription,
         Percentage: component.Percentage,
         isFormulaActive: isNewFormulaActive,
+        swatchColor: newFormulaColor
       };
     });
     console.log("filledNewFormulaComponents: ", filledNewFormulaComponents);
   }
+
+  useEffect(() => {
+    // console.log(newFormulaComponents);
+  }, [newFormulaComponents]);
 
   return (
     <>

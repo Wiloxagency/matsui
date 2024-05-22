@@ -46,6 +46,7 @@ export interface FormulaComponentInterface {
   ComponentDescription: string;
   Percentage: number;
   isFormulaActive?: boolean;
+  swatchColor?: string;
 }
 
 export interface InkSystemInterface {
@@ -68,4 +69,9 @@ export interface PigmentInterface {
   hex: string;
   cmyk: number[];
   rgb: number[];
+}
+
+export interface FormulaSwatchInterface {
+  formulaCode: string;
+  formulaColor: string;
 }
