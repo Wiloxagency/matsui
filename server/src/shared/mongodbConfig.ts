@@ -13,7 +13,7 @@ export async function createMongoDBConnection() {
   return database;
 }
 // ACCORDING TO THE RESULTS OF A VERY SHALLOW RESEARCH,
-// IT DOES NOT SEEM TO BE NECESSARY TO CLOSE THE CLIENT
+// IT DOES NOT SEEM TO BE NECESSARY TO CLOSE THE CLIENT 👇🏻
 // export async function closeMongoDBClient(){
 //     client.close()
 // }
