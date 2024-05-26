@@ -7,7 +7,7 @@ import BottomBar from "../BottomBar/BottomBar";
 import { pages } from "../../Constants/pages";
 
 export default function Header() {
-  // const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
+  const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
   const isSmallScreen = useMediaQuery({ query: "(max-width: 1200px)" });
 
   const location = useLocation();
@@ -48,12 +48,9 @@ export default function Header() {
         </div>
       )}
       <div
-        className="outletContainer"
-        // style={
-        //   location.pathname == "/formulas" || location.pathname == "/import"
-        //     ? { flexDirection: "row" }
-        //     : { flexDirection: "column" }
-        // }
+        className={
+          isMobile ? "outletContainer mobileLayout" : "outletContainer"
+        }
       >
         <Outlet />
       </div>

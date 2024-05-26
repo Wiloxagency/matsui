@@ -159,7 +159,10 @@ export default function AdminDashboard() {
             </>
           )}
         </div>
-        <div className="card">
+        <div
+          className="card"
+          style={{ width: "100%", minWidth: "350px", maxWidth: "100vw" }}
+        >
           <UsersTable
             users={fetchedUsers != undefined ? fetchedUsers : []}
             selectedRowsIds={selectedRowsIds}
