@@ -40,7 +40,7 @@ export default function Formulas() {
   const {
     data: fetchedFormulaSwatchColors,
     isSuccess: isGetFormulaSwatchColorsSuccessful,
-    refetch: refetchFormulaSwatchColors
+    refetch: refetchFormulaSwatchColors,
   } = useGetFormulaSwatchColorsQuery();
 
   const {
@@ -71,29 +71,8 @@ export default function Formulas() {
   //   return { value: series };
   // });
 
-  const isSmallScreen = useMediaQuery({ query: "(max-width: 1200px)" });
-
-  const gridTemplateFormulas = `
-  "a b"
-  "a b"
-  "a b"
-  "a c"
-  "a c"
-  `;
-
-  const gridTemplateFormulasSmall = `
-  "a"
-  "a"
-  "a"
-  "a"
-  "a"
-  "b"
-  "b"
-  "b"
-  "b"
-  "c"
-  "c"
-  `;
+  // const isSmallScreen = useMediaQuery({ query: "(max-width: 1200px)" });
+  const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
   const {
     isOpen: isOpenCreateFormulaModal,
@@ -131,30 +110,13 @@ export default function Formulas() {
     setFormulasInSeries(undefined);
 
     trigger(selectedSeries).then((response) => {
-      // console.log("response: ", response.data);
-      // console.log("data: ", data);
       if (response.data === undefined) return;
       setFormulasInSeries(response.data);
     });
   }, [selectedSeries, trigger]);
 
   return (
-    <div
-      className="formulaPageLayout"
-      style={
-        isSmallScreen
-          ? {
-              gridTemplateAreas: gridTemplateFormulasSmall,
-              gridAutoColumns: "1fr",
-              gridTemplateRows: "repeat(3, minmax(1rem, 10rem))",
-            }
-          : {
-              gridTemplateAreas: gridTemplateFormulas,
-              gridTemplateColumns: "repeat(2, minmax(375px, 1fr))",
-              gridTemplateRows: "repeat(5, minmax(8rem, 1fr))",
-            }
-      }
-    >
+    <>
       <CreateFormulaModal
         isOpenCreateFormulaModal={isOpenCreateFormulaModal}
         onOpenChangeCreateFormulaModal={onOpenChangeCreateFormulaModal}
@@ -162,198 +124,227 @@ export default function Formulas() {
         fetchedPigments={fetchedPigments}
         refetchFormulaSwatchColors={refetchFormulaSwatchColors}
       />
-      <div className="formulasSection" style={{ gridArea: "a" }}>
-        <div className="sectionHeader">
-          <span>FORMULAS</span>
-          <ReusableButton
-            className="underlineButton"
-            buttonText="CREATE NEW FORMULA"
-            Icon={FaPen}
-            handleClick={onOpenCreateFormulaModal}
-          />
-        </div>
-        <div className="card">
-          {false && (
-            <div className="dropdownAndLabelRow">
-              <label>INK SYSTEM</label>
-              <span className="selectContainer">
-                {/* IDEALLY YOU WOULD ONLY HAVE ONE OF THE 2 FOLLOWING SELECT TAGS.
+      <div
+        className={
+          isMobile ? "formulaPageLayout mobileLayout" : "formulaPageLayout"
+        }
+        // style={
+        //   isSmallScreen
+        //     ? {
+        //         gridTemplateAreas: gridTemplateFormulasSmall,
+        //         gridAutoColumns: "1fr",
+        //         gridTemplateRows: "repeat(3, minmax(1rem, 10rem))",
+        //       }
+        //     : {
+        //         gridTemplateAreas: gridTemplateFormulas,
+        //         gridTemplateColumns: "repeat(2, minmax(375px, 1fr))",
+        //         gridTemplateRows: "repeat(5, minmax(8rem, 1fr))",
+        //       }
+        // }
+      >
+        <div className="leftSide">
+          <div className="sectionHeader">
+            <span>FORMULAS</span>
+            <ReusableButton
+              className="underlineButton"
+              buttonText="CREATE NEW FORMULA"
+              Icon={FaPen}
+              handleClick={onOpenCreateFormulaModal}
+            />
+          </div>
+          <div className="card">
+            {false && (
+              <div className="dropdownAndLabelRow">
+                <label>INK SYSTEM</label>
+                <span className="selectContainer">
+                  {/* IDEALLY YOU WOULD ONLY HAVE ONE OF THE 2 FOLLOWING SELECT TAGS.
                 I JUST COULDN'T FIGURE OUT HOW TO PREVENT THE SELECTITEM TAG FROM
                 GIVING AN ERROR WHEN THE DATA STILL HASN'T BEEN FETCHED */}
-                {isGetInkSystemsLoading && (
-                  <Select
-                    aria-label="SELECT INK SYSTEM"
-                    variant="bordered"
-                    radius="full"
-                    placeholder="SELECT INK SYSTEM"
-                  >
-                    <SelectItem key="temp">temp</SelectItem>
-                  </Select>
-                )}
-
-                {isGetInkSystemsSuccessful && (
-                  <Select
-                    aria-label="SELECT INK SYSTEM"
-                    variant="bordered"
-                    radius="full"
-                    placeholder="SELECT INK SYSTEM"
-                    items={fetchedInkSystems}
-                  >
-                    {(inkSystem) => (
-                      <SelectItem key={inkSystem.code}>
-                        {inkSystem.name}
-                      </SelectItem>
-                    )}
-                  </Select>
-                )}
-              </span>
-            </div>
-          )}
-
-          <div className="dropdownAndLabelRow">
-            <label>SERIES</label>
-            <span className="selectContainer">
-              {isGetSeriesSuccessful && (
-                <Select
-                  aria-label="SELECT SERIES"
-                  variant="bordered"
-                  radius="full"
-                  placeholder="301"
-                  value={selectedSeries}
-                  onChange={(e) => handleSelectSeries(e)}
-                >
-                  {fetchedSeries.map((series) => (
-                    <SelectItem
-                      key={series.seriesName}
-                      value={series.seriesName}
+                  {isGetInkSystemsLoading && (
+                    <Select
+                      aria-label="SELECT INK SYSTEM"
+                      variant="bordered"
+                      radius="full"
+                      placeholder="SELECT INK SYSTEM"
                     >
-                      {series.seriesName}
-                    </SelectItem>
-                  ))}
-                  {/* {(series) => (
+                      <SelectItem key="temp">temp</SelectItem>
+                    </Select>
+                  )}
+
+                  {isGetInkSystemsSuccessful && (
+                    <Select
+                      aria-label="SELECT INK SYSTEM"
+                      variant="bordered"
+                      radius="full"
+                      placeholder="SELECT INK SYSTEM"
+                      items={fetchedInkSystems}
+                    >
+                      {(inkSystem) => (
+                        <SelectItem key={inkSystem.code}>
+                          {inkSystem.name}
+                        </SelectItem>
+                      )}
+                    </Select>
+                  )}
+                </span>
+              </div>
+            )}
+
+            <div className="dropdownAndLabelRow">
+              <label>SERIES</label>
+              <span className="selectContainer">
+                {isGetSeriesSuccessful && (
+                  <Select
+                    aria-label="SELECT SERIES"
+                    variant="bordered"
+                    radius="full"
+                    placeholder="301"
+                    value={selectedSeries}
+                    onChange={(e) => handleSelectSeries(e)}
+                  >
+                    {fetchedSeries.map((series) => (
+                      <SelectItem
+                        key={series.seriesName}
+                        value={series.seriesName}
+                      >
+                        {series.seriesName}
+                      </SelectItem>
+                    ))}
+                    {/* {(series) => (
                     <SelectItem key={series.seriesName}>
                       {series.seriesName}
                     </SelectItem>
                   )} */}
-                </Select>
+                  </Select>
+                )}
+                {isGetSeriesLoading && <Spinner className="m-auto" />}
+              </span>
+            </div>
+            <div className="searchBarRow">
+              <input type="text" placeholder="SEARCH BY COLOR NAME OR CODE" />
+              <FaSearch></FaSearch>
+            </div>
+            <div className="checkboxRow">
+              <input type="checkbox"></input>
+              <label style={{ margin: "0 1rem 0 .5rem" }}>ALL FORMULAS</label>
+              <input type="checkbox"></input>
+              <label style={{ margin: "0 1rem 0 .5rem" }}>
+                COMPANY FORMULAS
+              </label>
+            </div>
+            <div className="swatchesComponentContainer">
+              {isGetFormulaSwatchColorsSuccessful ? (
+                <Swatches
+                  // formulas={formulasInSeries}
+                  formulaSwatches={fetchedFormulaSwatchColors}
+                  selectedFormula={selectedFormula}
+                  setSelectedFormula={setSelectedFormula}
+                  selectedSeries={selectedSeries}
+                />
+              ) : (
+                <Spinner className="m-auto" />
               )}
-              {isGetSeriesLoading && <Spinner className="m-auto" />}
-            </span>
-          </div>
-          <div className="searchBarRow">
-            <input type="text" placeholder="SEARCH BY COLOR NAME OR CODE" />
-            <FaSearch></FaSearch>
-          </div>
-          <div className="checkboxRow">
-            <input type="checkbox"></input>
-            <label style={{ margin: "0 1rem 0 .5rem" }}>ALL FORMULAS</label>
-            <input type="checkbox"></input>
-            <label style={{ margin: "0 1rem 0 .5rem" }}>COMPANY FORMULAS</label>
-          </div>
-          <div className="swatchesComponentContainer">
-            {isGetFormulaSwatchColorsSuccessful ? (
-              <Swatches
-                // formulas={formulasInSeries}
-                formulaSwatches={fetchedFormulaSwatchColors}
-                selectedFormula={selectedFormula}
-                setSelectedFormula={setSelectedFormula}
-                selectedSeries={selectedSeries}
-              />
-            ) : (
-              <Spinner className="m-auto" />
-            )}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="formulaDetailsSection" style={{ gridArea: "b" }}>
-        <div className="sectionHeader">
-          <span style={{ minWidth: "fit-content" }}>
-            FORMULA DETAILS: {selectedFormula && selectedFormula.formulaCode}
-          </span>
-          {/* <span>
+        <div className="rightSide">
+          <div className="formulaDetailsSection">
+            <div className="sectionHeader">
+              <span style={{ minWidth: "fit-content" }}>
+                FORMULA DETAILS:{" "}
+                {selectedFormula && selectedFormula.formulaCode}
+              </span>
+              {/* <span>
               QUANTITY:
               <input type="number" className="quantityInput" />
               <span style={{ marginLeft: "1rem" }}>g / kg/ lbs</span>
             </span> */}
-          <span style={{ width: "14rem" }}>
-            <Input
-              label="QUANTITY"
-              labelPlacement="outside-left"
-              size="sm"
-              fullWidth={false}
-              type="number"
-              value={formulaQuantityAsString}
-              onValueChange={setFormulaQuantityAsString}
-              endContent={
-                <div className="flex items-center">
-                  <label className="sr-only" htmlFor="currency">
-                    Currency
-                  </label>
-                  <select
-                    className="outline-none border-0 bg-transparent text-default-400 text-small"
-                    id="currency"
-                    name="currency"
-                    value={formulaUnit}
-                    onChange={handleFormulaUnitSelectionChange}
-                  >
-                    <option value="g">g</option>
-                    <option value="kg">kg</option>
-                    <option value="lb">lb</option>
-                  </select>
-                </div>
-              }
-            />
-          </span>
-        </div>
-        <div className="card">
-          {selectedFormula !== undefined ? (
-            <>
-              <FormulaPercentagesGraph formula={selectedFormula} />
-              <FormulaDetailsTable
-                formula={selectedFormula}
-                formulaQuantity={parseFloat(formulaQuantityAsString)}
-                formulaUnit={formulaUnit}
-              />
-              <div className="buttonsAndTotalRow">
-                <ReusableButton
-                  className="underlineButton"
-                  buttonText="DUPLICATE FORMULA"
-                  Icon={FaClone}
-                  handleClick={() => {}}
-                />{" "}
-                <ReusableButton
-                  className="underlineButton"
-                  buttonText="PRINT FORMULA"
-                  Icon={FaPrint}
-                  handleClick={() => {}}
+              <span style={{ width: "14rem" }}>
+                <Input
+                  label="QUANTITY"
+                  labelPlacement="outside-left"
+                  size="sm"
+                  fullWidth={false}
+                  type="number"
+                  value={formulaQuantityAsString}
+                  onValueChange={setFormulaQuantityAsString}
+                  endContent={
+                    <div className="flex items-center">
+                      <label className="sr-only" htmlFor="currency">
+                        Currency
+                      </label>
+                      <select
+                        className="outline-none border-0 bg-transparent text-default-400 text-small"
+                        id="currency"
+                        name="currency"
+                        value={formulaUnit}
+                        onChange={handleFormulaUnitSelectionChange}
+                      >
+                        <option value="g">g</option>
+                        <option value="kg">kg</option>
+                        <option value="lb">lb</option>
+                      </select>
+                    </div>
+                  }
                 />
-                <span>TOTAL: 97,70 $</span>
-              </div>
-            </>
-          ) : (
-            <>
-              {/* <Spinner className="m-auto" /> */}
-              <span className="m-auto">
-                Click on a formula to see its details
               </span>
-            </>
-          )}
-        </div>
-      </div>
-      <div className="similarFormulasSection" style={{ gridArea: "c" }}>
-        <div className="sectionHeader">SIMILAR FORMULAS</div>
-        <div className="card">
-          {/* <div className="swatchesComponentContainer"> */}
-          {/* <img
+            </div>
+            <div
+              className="card"
+              style={{ maxWidth: "100vw", marginBottom: "1rem" }}
+            >
+              {selectedFormula !== undefined ? (
+                <>
+                  {!isMobile && (
+                    <FormulaPercentagesGraph formula={selectedFormula} />
+                  )}
+                  <FormulaDetailsTable
+                    formula={selectedFormula}
+                    formulaQuantity={parseFloat(formulaQuantityAsString)}
+                    formulaUnit={formulaUnit}
+                  />
+                  <div className="buttonsAndTotalRow">
+                    <ReusableButton
+                      className="underlineButton"
+                      buttonText="DUPLICATE FORMULA"
+                      Icon={FaClone}
+                      handleClick={() => {}}
+                    />{" "}
+                    <ReusableButton
+                      className="underlineButton"
+                      buttonText="PRINT FORMULA"
+                      Icon={FaPrint}
+                      handleClick={() => {}}
+                    />
+                    <span>TOTAL: 97,70 $</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* <Spinner className="m-auto" /> */}
+                  <span className="m-auto">
+                    Click on a formula to see its details
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
+          <div className="similarFormulasSection">
+            <div className="sectionHeader">SIMILAR FORMULAS</div>
+            <div className="card">
+              {/* <div className="swatchesComponentContainer"> */}
+              {/* <img
               src="src/assets/underConstruction.jpg"
               className="m-auto rounded-lg"
               // style={{ height: "100%" }}
             ></img> */}
-          {/* <Swatches formulas={[]} /> */}
-          {/* </div> */}
+              {/* <Swatches formulas={[]} /> */}
+              {/* </div> */}
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
