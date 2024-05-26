@@ -4,3 +4,22 @@
         font-weight: 700;
     }
 }
+
+.importFormulaLayout {
+    display  : flex;
+    gap      : 2rem;
+    flex-wrap: wrap;
+
+    .leftSection {
+        max-width: 40vw;
+        min-width: 350px;
+    }
+
+}
+
+.importFormulaLayout.mobileLayout {
+    .leftSection {
+        max-width: 100vw;
+        width    : 100vw;
+    }
+}

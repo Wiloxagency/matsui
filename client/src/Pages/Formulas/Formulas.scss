@@ -1,47 +1,75 @@
 .formulaPageLayout {
-    display: grid;
-    gap    : 1rem;
-    width  : 100%
-}
+    display  : flex;
+    flex-wrap: wrap;
+    gap      : 2rem;
 
-.formulasSection {
-    display       : flex;
-    flex-direction: column;
-    flex          : 1;
-    height        : 100%;
-}
+    .leftSide {
+        display          : flex;
+        flex-direction   : column;
+        flex             : 1;
+        // height        : 100%;
 
-.formulaDetailsSection {
-    display       : flex;
-    flex-direction: column;
+        .swatchesComponentContainer {
 
-    .buttonsAndTotalRow {
-        display           : flex;
-        margin-top        : auto;
-        // justify-content: space-between;
-
-        button {
-            margin-right: 2rem;
+            .swatchesContainer {
+                max-height: 55vh;
+            }
         }
 
-        span {
-            margin-left: auto;
+    }
+
+    .rightSide {
+        flex: 1;
+
+        .formulaDetailsSection {
+            display       : flex;
+            flex-direction: column;
+
+            .buttonsAndTotalRow {
+                display           : flex;
+                margin-top        : auto;
+                // justify-content: space-between;
+
+                button {
+                    margin-right: 2rem;
+                }
+
+                span {
+                    margin-left: auto;
+                }
+            }
+        }
+
+        .similarFormulasSection {
+            display       : flex;
+            flex-direction: column;
+            flex          : 1;
+
+            .swatchesComponentContainer {
+                display   : flex;
+                flex-grow : 1;
+                overflow-y: scroll;
+            }
         }
     }
 }
 
-.similarFormulasSection {
-    display       : flex;
-    flex-direction: column;
-    flex          : 1;
+.formulaPageLayout.mobileLayout {
 
-    .swatchesComponentContainer {
-        display   : flex;
-        flex-grow : 1;
-        height    : 0;
-        overflow-y: scroll;
+    .leftSide {
+
+        .swatchesComponentContainer {
+            // max-height: 10vh;
+            // max-height: 100px;
+
+            .swatchesContainer {
+                max-height: 40vh;
+            }
+        }
+
     }
 }
+
 
 
 .dropdownAndLabelRow {

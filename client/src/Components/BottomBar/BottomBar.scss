@@ -1,0 +1,55 @@
+.bottomBarContainer {
+    position           : fixed;
+    bottom             : .5rem;
+    max-width          : 28rem;
+    width              : 90vw;
+    background-color   : #1a242d;
+    left               : 50%;
+    transform          : translateX(-50%);
+    // border          : 1px solid black;
+    border-radius      : 100rem;
+    height             : 3.5rem;
+    display            : flex;
+    justify-content    : center;
+    align-items        : center;
+    color              : white;
+    box-shadow         : 1px 1px 5px #00000071;
+    z-index            : 90;
+    padding-inline     : 3rem;
+
+    ul {
+        display: flex;
+        gap    : 2rem;
+
+        .active {
+            opacity   : 1;
+            transition: .5s;
+        }
+
+        li {
+            display       : flex;
+            flex-direction: column;
+            align-items   : center;
+            opacity       : .7;
+
+            .bottomBarIcon {
+                font-size    : 1.25rem;
+                margin-bottom: .3rem;
+            }
+
+            div {
+                text-align: center;
+                font-size : .7rem;
+            }
+        }
+
+        .signOutIcon {
+            color      : indianred;
+            margin-left: auto;
+            position   : absolute;
+            right      : 1rem;
+            top        : 50%;
+            transform  : translateY(-50%);
+        }
+    }
+}

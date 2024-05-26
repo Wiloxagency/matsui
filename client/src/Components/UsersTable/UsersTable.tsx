@@ -1,7 +1,3 @@
-import "./UsersTable.scss";
-import React, { Dispatch, SetStateAction } from "react";
-import { UserInterface } from "../../interfaces/interfaces";
-import { FaEllipsisV } from "react-icons/fa";
 import { Button } from "@nextui-org/button";
 import {
   Dropdown,
@@ -9,15 +5,23 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/dropdown";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from "@nextui-org/table";
-import { Spinner } from "@nextui-org/spinner";
+import { Dispatch, SetStateAction } from "react";
+import { FaEllipsisV } from "react-icons/fa";
+import { UserInterface } from "../../interfaces/interfaces";
+import "./UsersTable.scss";
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableColumn,
+//   TableHeader,
+//   TableRow,
+// } from "@nextui-org/table";
+
+import { Checkbox } from "@nextui-org/checkbox";
+import { useMediaQuery } from "react-responsive";
+import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
+import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 
 const columns = [
   {
@@ -38,11 +42,11 @@ const columns = [
   },
   {
     key: "registrationDate",
-    label: "REGISTRATION DATE",
+    label: "REGISTRATION",
   },
   {
     key: "createdFormulas",
-    label: "CREATED FORMULAS",
+    label: "FORMULAS",
   },
   {
     key: "lastAccess",
@@ -59,58 +63,76 @@ interface UsersTableProps {
   selectedRowsIds: Set<string>;
   setSelectedRowsIds: Dispatch<SetStateAction<Set<string>>>;
   indexRowToEdit: number | null;
-  // setIndexRowToEdit: Dispatch<SetStateAction<number | null>>;
   handleEditRow: (userId: string) => void;
+  
+  // setIndexRowToEdit: Dispatch<SetStateAction<number | null>>;
 }
 
 export default function UsersTable({
   users,
-  selectedRowsIds,
-  setSelectedRowsIds,
-  indexRowToEdit,
+  // selectedRowsIds,
+  // setSelectedRowsIds,
+  // indexRowToEdit,
+
   // setIndexRowToEdit,
   handleEditRow,
 }: UsersTableProps) {
-  const renderCell = React.useCallback(
-    (user: UserInterface, columnKey: React.Key) => {
-      const cellValue = user[columnKey as keyof UserInterface];
-
-      switch (columnKey) {
-        // case "username":
-        //   return (
-        //     <>
-        //       {/* {indexRowToEdit === null || indexRowToEdit === -1 ? (
-        //         <div>Index row to edit: {indexRowToEdit}</div>
-        //       ) : (
-        //         <TextInput />
-        //       )} */}
-        //     </>
-        //   );
-        case "actions":
-          return (
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                  <FaEllipsisV />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu aria-label="dropdown">
-                <DropdownItem onClick={() => handleEditRow(user._id)}>
-                  Edit
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          );
-        default:
-          return cellValue;
-      }
-    },
-    [handleEditRow]
-  );
+  const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
   return (
     <>
-      <Table
+      <Table className="usersTable">
+        <Thead>
+          <Tr>
+            <Th></Th>
+            {columns.map((columnHeader) => {
+              return <Th key={columnHeader.key}>{columnHeader.label}</Th>;
+            })}
+          </Tr>
+        </Thead>
+        <Tbody>
+          {users.map((user) => {
+            return (
+              <Tr key={user._id}>
+                <Td>
+                  <Checkbox></Checkbox>
+                </Td>
+                <Td>{user.username}</Td>
+                <Td>{user.email}</Td>
+                <Td>{user.company}</Td>
+                <Td>{user.status}</Td>
+                <Td>{user.registrationDate}</Td>
+                <Td>{user.createdFormulas}</Td>
+                <Td>{user.lastAccess}</Td>
+                <Td>
+                  {isMobile ? (
+                    <Button
+                      color="primary"
+                      onPress={() => handleEditRow(user._id)}
+                    >
+                      Edit user
+                    </Button>
+                  ) : (
+                    <Dropdown>
+                      <DropdownTrigger>
+                        <Button isIconOnly size="sm" variant="light">
+                          <FaEllipsisV />
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu aria-label="dropdown">
+                        <DropdownItem onClick={() => handleEditRow(user._id)}>
+                          Edit
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </Dropdown>
+                  )}
+                </Td>
+              </Tr>
+            );
+          })}
+        </Tbody>
+      </Table>
+      {/* <Table
         color="default"
         selectionMode="multiple"
         aria-label="Example static collection table"
@@ -154,7 +176,7 @@ export default function UsersTable({
             </TableRow>
           )}
         </TableBody>
-      </Table>
+      </Table> */}
     </>
   );
 }
