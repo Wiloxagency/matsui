@@ -9,15 +9,20 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/dropdown";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from "@nextui-org/table";
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableColumn,
+//   TableHeader,
+//   TableRow,
+// } from "@nextui-org/table";
 import { Spinner } from "@nextui-org/spinner";
+
+import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
+import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
+import { user } from "@nextui-org/theme";
+import { useMediaQuery } from "react-responsive";
 
 const columns = [
   {
@@ -38,11 +43,11 @@ const columns = [
   },
   {
     key: "registrationDate",
-    label: "REGISTRATION DATE",
+    label: "REGISTRATION",
   },
   {
     key: "createdFormulas",
-    label: "CREATED FORMULAS",
+    label: "FORMULAS",
   },
   {
     key: "lastAccess",
@@ -71,46 +76,53 @@ export default function UsersTable({
   // setIndexRowToEdit,
   handleEditRow,
 }: UsersTableProps) {
-  const renderCell = React.useCallback(
-    (user: UserInterface, columnKey: React.Key) => {
-      const cellValue = user[columnKey as keyof UserInterface];
-
-      switch (columnKey) {
-        // case "username":
-        //   return (
-        //     <>
-        //       {/* {indexRowToEdit === null || indexRowToEdit === -1 ? (
-        //         <div>Index row to edit: {indexRowToEdit}</div>
-        //       ) : (
-        //         <TextInput />
-        //       )} */}
-        //     </>
-        //   );
-        case "actions":
-          return (
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                  <FaEllipsisV />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu aria-label="dropdown">
-                <DropdownItem onClick={() => handleEditRow(user._id)}>
-                  Edit
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          );
-        default:
-          return cellValue;
-      }
-    },
-    [handleEditRow]
-  );
+  const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
   return (
     <>
-      <Table
+      <Table className="usersTable">
+        <Thead>
+          <Tr>
+            {columns.map((columnHeader) => {
+              return <Th key={columnHeader.key}>{columnHeader.label}</Th>;
+            })}
+          </Tr>
+        </Thead>
+        <Tbody>
+          {users.map((user) => {
+            return (
+              <Tr key={user._id}>
+                <Td>{user.username}</Td>
+                <Td>{user.email}</Td>
+                <Td>{user.company}</Td>
+                <Td>{user.status}</Td>
+                <Td>{user.registrationDate}</Td>
+                <Td>{user.createdFormulas}</Td>
+                <Td>{user.lastAccess}</Td>
+                <Td>
+                  {isMobile ? (
+                     <Button color="primary"  onPress={() => handleEditRow(user._id)}>Edit user</Button>
+                  ) : (
+                    <Dropdown>
+                      <DropdownTrigger>
+                        <Button isIconOnly size="sm" variant="light">
+                          <FaEllipsisV />
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu aria-label="dropdown">
+                        <DropdownItem onClick={() => handleEditRow(user._id)}>
+                          Edit
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </Dropdown>
+                  )}
+                </Td>
+              </Tr>
+            );
+          })}
+        </Tbody>
+      </Table>
+      {/* <Table
         color="default"
         selectionMode="multiple"
         aria-label="Example static collection table"
@@ -154,7 +166,7 @@ export default function UsersTable({
             </TableRow>
           )}
         </TableBody>
-      </Table>
+      </Table> */}
     </>
   );
 }
