@@ -1,7 +1,3 @@
-import "./UsersTable.scss";
-import React, { Dispatch, SetStateAction } from "react";
-import { UserInterface } from "../../interfaces/interfaces";
-import { FaEllipsisV } from "react-icons/fa";
 import { Button } from "@nextui-org/button";
 import {
   Dropdown,
@@ -9,6 +5,10 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/dropdown";
+import { Dispatch, SetStateAction } from "react";
+import { FaEllipsisV } from "react-icons/fa";
+import { UserInterface } from "../../interfaces/interfaces";
+import "./UsersTable.scss";
 // import {
 //   Table,
 //   TableBody,
@@ -17,12 +17,11 @@ import {
 //   TableHeader,
 //   TableRow,
 // } from "@nextui-org/table";
-import { Spinner } from "@nextui-org/spinner";
 
-import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
-import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
-import { user } from "@nextui-org/theme";
+import { Checkbox } from "@nextui-org/checkbox";
 import { useMediaQuery } from "react-responsive";
+import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
+import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 
 const columns = [
   {
@@ -64,15 +63,17 @@ interface UsersTableProps {
   selectedRowsIds: Set<string>;
   setSelectedRowsIds: Dispatch<SetStateAction<Set<string>>>;
   indexRowToEdit: number | null;
-  // setIndexRowToEdit: Dispatch<SetStateAction<number | null>>;
   handleEditRow: (userId: string) => void;
+  
+  // setIndexRowToEdit: Dispatch<SetStateAction<number | null>>;
 }
 
 export default function UsersTable({
   users,
-  selectedRowsIds,
-  setSelectedRowsIds,
-  indexRowToEdit,
+  // selectedRowsIds,
+  // setSelectedRowsIds,
+  // indexRowToEdit,
+
   // setIndexRowToEdit,
   handleEditRow,
 }: UsersTableProps) {
@@ -83,6 +84,7 @@ export default function UsersTable({
       <Table className="usersTable">
         <Thead>
           <Tr>
+            <Th></Th>
             {columns.map((columnHeader) => {
               return <Th key={columnHeader.key}>{columnHeader.label}</Th>;
             })}
@@ -92,6 +94,9 @@ export default function UsersTable({
           {users.map((user) => {
             return (
               <Tr key={user._id}>
+                <Td>
+                  <Checkbox></Checkbox>
+                </Td>
                 <Td>{user.username}</Td>
                 <Td>{user.email}</Td>
                 <Td>{user.company}</Td>
@@ -101,7 +106,12 @@ export default function UsersTable({
                 <Td>{user.lastAccess}</Td>
                 <Td>
                   {isMobile ? (
-                     <Button color="primary"  onPress={() => handleEditRow(user._id)}>Edit user</Button>
+                    <Button
+                      color="primary"
+                      onPress={() => handleEditRow(user._id)}
+                    >
+                      Edit user
+                    </Button>
                   ) : (
                     <Dropdown>
                       <DropdownTrigger>
