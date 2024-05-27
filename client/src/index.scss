@@ -7,7 +7,7 @@
   text-rendering         : optimizeLegibility;
   -webkit-font-smoothing : antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #e2edf6;
+  background-color       : #e2edf6;
 }
 
 * {
@@ -17,7 +17,7 @@
 }
 
 body {
-  display         : flex;
+  display            : flex;
   // min-height      : 100vh;
 }
 
@@ -53,11 +53,18 @@ a {
   justify-content: space-between;
   margin-bottom  : 1rem;
   font-weight    : bold;
+  align-items    : center;
+  flex-wrap      : wrap;
+  gap            : 1rem;
+}
+
+.sectionHeader.mobileLayout {
+  padding-inline: 1rem;
 }
 
 .swatchesComponentContainer {
-  display   : flex;
-  flex-grow : 1;
+  display      : flex;
+  flex-grow    : 1;
   // height    : 0;
-  overflow-y: scroll;
+  overflow-y   : scroll;
 }

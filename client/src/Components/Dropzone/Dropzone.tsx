@@ -17,17 +17,17 @@ async function parseSpreadsheet(
   const sheetToJson = XLSX.utils.sheet_to_json(firstSpreadsheet);
 
   // Temporal binding replacement
-  const columnsMatchOrder = [4, 5, 1, 2, 3]
+  const columnsMatchOrder = [4, 5, 1, 2, 3];
 
   const headers: string[] = Object.keys(sheetToJson[0] as []);
   console.log("Headers: ", headers);
 
   const columnsMatch = {
-    FormulaCode: headers[columnsMatchOrder[0]-1],
-    FormulaDescription: headers[columnsMatchOrder[1]-1],
-    ComponentCode: headers[columnsMatchOrder[2]-1],
-    ComponentDescription: headers[columnsMatchOrder[3]-1],
-    Percentage: headers[columnsMatchOrder[4]-1],
+    FormulaCode: headers[columnsMatchOrder[0] - 1],
+    FormulaDescription: headers[columnsMatchOrder[1] - 1],
+    ComponentCode: headers[columnsMatchOrder[2] - 1],
+    ComponentDescription: headers[columnsMatchOrder[3] - 1],
+    Percentage: headers[columnsMatchOrder[4] - 1],
   };
 
   console.log(sheetToJson);
@@ -44,17 +44,20 @@ async function parseSpreadsheet(
   const transformedComponents = sheetToJson.map(transformComponent);
   console.log("Transformed Components: ", transformedComponents);
   setTransformedComponents(transformedComponents);
-
-
 }
 
 export default function CustomDropzone() {
   const [extractedHeaders, setExtractedHeaders] = useState<string[]>([]);
   const [transformedComponents, setTransformedComponents] = useState<any[]>([]);
+  transformedComponents;
   
   const onDrop = useCallback((acceptedFiles: Array<File>) => {
     if (acceptedFiles[0] === undefined) return;
-    parseSpreadsheet(acceptedFiles[0], setExtractedHeaders, setTransformedComponents);
+    parseSpreadsheet(
+      acceptedFiles[0],
+      setExtractedHeaders,
+      setTransformedComponents
+    );
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {

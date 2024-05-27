@@ -29,13 +29,20 @@
                 display           : flex;
                 margin-top        : auto;
                 // justify-content: space-between;
+                flex-wrap         : wrap;
 
-                button {
-                    margin-right: 2rem;
-                }
+                .buttonsContainer {
+                    gap      : 1rem;
+                    display  : flex;
+                    flex-wrap: wrap;
 
-                span {
-                    margin-left: auto;
+                    button {
+                        margin-right: 2rem;
+                    }
+
+                    span {
+                        margin-left: auto;
+                    }
                 }
             }
         }
@@ -120,6 +127,8 @@
     display           : flex;
     // justify-content: space-between;
     margin-bottom     : 1rem;
+    flex-wrap         : wrap;
+    gap               : 1rem;
 }
 
 .quantityInput {

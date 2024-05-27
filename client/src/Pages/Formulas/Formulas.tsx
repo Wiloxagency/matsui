@@ -143,7 +143,11 @@ export default function Formulas() {
         // }
       >
         <div className="leftSide">
-          <div className="sectionHeader">
+          <div
+            className={
+              isMobile ? "sectionHeader mobileLayout" : "sectionHeader"
+            }
+          >
             <span>FORMULAS</span>
             <ReusableButton
               className="underlineButton"
@@ -225,12 +229,16 @@ export default function Formulas() {
               <FaSearch></FaSearch>
             </div>
             <div className="checkboxRow">
-              <input type="checkbox"></input>
-              <label style={{ margin: "0 1rem 0 .5rem" }}>ALL FORMULAS</label>
-              <input type="checkbox"></input>
-              <label style={{ margin: "0 1rem 0 .5rem" }}>
-                COMPANY FORMULAS
-              </label>
+              <span>
+                <input type="checkbox"></input>
+                <label style={{ margin: "0 1rem 0 .5rem" }}>ALL FORMULAS</label>
+              </span>
+              <span>
+                <input type="checkbox"></input>
+                <label style={{ margin: "0 1rem 0 .5rem" }}>
+                  COMPANY FORMULAS
+                </label>
+              </span>
             </div>
             <div className="swatchesComponentContainer">
               {isGetFormulaSwatchColorsSuccessful ? (
@@ -250,7 +258,11 @@ export default function Formulas() {
 
         <div className="rightSide">
           <div className="formulaDetailsSection">
-            <div className="sectionHeader">
+            <div
+              className={
+                isMobile ? "sectionHeader mobileLayout" : "sectionHeader"
+              }
+            >
               <span style={{ minWidth: "fit-content" }}>
                 FORMULA DETAILS:{" "}
                 {selectedFormula && selectedFormula.formulaCode}
@@ -305,19 +317,23 @@ export default function Formulas() {
                     formulaUnit={formulaUnit}
                   />
                   <div className="buttonsAndTotalRow">
-                    <ReusableButton
-                      className="underlineButton"
-                      buttonText="DUPLICATE FORMULA"
-                      Icon={FaClone}
-                      handleClick={() => {}}
-                    />{" "}
-                    <ReusableButton
-                      className="underlineButton"
-                      buttonText="PRINT FORMULA"
-                      Icon={FaPrint}
-                      handleClick={() => {}}
-                    />
-                    <span>TOTAL: 97,70 $</span>
+                    <div style={{ marginBlock: "1rem", marginLeft: "auto" }}>
+                      TOTAL: 97,70 $
+                    </div>
+                    <div className="buttonsContainer">
+                      <ReusableButton
+                        className="underlineButton"
+                        buttonText="DUPLICATE FORMULA"
+                        Icon={FaClone}
+                        handleClick={() => {}}
+                      />{" "}
+                      <ReusableButton
+                        className="underlineButton"
+                        buttonText="PRINT FORMULA"
+                        Icon={FaPrint}
+                        handleClick={() => {}}
+                      />
+                    </div>
                   </div>
                 </>
               ) : (
@@ -331,8 +347,17 @@ export default function Formulas() {
             </div>
           </div>
           <div className="similarFormulasSection">
-            <div className="sectionHeader">SIMILAR FORMULAS</div>
-            <div className="card">
+            <div
+              className={
+                isMobile ? "sectionHeader mobileLayout" : "sectionHeader"
+              }
+            >
+              SIMILAR FORMULAS
+            </div>
+            <div
+              className="card"
+              style={isMobile ? { marginBottom: "5rem" } : {}}
+            >
               {/* <div className="swatchesComponentContainer"> */}
               {/* <img
               src="src/assets/underConstruction.jpg"

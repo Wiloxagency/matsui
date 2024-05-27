@@ -1,19 +1,20 @@
-import React from "react";
 import "./FormulaDetailsTable.scss";
 import { FormulaInterface } from "../../interfaces/interfaces";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from "@nextui-org/table";
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableColumn,
+//   TableHeader,
+//   TableRow,
+// } from "@nextui-org/table";
+import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
+import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 
 const columns = [
   {
     key: "hex",
-    label: "",
+    label: "hex",
   },
   {
     key: "componentCode",
@@ -37,12 +38,12 @@ const columns = [
   },
 ];
 
-type TableComponent = {
-  componentCode: string;
-  componentDescription: string;
-  percentage: number;
-  hex?: string;
-};
+// type TableComponent = {
+//   componentCode: string;
+//   componentDescription: string;
+//   percentage: number;
+//   hex?: string;
+// };
 
 interface FormulaDetailsTableProps {
   formula: FormulaInterface;
@@ -60,36 +61,70 @@ export default function FormulaDetailsTable({
   // });
   // const { data: fetchedComponents } = useGetGivenComponentsQuery(givenComponentsList);
 
-  const renderCell = React.useCallback(
-    (component: TableComponent, columnKey: React.Key) => {
-      const cellValue = component[columnKey as keyof TableComponent];
+  // const renderCell = React.useCallback(
+  //   (component: TableComponent, columnKey: React.Key) => {
+  //     const cellValue = component[columnKey as keyof TableComponent];
 
-      switch (columnKey) {
-        case "hex":
-          return (
-            <>
-              <span
-                className="miniSwatch"
-                style={{ backgroundColor: "#" + component.hex }}
-              ></span>
-            </>
-          );
-        case "quantity":
-          return (
-            <div>
-              {(formulaQuantity * component.percentage) / 100} {formulaUnit}
-            </div>
-          );
-        default:
-          return cellValue;
-      }
-    },
-    [formulaQuantity, formulaUnit]
-  );
+  //     switch (columnKey) {
+  //       case "hex":
+  //         return (
+  //           <>
+  //             <span
+  //               className="miniSwatch"
+  //               style={{ backgroundColor: "#" + component.hex }}
+  //             ></span>
+  //           </>
+  //         );
+  //       case "quantity":
+  //         return (
+  //           <div>
+  //             {(formulaQuantity * component.percentage) / 100} {formulaUnit}
+  //           </div>
+  //         );
+  //       default:
+  //         return cellValue;
+  //     }
+  //   },
+  //   [formulaQuantity, formulaUnit]
+  // );
 
   return (
     <>
-      <Table
+      <Table className="usersTable">
+        <Thead>
+          <Tr>
+            {columns.map((columnHeader) => {
+              return (
+                <Th key={columnHeader.key}>
+                  {columnHeader.key !== "hex" ? columnHeader.label : ""}
+                </Th>
+              );
+            })}
+          </Tr>
+        </Thead>
+        <Tbody>
+          {formula.components.map((component) => {
+            return (
+              <Tr key={component.componentCode}>
+                <Td>
+                  <span
+                    className="miniSwatch"
+                    style={{ backgroundColor: "#" + component.hex }}
+                  ></span>
+                </Td>
+                <Td>{component.componentCode}</Td>
+                <Td>{component.componentDescription}</Td>
+                <Td>{component.percentage}</Td>
+                <Td>
+                  {(formulaQuantity * component.percentage) / 100} {formulaUnit}
+                </Td>
+                <Td>0.00</Td>
+              </Tr>
+            );
+          })}
+        </Tbody>
+      </Table>
+      {/* <Table
         color="default"
         aria-label="Example static collection table"
         removeWrapper
@@ -108,7 +143,7 @@ export default function FormulaDetailsTable({
             </TableRow>
           )}
         </TableBody>
-      </Table>
+      </Table> */}
     </>
   );
 }
