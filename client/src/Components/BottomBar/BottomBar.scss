@@ -23,7 +23,7 @@
 
         .active {
             opacity   : 1;
-            transition: .5s;
+            transition: .3s;
         }
 
         li {
@@ -47,9 +47,11 @@
             color      : indianred;
             margin-left: auto;
             position   : absolute;
-            right      : 1rem;
+            right      : 1.5rem;
             top        : 50%;
             transform  : translateY(-50%);
+            cursor     : pointer
         }
+
     }
 }

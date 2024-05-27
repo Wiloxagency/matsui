@@ -56,6 +56,7 @@ export default function FormulaDetailsTable({
   formulaQuantity,
   formulaUnit,
 }: FormulaDetailsTableProps) {
+  
   // const givenComponentsList = formula.components.map(({ componentCode }) => {
   //   return componentCode;
   // });

@@ -80,6 +80,9 @@ export default function Formulas() {
     onOpenChange: onOpenChangeCreateFormulaModal,
   } = useDisclosure();
 
+  // const [triggerGetFormulaComponents, { data: getFormulaComponentsData }] = api.endpoints.getFormulaComponents.useLazyQuery();
+
+
   const [trigger, { data }] =
     api.endpoints.getCodesOfFormulasInSeries.useLazyQuery();
 
@@ -128,19 +131,6 @@ export default function Formulas() {
         className={
           isMobile ? "formulaPageLayout mobileLayout" : "formulaPageLayout"
         }
-        // style={
-        //   isSmallScreen
-        //     ? {
-        //         gridTemplateAreas: gridTemplateFormulasSmall,
-        //         gridAutoColumns: "1fr",
-        //         gridTemplateRows: "repeat(3, minmax(1rem, 10rem))",
-        //       }
-        //     : {
-        //         gridTemplateAreas: gridTemplateFormulas,
-        //         gridTemplateColumns: "repeat(2, minmax(375px, 1fr))",
-        //         gridTemplateRows: "repeat(5, minmax(8rem, 1fr))",
-        //       }
-        // }
       >
         <div className="leftSide">
           <div className="sectionHeader">
@@ -263,11 +253,6 @@ export default function Formulas() {
                 FORMULA DETAILS:{" "}
                 {selectedFormula && selectedFormula.formulaCode}
               </span>
-              {/* <span>
-              QUANTITY:
-              <input type="number" className="quantityInput" />
-              <span style={{ marginLeft: "1rem" }}>g / kg/ lbs</span>
-            </span> */}
               <span style={{ width: "14rem" }}>
                 <Input
                   label="QUANTITY"
@@ -302,6 +287,11 @@ export default function Formulas() {
               className="card"
               style={{ maxWidth: "100vw", marginBottom: "1rem" }}
             >
+              {/* TODO: FIGURE OUT HOW TO SHOW THIS SPINNER AFTER A SWATCH IS CLICKED
+              BUT BEFORE THE API RESPONSE HAS BEEN RECEIVED 👇🏻 */}
+              {/* {selectedFormula !== undefined && (
+                <Spinner className="m-auto"></Spinner>
+              )} */}
               {selectedFormula !== undefined ? (
                 <>
                   {!isMobile && (
@@ -351,6 +341,11 @@ export default function Formulas() {
               SIMILAR FORMULAS
             </div>
             <div className="card">
+              <span className="m-auto text-center">
+                Click on a formula to see similar formulas
+                <br />
+                (under construction)
+              </span>
               {/* <div className="swatchesComponentContainer"> */}
               {/* <img
               src="src/assets/underConstruction.jpg"
