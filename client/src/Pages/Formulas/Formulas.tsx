@@ -143,11 +143,7 @@ export default function Formulas() {
         // }
       >
         <div className="leftSide">
-          <div
-            className={
-              isMobile ? "sectionHeader mobileLayout" : "sectionHeader"
-            }
-          >
+          <div className="sectionHeader">
             <span>FORMULAS</span>
             <ReusableButton
               className="underlineButton"
@@ -354,10 +350,7 @@ export default function Formulas() {
             >
               SIMILAR FORMULAS
             </div>
-            <div
-              className="card"
-              style={isMobile ? { marginBottom: "5rem" } : {}}
-            >
+            <div className="card">
               {/* <div className="swatchesComponentContainer"> */}
               {/* <img
               src="src/assets/underConstruction.jpg"

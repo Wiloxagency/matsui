@@ -9,6 +9,14 @@
     }
 }
 
+.adminDashboardLayout.mobileLayout {
+    margin-bottom: 5rem;
+
+    .sectionHeader {
+        padding-inline: 1rem;
+    }
+}
+
 .topSectionContainer {
     display          : flex;
     flex-direction   : column;

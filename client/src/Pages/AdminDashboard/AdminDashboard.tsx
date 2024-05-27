@@ -17,6 +17,7 @@ import UsersTable from "../../Components/UsersTable/UsersTable";
 import "./AdminDashboard.scss";
 import { Input } from "@nextui-org/input";
 import { useGetUsersQuery } from "../../State/api";
+import { useMediaQuery } from "react-responsive";
 
 export default function AdminDashboard() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -28,6 +29,8 @@ export default function AdminDashboard() {
   const [idUserToEdit, setIdUserToEdit] = useState<string | undefined>(
     undefined
   );
+
+  const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
   function handleClick() {
     setIsSendEmailActive((previousValue) => !previousValue);
@@ -70,7 +73,11 @@ export default function AdminDashboard() {
   // }, [onOpenChange]);
 
   return (
-    <div className="adminDashboardLayout">
+    <div
+      className={
+        isMobile ? "adminDashboardLayout mobileLayout" : "adminDashboardLayout"
+      }
+    >
       <div className="topSectionContainer">
         <div className="sectionHeader">
           <span style={{ marginRight: "auto" }}>USER</span>{" "}

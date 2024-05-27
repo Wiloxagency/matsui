@@ -18,6 +18,12 @@
 }
 
 .importFormulaLayout.mobileLayout {
+    margin-bottom: 5rem;
+
+    .sectionHeader {
+        padding-inline: 1rem;
+    }
+
     .leftSection {
         max-width: 100vw;
         width    : 100vw;
