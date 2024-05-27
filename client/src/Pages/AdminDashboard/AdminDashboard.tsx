@@ -18,6 +18,7 @@ import "./AdminDashboard.scss";
 import { Input } from "@nextui-org/input";
 import { useGetUsersQuery } from "../../State/api";
 import { useMediaQuery } from "react-responsive";
+import { Spinner } from "@nextui-org/spinner";
 
 export default function AdminDashboard() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -82,6 +83,7 @@ export default function AdminDashboard() {
         isKeyboardDismissDisabled={true}
         hideCloseButton={true}
         scrollBehavior="outside"
+        placement="top-center"
       >
         <ModalContent>
           {(onClose) =>
@@ -112,12 +114,7 @@ export default function AdminDashboard() {
                   Edit user
                 </ModalHeader>
                 <ModalBody>
-                  <Input
-                    label="Username"
-                    type="text"
-                    variant="bordered"
-                    autoFocus
-                  />
+                  <Input label="Username" type="text" variant="bordered" />
                   <Input label="Company" type="text" variant="bordered" />
                   <Input label="Email" type="text" disabled />
                   <Input label="Registration date" type="text" disabled />
@@ -174,14 +171,18 @@ export default function AdminDashboard() {
             className="card"
             style={{ width: "100%", minWidth: "350px", maxWidth: "100vw" }}
           >
-            <UsersTable
-              users={fetchedUsers != undefined ? fetchedUsers : []}
-              selectedRowsIds={selectedRowsIds}
-              setSelectedRowsIds={setSelectedRowsIds}
-              indexRowToEdit={indexRowToEdit}
-              // setIndexRowToEdit={setIndexRowToEdit}
-              handleEditRow={handleEditRow}
-            />
+            {fetchedUsers !== undefined ? (
+              <UsersTable
+                users={fetchedUsers}
+                selectedRowsIds={selectedRowsIds}
+                setSelectedRowsIds={setSelectedRowsIds}
+                indexRowToEdit={indexRowToEdit}
+                // setIndexRowToEdit={setIndexRowToEdit}
+                handleEditRow={handleEditRow}
+              />
+            ) : (
+              <Spinner className="m-auto"></Spinner>
+            )}
           </div>
         </div>
         <div
