@@ -217,7 +217,7 @@ export default function CreateFormulaModal({
         ComponentDescription: component.ComponentDescription,
         Percentage: component.Percentage,
         isFormulaActive: isNewFormulaActive,
-        swatchColor: newFormulaColor,
+        // swatchColor: newFormulaColor,
       };
     });
     // console.log("filledNewFormulaComponents: ", filledNewFormulaComponents);

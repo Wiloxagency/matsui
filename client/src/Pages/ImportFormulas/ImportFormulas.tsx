@@ -1,16 +1,68 @@
 import "./ImportFormulas.scss";
 import { Input } from "@nextui-org/input";
 import { Switch } from "@nextui-org/switch";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CustomDropzone from "../../Components/Dropzone/Dropzone";
 import { useMediaQuery } from "react-responsive";
+import { Button } from "@nextui-org/button";
+
+interface ImportFormulaHeaderColumnIndexesInterface {
+  indexComponentCode: number;
+  indexComponentDescription: number;
+  indexFormulaCode: number;
+  indexFormulaDescription: number;
+  indexPercentage: number;
+}
+
+// TODO: OPTIMIZE THIS LATER. THE LABELS SHOULD BE PART OF AN ARRAY
+// OF HEADER OBJECTS 👇🏻
+const labels = [
+  "FORMULA CODE",
+  "FORMULA DESCRIPTION",
+  "COMPONENT CODE",
+  "COMPONENT DESCRIPTION",
+  "COMPONENT PERCENTAGE",
+];
 
 export default function ImportFormulas() {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
   const [isSwitchSelected, setIsSwitchSelected] = useState(true);
+
+  const [columnIndexes, setColumnIndexes] =
+    useState<ImportFormulaHeaderColumnIndexesInterface>({
+      indexComponentCode: 0,
+      indexComponentDescription: 1,
+      indexFormulaCode: 2,
+      indexFormulaDescription: 3,
+      indexPercentage: 4,
+    });
+
+  function handleColumnIndexesChange(value: number, receivedHeader: string) {
+    const columnIndexesShallowCopy: ImportFormulaHeaderColumnIndexesInterface =
+      columnIndexes;
+
+    columnIndexesShallowCopy[
+      receivedHeader as keyof ImportFormulaHeaderColumnIndexesInterface
+    ] = value;
+
+    setColumnIndexes(columnIndexesShallowCopy);
+  }
+
+  function handleConfirmColumnHeaders() {
+    console.log(columnIndexes);
+  }
+
+  useEffect(() => {
+    console.log(columnIndexes);
+  }, [columnIndexes]);
+
   return (
     <>
-      <div className={isMobile ? "importFormulaLayout mobileLayout" : "importFormulaLayout"}>
+      <div
+        className={
+          isMobile ? "importFormulaLayout mobileLayout" : "importFormulaLayout"
+        }
+      >
         <div className="leftSection">
           <div className="sectionHeader">
             <span>STEP 1: UPLOAD FILE</span>
@@ -50,36 +102,30 @@ export default function ImportFormulas() {
                 <span style={{ flex: "3" }}>HEADER</span>
                 <span style={{ flex: "1" }}>COLUMN</span>
               </div>
-              <div className="row">
-                <span style={{ flex: "3" }}>FORMULA CODE </span>
-                <span style={{ flex: "1" }}>
-                  <Input type="number" placeholder="0"></Input>
-                </span>
-              </div>
-              <div className="row">
-                <span style={{ flex: "3" }}>FORMULA DESCRIPTION</span>
-                <span style={{ flex: "1" }}>
-                  <Input type="number" placeholder="0"></Input>
-                </span>
-              </div>
-              <div className="row">
-                <span style={{ flex: "3" }}>COMPONENT CODE</span>
-                <span style={{ flex: "1" }}>
-                  <Input type="number" placeholder="0"></Input>
-                </span>
-              </div>
-              <div className="row">
-                <span style={{ flex: "3" }}>COMPONENT DESCRIPTION</span>
-                <span style={{ flex: "1" }}>
-                  <Input type="number" placeholder="0"></Input>
-                </span>
-              </div>
-              <div className="row">
-                <span style={{ flex: "3" }}>COMPONENT PERCENTAGE</span>
-                <span style={{ flex: "1" }}>
-                  <Input type="number" placeholder="0"></Input>
-                </span>
-              </div>
+
+              {Object.entries(columnIndexes).map(
+                ([key, value], indexHeader) => {
+                  return (
+                    <div key={key} className="row">
+                      <span style={{ flex: "3" }}>{labels[indexHeader]}</span>
+                      <span style={{ flex: "1" }}>
+                        <Input
+                          type="number"
+                          placeholder={(value + 1).toString()}
+                          min={0}
+                          onValueChange={(inputValue) => {
+                            handleColumnIndexesChange(
+                              Number(inputValue),
+                              "indexFormulaCode"
+                            );
+                          }}
+                        ></Input>
+                      </span>
+                    </div>
+                  );
+                }
+              )}
+              <Button onPress={handleConfirmColumnHeaders}>Confirm</Button>
             </div>
           </div>
         </div>
