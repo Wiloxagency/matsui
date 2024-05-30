@@ -2,13 +2,18 @@ export function returnHexColor(
   formulaComponents: {
     componentCode: string;
     componentDescription: string;
-    percentage: number;
-    hex?: string;
+    // OLD FORMULAS HAVE THEIR COMPONENT PERCENTAGES SET AS STRINGS 👇🏻
+    percentage: number | string;
+    hex: string;
   }[]
 ): string {
-//   console.log("formulaComponents: ", formulaComponents);
+  //   console.log("formulaComponents: ", formulaComponents);
 
-  const hexValues = formulaComponents;
+  const convertedFormulaComponents = formulaComponents.map((component) => {
+    return { color: component.hex, percentage: Number(component.percentage) };
+  });
+
+  const hexValues = convertedFormulaComponents;
 
   // Function to convert hex to RGB
   const hexToRgb = (hex: string) => {
@@ -33,7 +38,7 @@ export function returnHexColor(
   );
   const weightedRgb = hexValues.reduce(
     (acc, item) => {
-      const rgb = hexToRgb(item.hex!);
+      const rgb = hexToRgb(item.color);
       acc.r += (rgb.r * item.percentage) / totalPercentage;
       acc.g += (rgb.g * item.percentage) / totalPercentage;
       acc.b += (rgb.b * item.percentage) / totalPercentage;
@@ -49,7 +54,7 @@ export function returnHexColor(
     Math.round(weightedRgb.b)
   );
 
-//   console.info("finalHexColor", finalHexColor);
+  //   console.info("finalHexColor", finalHexColor);
 
   return "#" + finalHexColor;
 }

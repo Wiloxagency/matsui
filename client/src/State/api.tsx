@@ -25,7 +25,6 @@ export const api = createApi({
       }
     >({
       query: (arg) => {
-        console.log(arg)
         const { formulaSeries, formulaCodes, isInitialRequest } = arg;
         return {
           method: "POST",

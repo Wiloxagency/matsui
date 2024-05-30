@@ -111,7 +111,7 @@ export default function Formulas() {
     // if (isGetFormulasSuccessful) {
     //   setSelectedFormula(fetchedFormulas[0]);
     // }
-    console.log("fetchedFormulas: ", fetchedFormulas);
+    // console.log("fetchedFormulas: ", fetchedFormulas);
   }, [fetchedFormulas, isGetFormulasSuccessful]);
 
   useEffect(() => {
@@ -257,7 +257,7 @@ export default function Formulas() {
             >
               <span style={{ minWidth: "fit-content" }}>
                 FORMULA DETAILS:{" "}
-                {selectedFormula && selectedFormula.formulaCode}
+                {selectedFormula && selectedFormula.formulaDescription}
               </span>
               <span style={{ width: "14rem" }}>
                 <Input
