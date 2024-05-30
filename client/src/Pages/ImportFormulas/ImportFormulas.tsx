@@ -7,10 +7,10 @@ import { useMediaQuery } from "react-responsive";
 import { Button } from "@nextui-org/button";
 
 interface ImportFormulaHeaderColumnIndexesInterface {
-  indexComponentCode: number;
-  indexComponentDescription: number;
   indexFormulaCode: number;
   indexFormulaDescription: number;
+  indexComponentCode: number;
+  indexComponentDescription: number;
   indexPercentage: number;
 }
 
@@ -27,14 +27,16 @@ const labels = [
 export default function ImportFormulas() {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
   const [isSwitchSelected, setIsSwitchSelected] = useState(true);
+  const [JSONFormulas, setJSONFormulas] = useState<unknown[]>([]);
+  const [validationMessage, setValidationMessage] = useState<string>("");
 
   const [columnIndexes, setColumnIndexes] =
     useState<ImportFormulaHeaderColumnIndexesInterface>({
-      indexComponentCode: 0,
+      indexFormulaCode: 1,
+      indexFormulaDescription: 1,
+      indexComponentCode: 1,
       indexComponentDescription: 1,
-      indexFormulaCode: 2,
-      indexFormulaDescription: 3,
-      indexPercentage: 4,
+      indexPercentage: 1,
     });
 
   function handleColumnIndexesChange(value: number, receivedHeader: string) {
@@ -49,7 +51,52 @@ export default function ImportFormulas() {
   }
 
   function handleConfirmColumnHeaders() {
-    console.log(columnIndexes);
+    setValidationMessage("");
+    const columnValues: number[] = [];
+    for (const header of Object.keys(columnIndexes)) {
+      columnValues.push(
+        columnIndexes[header as keyof ImportFormulaHeaderColumnIndexesInterface]
+      );
+    }
+    const repeatedValues = columnValues.filter(
+      (e, i, a) => a.indexOf(e) !== i
+    ).length;
+
+    if (repeatedValues > 0) {
+      setValidationMessage(
+        "All fields must be set. Can't use the same column twice"
+      );
+      return;
+    }
+    remapJSONFormulas();
+  }
+
+  function remapJSONFormulas() {
+    console.log(JSONFormulas);
+    console.log("columnIndexes: ", columnIndexes);
+
+    const headers: string[] = Object.keys(JSONFormulas[0] as []);
+
+    const columnsMatchOrder = [4, 5, 1, 2, 3];
+
+    const columnsMatch = {
+      FormulaCode: headers[columnsMatchOrder[0] - 1],
+      FormulaDescription: headers[columnsMatchOrder[1] - 1],
+      ComponentCode: headers[columnsMatchOrder[2] - 1],
+      ComponentDescription: headers[columnsMatchOrder[3] - 1],
+      Percentage: headers[columnsMatchOrder[4] - 1],
+    };
+
+    const transformComponent = (component: any) => {
+      const transformed: any = {};
+      for (const [newKey, oldKey] of Object.entries(columnsMatch)) {
+        transformed[newKey] = component[oldKey];
+      }
+      return transformed;
+    };
+
+    const transformedComponents = JSONFormulas.map(transformComponent);
+    console.log("Transformed Components: ", transformedComponents);
   }
 
   useEffect(() => {
@@ -89,7 +136,7 @@ export default function ImportFormulas() {
             >
               {isSwitchSelected ? "YES" : "NO"}
             </Switch>
-            <CustomDropzone />
+            <CustomDropzone setJSONFormulas={setJSONFormulas} />
           </div>
         </div>
         <div className="rightSection" style={{ minWidth: "350px" }}>
@@ -102,22 +149,20 @@ export default function ImportFormulas() {
                 <span style={{ flex: "3" }}>HEADER</span>
                 <span style={{ flex: "1" }}>COLUMN</span>
               </div>
-
               {Object.entries(columnIndexes).map(
                 ([key, value], indexHeader) => {
+                  value;
                   return (
                     <div key={key} className="row">
                       <span style={{ flex: "3" }}>{labels[indexHeader]}</span>
                       <span style={{ flex: "1" }}>
                         <Input
                           type="number"
-                          placeholder={(value + 1).toString()}
-                          min={0}
+                          // value={value.toString()}
+                          // placeholder={value.toString()}
+                          min={1}
                           onValueChange={(inputValue) => {
-                            handleColumnIndexesChange(
-                              Number(inputValue),
-                              "indexFormulaCode"
-                            );
+                            handleColumnIndexesChange(Number(inputValue), key);
                           }}
                         ></Input>
                       </span>
@@ -125,6 +170,16 @@ export default function ImportFormulas() {
                   );
                 }
               )}
+              <p
+                style={{ color: "red", textAlign: "center" }}
+                className={
+                  validationMessage !== ""
+                    ? "validationErrorMessage active"
+                    : "validationErrorMessage"
+                }
+              >
+                {validationMessage}
+              </p>
               <Button onPress={handleConfirmColumnHeaders}>Confirm</Button>
             </div>
           </div>

@@ -1,62 +1,74 @@
-import "./Dropzone.scss";
 import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { FaCloudUploadAlt } from "react-icons/fa";
+import "./Dropzone.scss";
 
 import * as XLSX from "xlsx";
 
 async function parseSpreadsheet(
   receivedFile: File,
   setExtractedHeaders: Dispatch<SetStateAction<string[]>>,
-  setTransformedComponents: Dispatch<SetStateAction<any[]>>
+  setTransformedComponents: Dispatch<SetStateAction<any[]>>,
+  setJSONFormulas: Dispatch<SetStateAction<unknown[]>>
 ) {
   const fileAsArrayBuffer = await receivedFile.arrayBuffer();
   const workbook = XLSX.read(fileAsArrayBuffer);
   const firstSpreadsheetName = workbook.SheetNames[0];
   const firstSpreadsheet = workbook.Sheets[firstSpreadsheetName];
   const sheetToJson = XLSX.utils.sheet_to_json(firstSpreadsheet);
+  setJSONFormulas(sheetToJson);
 
   // Temporal binding replacement
-  const columnsMatchOrder = [4, 5, 1, 2, 3];
+  // const columnsMatchOrder = [4, 5, 1, 2, 3];
 
   const headers: string[] = Object.keys(sheetToJson[0] as []);
-  console.log("Headers: ", headers);
+  // console.log("Headers: ", headers);
 
-  const columnsMatch = {
-    FormulaCode: headers[columnsMatchOrder[0] - 1],
-    FormulaDescription: headers[columnsMatchOrder[1] - 1],
-    ComponentCode: headers[columnsMatchOrder[2] - 1],
-    ComponentDescription: headers[columnsMatchOrder[3] - 1],
-    Percentage: headers[columnsMatchOrder[4] - 1],
-  };
+  // const columnsMatch = {
+  //   FormulaCode: headers[columnsMatchOrder[0] - 1],
+  //   FormulaDescription: headers[columnsMatchOrder[1] - 1],
+  //   ComponentCode: headers[columnsMatchOrder[2] - 1],
+  //   ComponentDescription: headers[columnsMatchOrder[3] - 1],
+  //   Percentage: headers[columnsMatchOrder[4] - 1],
+  // };
 
-  console.log(sheetToJson);
+  // console.log(sheetToJson);
   setExtractedHeaders(headers);
 
-  const transformComponent = (component: any) => {
-    const transformed: any = {};
-    for (const [newKey, oldKey] of Object.entries(columnsMatch)) {
-      transformed[newKey] = component[oldKey];
-    }
-    return transformed;
-  };
+  // const transformComponent = (component: any) => {
+  //   const transformed: any = {};
+  //   for (const [newKey, oldKey] of Object.entries(columnsMatch)) {
+  //     transformed[newKey] = component[oldKey];
+  //   }
+  //   return transformed;
+  // };
 
-  const transformedComponents = sheetToJson.map(transformComponent);
-  console.log("Transformed Components: ", transformedComponents);
-  setTransformedComponents(transformedComponents);
+  // const transformedComponents = sheetToJson.map(transformComponent);
+  // console.log("Transformed Components: ", transformedComponents);
+  // setTransformedComponents(transformedComponents);
 }
 
-export default function CustomDropzone() {
+interface CustomDropzonePropsInterface {
+  // JSONFormulas: unknown[];
+  setJSONFormulas: Dispatch<SetStateAction<unknown[]>>;
+}
+
+export default function CustomDropzone({
+  setJSONFormulas,
+}: CustomDropzonePropsInterface) {
   const [extractedHeaders, setExtractedHeaders] = useState<string[]>([]);
   const [transformedComponents, setTransformedComponents] = useState<any[]>([]);
   transformedComponents;
-  
+
   const onDrop = useCallback((acceptedFiles: Array<File>) => {
+    // setJSONFormulas([1, 2, 3]);
+
     if (acceptedFiles[0] === undefined) return;
     parseSpreadsheet(
       acceptedFiles[0],
       setExtractedHeaders,
-      setTransformedComponents
+      setTransformedComponents,
+      setJSONFormulas
     );
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
