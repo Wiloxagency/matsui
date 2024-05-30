@@ -83,6 +83,6 @@ export interface GetFormulasResultInterface {
     componentCode: string;
     componentDescription: string;
     percentage: number;
-    hex?: string;
+    hex: string;
   }[];
 }

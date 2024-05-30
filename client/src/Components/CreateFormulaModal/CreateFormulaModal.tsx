@@ -201,9 +201,12 @@ export default function CreateFormulaModal({
     const totalPercentages = newFormulaComponents
       .map((component) => component.Percentage)
       .reduce((a, b) => a + b);
-    if (totalPercentages !== 100) {
+
+    const roundedTotalPercentages = parseFloat(totalPercentages.toPrecision(5));
+
+    if (roundedTotalPercentages !== 100) {
       setValidationMessage(
-        `Component percentages must add up to exactly 100. Current value is ${totalPercentages}`
+        `Component percentages must add up to exactly 100. Current value is ${roundedTotalPercentages}`
       );
       return;
     }
