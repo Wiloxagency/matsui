@@ -9,11 +9,11 @@ export function returnHexColor(
 ): string {
   //   console.log("formulaComponents: ", formulaComponents);
 
-  const convertedFormulaComponents = formulaComponents.map((component) => {
+  const convertedFormulaComponentsPercentagesToNumbers = formulaComponents.map((component) => {
     return { color: component.hex, percentage: Number(component.percentage) };
   });
 
-  const hexValues = convertedFormulaComponents;
+  const hexValues = convertedFormulaComponentsPercentagesToNumbers;
 
   // Function to convert hex to RGB
   const hexToRgb = (hex: string) => {
