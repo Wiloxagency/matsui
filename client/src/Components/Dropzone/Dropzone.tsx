@@ -8,7 +8,7 @@ import * as XLSX from "xlsx";
 async function parseSpreadsheet(
   receivedFile: File,
   setExtractedHeaders: Dispatch<SetStateAction<string[]>>,
-  setTransformedComponents: Dispatch<SetStateAction<any[]>>,
+  // setTransformedComponents: Dispatch<SetStateAction<any[]>>,
   setJSONFormulas: Dispatch<SetStateAction<unknown[]>>
 ) {
   const fileAsArrayBuffer = await receivedFile.arrayBuffer();
@@ -57,8 +57,8 @@ export default function CustomDropzone({
   setJSONFormulas,
 }: CustomDropzonePropsInterface) {
   const [extractedHeaders, setExtractedHeaders] = useState<string[]>([]);
-  const [transformedComponents, setTransformedComponents] = useState<any[]>([]);
-  transformedComponents;
+  // const [transformedComponents, setTransformedComponents] = useState<any[]>([]);
+  // transformedComponents;
 
   const onDrop = useCallback((acceptedFiles: Array<File>) => {
     // setJSONFormulas([1, 2, 3]);
@@ -67,7 +67,7 @@ export default function CustomDropzone({
     parseSpreadsheet(
       acceptedFiles[0],
       setExtractedHeaders,
-      setTransformedComponents,
+      // setTransformedComponents,
       setJSONFormulas
     );
   }, []);
