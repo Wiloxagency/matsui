@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
   FormulaComponentInterface,
-  FormulaInterface,
   FormulaSwatchInterface,
+  GetFormulasResultInterface,
   InkSystemInterface,
   PigmentInterface,
   UserInterface,
@@ -16,19 +16,37 @@ export const api = createApi({
     getUsers: builder.query<Array<UserInterface>, void>({
       query: () => "users/",
     }),
-    getFormulaComponents: builder.query<
-      FormulaInterface,
-      { formulaSeries: string; formulaCode: string }
+    getFormulas: builder.query<
+      GetFormulasResultInterface[],
+      {
+        isInitialRequest: boolean;
+        formulaSeries: string;
+        formulaCodes?: string[];
+      }
     >({
       query: (arg) => {
-        const { formulaSeries, formulaCode } = arg;
+        console.log(arg)
+        const { formulaSeries, formulaCodes, isInitialRequest } = arg;
         return {
           method: "POST",
-          url: "components/",
-          params: { formulaSeries, formulaCode },
+          url: "components/GetFormulas",
+          body: { formulaSeries, formulaCodes, isInitialRequest },
         };
       },
     }),
+    // getFormulaComponents: builder.query<
+    //   FormulaInterface,
+    //   { formulaSeries: string; formulaCode: string }
+    // >({
+    //   query: (arg) => {
+    //     const { formulaSeries, formulaCode } = arg;
+    //     return {
+    //       method: "POST",
+    //       url: "components/",
+    //       params: { formulaSeries, formulaCode },
+    //     };
+    //   },
+    // }),
     getGivenComponents: builder.query<
       Array<FormulaComponentInterface>,
       string[]
@@ -67,7 +85,7 @@ export const api = createApi({
 
 export const {
   useGetUsersQuery,
-  useGetFormulaComponentsQuery,
+  useGetFormulasQuery,
   useGetGivenComponentsQuery,
   useGetSeriesQuery,
   useGetInkSystemsQuery,

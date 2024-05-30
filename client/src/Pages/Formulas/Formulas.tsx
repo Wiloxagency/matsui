@@ -1,24 +1,24 @@
-import "./Formulas.scss";
+import { Input } from "@nextui-org/input";
+import { useDisclosure } from "@nextui-org/modal";
+import { Select, SelectItem } from "@nextui-org/select";
+import { Spinner } from "@nextui-org/spinner";
 import { useEffect, useState } from "react";
+import { FaClone, FaPen, FaPrint, FaSearch } from "react-icons/fa";
 import { useMediaQuery } from "react-responsive";
+import CreateFormulaModal from "../../Components/CreateFormulaModal/CreateFormulaModal";
+import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
+import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
+import ReusableButton from "../../Components/ReusableButton/ReusableButton";
+import Swatches from "../../Components/Swatches/Swatches";
 import {
   api,
-  useGetFormulaSwatchColorsQuery,
+  useGetFormulasQuery,
   useGetInkSystemsQuery,
   useGetPigmentsQuery,
   useGetSeriesQuery,
 } from "../../State/api";
 import { FormulaInterface } from "../../interfaces/interfaces";
-import { Input } from "@nextui-org/input";
-import { Select, SelectItem } from "@nextui-org/select";
-import { FaClone, FaPen, FaPrint, FaSearch } from "react-icons/fa";
-import { Spinner } from "@nextui-org/spinner";
-import { useDisclosure } from "@nextui-org/modal";
-import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
-import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
-import ReusableButton from "../../Components/ReusableButton/ReusableButton";
-import Swatches from "../../Components/Swatches/Swatches";
-import CreateFormulaModal from "../../Components/CreateFormulaModal/CreateFormulaModal";
+import "./Formulas.scss";
 
 export default function Formulas() {
   const [formulasInSeries, setFormulasInSeries] = useState<
@@ -37,11 +37,17 @@ export default function Formulas() {
   // const { data: fetchedFormulas, isSuccess: isGetFormulasSuccessful } =
   //   useGetFormulasQuery();
 
+  // const {
+  //   data: fetchedFormulaSwatchColors,
+  //   isSuccess: isGetFormulaSwatchColorsSuccessful,
+  //   refetch: refetchFormulaSwatchColors,
+  // } = useGetFormulaSwatchColorsQuery();
+
   const {
-    data: fetchedFormulaSwatchColors,
-    isSuccess: isGetFormulaSwatchColorsSuccessful,
-    refetch: refetchFormulaSwatchColors,
-  } = useGetFormulaSwatchColorsQuery();
+    data: fetchedFormulas,
+    isSuccess: isGetFormulasSuccessful,
+    refetch: refetchFormulasColors,
+  } = useGetFormulasQuery({ isInitialRequest: true, formulaSeries: "301" });
 
   const {
     data: fetchedInkSystems,
@@ -82,7 +88,6 @@ export default function Formulas() {
 
   // const [triggerGetFormulaComponents, { data: getFormulaComponentsData }] = api.endpoints.getFormulaComponents.useLazyQuery();
 
-
   const [trigger, { data }] =
     api.endpoints.getCodesOfFormulasInSeries.useLazyQuery();
 
@@ -102,11 +107,12 @@ export default function Formulas() {
     });
   };
 
-  // useEffect(() => {
-  //   if (isGetFormulasSuccessful) {
-  //     setSelectedFormula(fetchedFormulas[0]);
-  //   }
-  // }, [fetchedFormulas, isGetFormulasSuccessful]);
+  useEffect(() => {
+    // if (isGetFormulasSuccessful) {
+    //   setSelectedFormula(fetchedFormulas[0]);
+    // }
+    console.log("fetchedFormulas: ", fetchedFormulas);
+  }, [fetchedFormulas, isGetFormulasSuccessful]);
 
   useEffect(() => {
     return;
@@ -125,7 +131,7 @@ export default function Formulas() {
         onOpenChangeCreateFormulaModal={onOpenChangeCreateFormulaModal}
         fetchedSeries={fetchedSeries}
         fetchedPigments={fetchedPigments}
-        refetchFormulaSwatchColors={refetchFormulaSwatchColors}
+        refetchFormulaSwatchColors={refetchFormulasColors}
       />
       <div
         className={
@@ -227,10 +233,10 @@ export default function Formulas() {
               </span>
             </div>
             <div className="swatchesComponentContainer">
-              {isGetFormulaSwatchColorsSuccessful ? (
+              {isGetFormulasSuccessful ? (
                 <Swatches
                   // formulas={formulasInSeries}
-                  formulaSwatches={fetchedFormulaSwatchColors}
+                  formulas={fetchedFormulas}
                   selectedFormula={selectedFormula}
                   setSelectedFormula={setSelectedFormula}
                   selectedSeries={selectedSeries}
@@ -303,9 +309,7 @@ export default function Formulas() {
                     formulaUnit={formulaUnit}
                   />
                   <div className="buttonsAndTotalRow">
-                    <div style={{ marginBlock: "1rem", marginLeft: "auto" }}>
-                      TOTAL: 97,70 $
-                    </div>
+                    <div className="totalLabel">TOTAL: 97,70 $</div>
                     <div className="buttonsContainer">
                       <ReusableButton
                         className="underlineButton"

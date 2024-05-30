@@ -3,15 +3,13 @@ import "./Swatches.scss";
 // import returnTemporaryFormulas from "./TempFormulas";
 import {
   FormulaInterface,
-  FormulaSwatchInterface,
-  // FormulaSwatchInterface,
+  GetFormulasResultInterface,
 } from "../../interfaces/interfaces";
-// import { formulaColors, formulaNames } from "../../State/formulaNames";
-import { api } from "../../State/api";
+import { returnHexColor } from "../../Utilities/returnHexColor";
 
 interface SwatchesProps {
   // formulas: FormulaSwatchInterface[] | undefined;
-  formulaSwatches: FormulaSwatchInterface[] | undefined;
+  formulas: GetFormulasResultInterface[] | undefined;
   selectedFormula: FormulaInterface | undefined;
   setSelectedFormula: Dispatch<SetStateAction<FormulaInterface | undefined>>;
   selectedSeries: string;
@@ -26,57 +24,49 @@ interface SwatchesProps {
 // }
 
 export default function Swatches({
-  formulaSwatches,
+  formulas,
   setSelectedFormula,
   selectedFormula,
   selectedSeries,
 }: SwatchesProps) {
-  const [trigger, { data }] = api.endpoints.getFormulaComponents.useLazyQuery();
-  data;
+  // const [trigger, { data }] = api.endpoints.getFormulas.useLazyQuery();
+  // data;
 
-  function handleSelectFormula(clickedFormula: string) {
-    trigger({
+  function handleSelectFormula(clickedFormula: GetFormulasResultInterface) {
+    // console.log(clickedFormula);
+
+    const fullFormula: FormulaInterface = {
       formulaSeries: selectedSeries,
-      formulaCode: clickedFormula.toUpperCase(),
-    }).then((response) => {
-      // console.log("response: ", response.data);
-      // console.log("data: ", data);
-
-      if (response.data === undefined) return;
-
-      const fullFormula: FormulaInterface = {
-        formulaSeries: selectedSeries,
-        formulaCode: clickedFormula,
-        formulaDescription: "",
-        isActive: true,
-        reportedAsError: false,
-        inkSystem: "",
-        components: response.data.components,
-      };
-      setSelectedFormula(fullFormula);
-    });
+      formulaCode: clickedFormula._id,
+      formulaDescription: clickedFormula.formulaDescription,
+      isActive: true,
+      reportedAsError: false,
+      inkSystem: "",
+      components: clickedFormula.components,
+    };
+    setSelectedFormula(fullFormula);
   }
 
-  if (formulaSwatches !== undefined)
+  if (formulas !== undefined)
     return (
       <>
         <div className="swatchesContainer">
-          {formulaSwatches.map((formulaSwatch) => {
+          {formulas.map((formula) => {
             return (
               <span
-                key={formulaSwatch.formulaCode}
+                key={formula._id}
                 className={
-                  formulaSwatch.formulaCode === selectedFormula?.formulaCode
+                  formula._id === selectedFormula?.formulaCode
                     ? "swatch active"
                     : "swatch"
                 }
                 style={{
-                  backgroundColor: "#" + formulaSwatch.formulaColor,
+                  backgroundColor: returnHexColor(formula.components),
                 }}
-                onClick={() => handleSelectFormula(formulaSwatch.formulaCode)}
+                onClick={() => handleSelectFormula(formula)}
               >
                 <div className="swatchLabelContainer">
-                  <div className="swatchTitle">{formulaSwatch.formulaCode}</div>
+                  <div className="swatchTitle">{formula._id}</div>
                   {/* <div>{formula.formulaDescription}</div> */}
                 </div>
               </span>

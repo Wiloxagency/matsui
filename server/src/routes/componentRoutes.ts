@@ -11,6 +11,77 @@ router.get("/", async (req: Request, res: Response) => {
   res.json(allComponents);
 });
 
+router.post("/GetFormulas", async (req: Request, res: Response) => {
+  const db = await createMongoDBConnection();
+  const components = db.collection("components");
+  let initialRequestFormulaCodes: string[] = [];
+
+  if (req.body.isInitialRequest === true) {
+    const formulaSwatchColors = db.collection("formulaSwatchColors");
+    const latest20FormulaSwatchColors = await formulaSwatchColors
+      .find()
+      .sort({ _id: -1 })
+      .limit(40)
+      .toArray();
+    initialRequestFormulaCodes = latest20FormulaSwatchColors.map(
+      (formula) => formula.formulaCode
+    );
+  }
+
+  console.log(initialRequestFormulaCodes);
+
+  const pipeline = [
+    { $match: { FormulaSerie: req.body.formulaSeries } },
+    {
+      $match: {
+        FormulaCode: {
+          $in: req.body.isInitialRequest
+            ? initialRequestFormulaCodes
+            : req.body.formulaCodes,
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "pigments",
+        localField: "ComponentCode",
+        foreignField: "code",
+        as: "component",
+      },
+    },
+    {
+      $replaceRoot: {
+        newRoot: {
+          $mergeObjects: [{ $arrayElemAt: ["$component", 0] }, "$$ROOT"],
+        },
+      },
+    },
+    { $project: { fromItems: 0 } },
+    {
+      $group: {
+        _id: "$FormulaCode",
+        formulaDescription: {
+          $first: "$FormulaDescription",
+        },
+        components: {
+          $push: {
+            componentCode: "$ComponentCode",
+            componentDescription: "$ComponentDescription",
+            hex: "$hex",
+            percentage: "$Percentage",
+          },
+        },
+      },
+    },
+  ];
+
+  const formulas = await components
+    .aggregate(pipeline)
+    .sort({ _id: -1 })
+    .toArray();
+  res.json(formulas);
+});
+
 router.post("/", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const components = db.collection("components");

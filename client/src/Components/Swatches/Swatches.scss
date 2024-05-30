@@ -1,8 +1,9 @@
 .swatchesContainer {
-    display        : flex;
-    flex-wrap      : wrap;
+    display           : flex;
+    flex-wrap         : wrap;
     // justify-content: space-between;
-    gap            : 1rem;
+    gap               : 1rem;
+    padding           : .5rem;
 
     // overflow-y: scroll;
     // height    : 80%;
@@ -15,6 +16,7 @@
         // background-color: cadetblue;
         border-radius         : 1rem;
         // border             : 2px solid #00000000;
+        box-shadow            : 0px 0px 14px #00000014;
         cursor                : pointer;
 
         .swatchLabelContainer {

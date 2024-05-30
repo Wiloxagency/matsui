@@ -75,3 +75,14 @@ export interface FormulaSwatchInterface {
   formulaCode: string;
   formulaColor: string;
 }
+
+export interface GetFormulasResultInterface {
+  _id: string;
+  formulaDescription: string;
+  components: {
+    componentCode: string;
+    componentDescription: string;
+    percentage: number;
+    hex?: string;
+  }[];
+}
