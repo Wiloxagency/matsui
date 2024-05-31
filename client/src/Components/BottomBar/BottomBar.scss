@@ -15,7 +15,7 @@
     color              : white;
     box-shadow         : 1px 1px 5px #00000071;
     z-index            : 90;
-    padding-inline     : 3rem;
+    padding-right      : 2rem;
 
     ul {
         display: flex;
@@ -47,7 +47,7 @@
             color      : indianred;
             margin-left: auto;
             position   : absolute;
-            right      : 1.5rem;
+            right      : 1rem;
             top        : 50%;
             transform  : translateY(-50%);
             cursor     : pointer

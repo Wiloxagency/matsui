@@ -1,4 +1,4 @@
-import { FaSwatchbook, FaUserTie } from "react-icons/fa";
+import { FaMoneyBill, FaSwatchbook, FaUserTie } from "react-icons/fa";
 import { FaCloudArrowUp } from "react-icons/fa6";
 
 export const pages = [
@@ -13,6 +13,12 @@ export const pages = [
     label: "ADMIN DASHBOARD",
     mobileLabel: "Admin",
     icon: FaUserTie,
+  },
+  {
+    path: "/calculator",
+    label: "INK CALCULATOR",
+    mobileLabel: "Calculator",
+    icon: FaMoneyBill,
   },
   {
     path: "/import",
