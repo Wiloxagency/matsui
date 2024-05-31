@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
   FormulaComponentInterface,
-  FormulaSwatchInterface,
   GetFormulasResultInterface,
   InkSystemInterface,
   PigmentInterface,
@@ -33,19 +32,6 @@ export const api = createApi({
         };
       },
     }),
-    // getFormulaComponents: builder.query<
-    //   FormulaInterface,
-    //   { formulaSeries: string; formulaCode: string }
-    // >({
-    //   query: (arg) => {
-    //     const { formulaSeries, formulaCode } = arg;
-    //     return {
-    //       method: "POST",
-    //       url: "components/",
-    //       params: { formulaSeries, formulaCode },
-    //     };
-    //   },
-    // }),
     getGivenComponents: builder.query<
       Array<FormulaComponentInterface>,
       string[]
@@ -69,9 +55,6 @@ export const api = createApi({
     getPigments: builder.query<Array<PigmentInterface>, void>({
       query: () => "components/GetPigments",
     }),
-    getFormulaSwatchColors: builder.query<Array<FormulaSwatchInterface>, void>({
-      query: () => "components/GetFormulaSwatchColors",
-    }),
     addFormula: builder.mutation<void, FormulaComponentInterface[]>({
       query: (payload) => ({
         url: "components/CreateFormula",
@@ -90,6 +73,5 @@ export const {
   useGetInkSystemsQuery,
   useGetCodesOfFormulasInSeriesQuery,
   useGetPigmentsQuery,
-  useGetFormulaSwatchColorsQuery,
   useAddFormulaMutation,
 } = api;

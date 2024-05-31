@@ -8,7 +8,6 @@ import {
 import { returnHexColor } from "../../Utilities/returnHexColor";
 
 interface SwatchesProps {
-  // formulas: FormulaSwatchInterface[] | undefined;
   formulas: GetFormulasResultInterface[] | undefined;
   selectedFormula: FormulaInterface | undefined;
   setSelectedFormula: Dispatch<SetStateAction<FormulaInterface | undefined>>;

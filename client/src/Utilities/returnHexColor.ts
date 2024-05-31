@@ -1,7 +1,5 @@
 export function returnHexColor(
   formulaComponents: {
-    componentCode: string;
-    componentDescription: string;
     // OLD FORMULAS HAVE THEIR COMPONENT PERCENTAGES SET AS STRINGS 👇🏻
     percentage: number | string;
     hex: string;

@@ -26,6 +26,7 @@ import { Tooltip } from "@nextui-org/tooltip";
 import { useAddFormulaMutation } from "../../State/api";
 import { Flip, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { returnHexColor } from "../../Utilities/returnHexColor";
 
 interface CreateFormulaModalProps {
   isOpenCreateFormulaModal: boolean;
@@ -55,7 +56,7 @@ export default function CreateFormulaModal({
   const [isColorPickerVisible, setIsColorPickerVisible] =
     useState<boolean>(false);
 
-  const [newFormulaColor, setNewFormulaColor] = useState<string>("#2dacb8");
+  const [newFormulaColor, setNewFormulaColor] = useState<string>("#fff");
 
   const [newFormulaComponents, setNewFormulaComponents] = useState<
     FormulaComponentInterface[]
@@ -105,6 +106,7 @@ export default function CreateFormulaModal({
     // THE RECEIVED COMPONENT CODE COMES FROM THE fetchedPigments ARRAY.
     // THEREFORE, matchingPigment WILL NEVER BE UNDEFINED 👇🏻
     componentShallowCopy.ComponentDescription = matchingPigment!.description;
+    componentShallowCopy.hex = matchingPigment!.hex;
     componentsShallowCopy[receivedIndexComponent] = componentShallowCopy;
     setNewFormulaComponents([...componentsShallowCopy]);
   }
@@ -121,6 +123,13 @@ export default function CreateFormulaModal({
     componentShallowCopy.Percentage = value;
     componentsShallowCopy[receivedIndexComponent] = componentShallowCopy;
     setNewFormulaComponents(componentsShallowCopy);
+
+    const returnHexColorPayload = newFormulaComponents.map((component) => {
+      return { hex: component.hex!, percentage: component.Percentage };
+    });
+
+    const newFormulaHexColor = returnHexColor(returnHexColorPayload);
+    setNewFormulaColor(newFormulaHexColor);
   }
 
   function handleAddFormulaComponent() {
@@ -302,26 +311,6 @@ export default function CreateFormulaModal({
                     setNewFormulaDescription(event.target.value);
                   }}
                 />
-
-                <div style={{ display: "flex" }}>
-                  <span
-                    className="formulaColorPreview"
-                    style={{ background: `${newFormulaColor} content-box` }}
-                    onClick={() =>
-                      setIsColorPickerVisible(!isColorPickerVisible)
-                    }
-                  ></span>
-
-                  <Button
-                    color="primary"
-                    variant="light"
-                    onPress={() =>
-                      setIsColorPickerVisible(!isColorPickerVisible)
-                    }
-                  >
-                    Choose formula color
-                  </Button>
-                </div>
                 {isColorPickerVisible ? (
                   <div className={"colorPickerPopover"}>
                     {!isMobile && (
@@ -351,7 +340,16 @@ export default function CreateFormulaModal({
                   </div>
                 ) : null}
 
-                <p className="mx-auto">Components</p>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <p className="mr-auto" style={{ fontWeight: "600" }}>
+                    Components
+                  </p>
+                  <p style={{ opacity: ".7" }}>Color preview: </p>
+                  <span
+                    className="formulaColorPreview"
+                    style={{ background: `${newFormulaColor} content-box` }}
+                  ></span>
+                </div>
                 <Divider className="my-1" />
 
                 {newFormulaComponents.map(

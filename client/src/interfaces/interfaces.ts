@@ -17,12 +17,6 @@ export interface UserInterface {
   lastAccess: Date;
 }
 
-export interface FormulaSwatchInterface {
-  formulaCode: string;
-  formulaSeries: string;
-  formulaDescription: string;
-}
-
 export interface FormulaInterface {
   formulaSeries: string;
   formulaCode: string;
@@ -47,6 +41,7 @@ export interface FormulaComponentInterface {
   Percentage: number;
   isFormulaActive?: boolean;
   swatchColor?: string;
+  hex?: string
 }
 
 export interface InkSystemInterface {
@@ -69,11 +64,6 @@ export interface PigmentInterface {
   hex: string;
   cmyk: number[];
   rgb: number[];
-}
-
-export interface FormulaSwatchInterface {
-  formulaCode: string;
-  formulaColor: string;
 }
 
 export interface GetFormulasResultInterface {
