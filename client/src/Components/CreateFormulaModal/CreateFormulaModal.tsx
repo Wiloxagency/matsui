@@ -27,6 +27,8 @@ import { useAddFormulaMutation } from "../../State/api";
 import { Flip, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { returnHexColor } from "../../Utilities/returnHexColor";
+import { Radio, RadioGroup } from "@nextui-org/radio";
+import { cn } from "@nextui-org/system";
 
 interface CreateFormulaModalProps {
   isOpenCreateFormulaModal: boolean;
@@ -65,7 +67,7 @@ export default function CreateFormulaModal({
       FormulaSerie: "",
       FormulaCode: "",
       FormulaDescription: "",
-      ComponentCode: "",
+      ComponentCode: "ALPHA BASE",
       ComponentDescription: "",
       Percentage: 0,
     },
@@ -74,6 +76,8 @@ export default function CreateFormulaModal({
   const [isNewFormulaActive, setIsNewFormulaActive] = useState<boolean>(true);
 
   const [validationMessage, setValidationMessage] = useState<string>("");
+
+  const [formulaUnit, setFormulaUnit] = useState<string>("Grams");
 
   const [addFormula] = useAddFormulaMutation();
 
@@ -340,10 +344,14 @@ export default function CreateFormulaModal({
                   </div>
                 ) : null}
 
-                <div style={{ display: "flex", alignItems: "center" }}>
+                <div
+                  className="mt-1"
+                  style={{ display: "flex", alignItems: "center" }}
+                >
                   <p className="mr-auto" style={{ fontWeight: "600" }}>
                     Components
                   </p>
+
                   <p style={{ opacity: ".7" }}>Color preview: </p>
                   <span
                     className="formulaColorPreview"
@@ -351,6 +359,58 @@ export default function CreateFormulaModal({
                   ></span>
                 </div>
                 <Divider className="my-1" />
+
+                <div className="text-foreground-500">
+                  Set the formula weight
+                </div>
+
+                <span style={{ width: "50%" }}>
+                  <Input
+                    type="number"
+                    min={0}
+                    placeholder="000"
+                    labelPlacement="inside"
+                    endContent={
+                      <div className="pointer-events-none flex items-center">
+                        <span className="text-default-400 text-small">g</span>
+                      </div>
+                    }
+                  />
+                </span>
+
+                <div className="flex flex-col gap-3">
+                  <RadioGroup
+                    label="Select the measurement unit for the components"
+                    value={formulaUnit}
+                    onValueChange={setFormulaUnit}
+                    orientation="horizontal"
+                  >
+                    <Radio
+                      classNames={{
+                        base: cn(
+                          "inline-flex m-0 bg-content1 hover:bg-content2 items-center justify-between flex-1",
+                          "flex-row-reverse max-w-[300px] cursor-pointer rounded-lg gap-4 p-4 border-2 border-transparent",
+                          "data-[selected=true]:border-primary"
+                        ),
+                      }}
+                      value="Grams"
+                    >
+                      Grams
+                    </Radio>
+                    <Radio
+                      classNames={{
+                        base: cn(
+                          "inline-flex m-0 bg-content1 hover:bg-content2 items-center justify-between flex-1",
+                          "flex-row-reverse max-w-[300px] cursor-pointer rounded-lg gap-4 p-4 border-2 border-transparent",
+                          "data-[selected=true]:border-primary"
+                        ),
+                      }}
+                      value="Percentage"
+                    >
+                      Percentage
+                    </Radio>
+                  </RadioGroup>
+                </div>
 
                 {newFormulaComponents.map(
                   (formulaComponent, indexComponent) => {
@@ -402,29 +462,53 @@ export default function CreateFormulaModal({
                           </Select>
                         </span>
                         <span style={{ flex: "1.4" }}>
-                          <Input
-                            type="number"
-                            min={0}
-                            max={100}
-                            step={0.001}
-                            label="Percentage"
-                            placeholder="0.000"
-                            labelPlacement="inside"
-                            // value={formulaComponent.Percentage.toString()}
-                            onValueChange={(value) => {
-                              handleComponentPercentageChange(
-                                Number(value),
-                                indexComponent
-                              );
-                            }}
-                            endContent={
-                              <div className="pointer-events-none flex items-center">
-                                <span className="text-default-400 text-small">
-                                  %
-                                </span>
-                              </div>
-                            }
-                          />
+                          {/* TODO: JOIN THESE 2 INPUTS AND BIND EVERYTHING DYNAMICALLY 👇🏻 */}
+                          {formulaUnit === "Grams" ? (
+                            <Input
+                              type="number"
+                              min={0}
+                              label="Grams"
+                              placeholder="000"
+                              labelPlacement="inside"
+                              // value={formulaComponent.Percentage.toString()}
+                              onValueChange={(value) => {
+                                handleComponentPercentageChange(
+                                  Number(value),
+                                  indexComponent
+                                );
+                              }}
+                              endContent={
+                                <div className="pointer-events-none flex items-center">
+                                  <span className="text-default-400 text-small">
+                                    g
+                                  </span>
+                                </div>
+                              }
+                            />
+                          ) : (
+                            <Input
+                              type="number"
+                              min={0}
+                              max={100}
+                              label="Percentage"
+                              placeholder="0.000"
+                              labelPlacement="inside"
+                              // value={formulaComponent.Percentage.toString()}
+                              onValueChange={(value) => {
+                                handleComponentPercentageChange(
+                                  Number(value),
+                                  indexComponent
+                                );
+                              }}
+                              endContent={
+                                <div className="pointer-events-none flex items-center">
+                                  <span className="text-default-400 text-small">
+                                    %
+                                  </span>
+                                </div>
+                              }
+                            />
+                          )}
                         </span>
                       </div>
                     );
