@@ -8,7 +8,7 @@ import {
   useDisclosure,
 } from "@nextui-org/modal";
 import { useEffect, useState } from "react";
-import { FaEnvelope, FaLock } from "react-icons/fa";
+import { FaEnvelope, FaFileExport, FaLock } from "react-icons/fa";
 // import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
 import ReusableButton from "../../Components/ReusableButton/ReusableButton";
 import SendEmailCard from "../../Components/SendEmailCard/SendEmailCard";
@@ -51,6 +51,8 @@ export default function AdminDashboard() {
     setIndexRowToEdit(null);
     onOpenChange();
   }
+
+  function handleExportUsers() {}
 
   useEffect(() => {
     setSelectedRowsIds(new Set(""));
@@ -147,7 +149,15 @@ export default function AdminDashboard() {
       >
         <div className="topSectionContainer">
           <div className="sectionHeader">
-            <span style={{ marginRight: "auto" }}>USER</span>{" "}
+            <span>USERS</span>{" "}
+            <Button
+              className="mr-auto"
+              startContent={<FaFileExport />}
+              variant="bordered"
+              onClick={handleExportUsers}
+            >
+              EXPORT USERS
+            </Button>
             {isSendEmailActive || selectedRowsIds.size == 0 ? null : (
               <>
                 <span style={{ marginRight: "2rem" }}>
