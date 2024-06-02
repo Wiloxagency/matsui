@@ -26,21 +26,18 @@
             flex-direction: column;
 
             .buttonsAndTotalRow {
-                display           : flex;
-                margin-top        : auto;
-                // justify-content: space-between;
-                flex-wrap         : wrap;
+                display  : flex;
+                flex-wrap: wrap;
 
                 .totalLabel {
-                    margin-block: 1rem;
-                    width       : 100%;
-                    text-align  : end;
+                    margin-left: auto;
                 }
 
                 .buttonsContainer {
-                    gap      : 1rem;
-                    display  : flex;
-                    flex-wrap: wrap;
+                    gap       : 1rem;
+                    display   : flex;
+                    flex-wrap : wrap;
+                    margin-top: 1rem;
 
                     button {
                         margin-right: 2rem;
@@ -135,11 +132,9 @@
 }
 
 .checkboxRow {
-    display           : flex;
-    // justify-content: space-between;
-    margin-bottom     : 1rem;
-    flex-wrap         : wrap;
-    gap               : 1rem;
+    margin-bottom: 1rem;
+    flex-wrap    : wrap;
+    gap          : 1rem;
 }
 
 .quantityInput {

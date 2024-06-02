@@ -3,7 +3,13 @@ import { useDisclosure } from "@nextui-org/modal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Spinner } from "@nextui-org/spinner";
 import { useEffect, useState } from "react";
-import { FaClone, FaPen, FaPrint, FaSearch } from "react-icons/fa";
+import {
+  FaClone,
+  FaFileExport,
+  FaPen,
+  FaPrint,
+  FaSearch,
+} from "react-icons/fa";
 import { useMediaQuery } from "react-responsive";
 import CreateFormulaModal from "../../Components/CreateFormulaModal/CreateFormulaModal";
 import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
@@ -19,6 +25,8 @@ import {
 } from "../../State/api";
 import { FormulaInterface } from "../../interfaces/interfaces";
 import "./Formulas.scss";
+import { Divider } from "@nextui-org/divider";
+import { Button } from "@nextui-org/button";
 
 export default function Formulas() {
   const [formulasInSeries, setFormulasInSeries] = useState<
@@ -107,6 +115,8 @@ export default function Formulas() {
     });
   };
 
+  function handleExportFormulas() {}
+
   useEffect(() => {
     // if (isGetFormulasSuccessful) {
     //   setSelectedFormula(fetchedFormulas[0]);
@@ -141,12 +151,21 @@ export default function Formulas() {
         <div className="leftSide">
           <div className="sectionHeader">
             <span>FORMULAS</span>
-            <ReusableButton
-              className="underlineButton"
-              buttonText="CREATE NEW FORMULA"
-              Icon={FaPen}
-              handleClick={onOpenCreateFormulaModal}
-            />
+            <Button
+              className="ml-auto"
+              startContent={<FaFileExport />}
+              variant="bordered"
+              onClick={handleExportFormulas}
+            >
+              EXPORT FORMULAS
+            </Button>
+            <Button
+              startContent={<FaPen />}
+              color="primary"
+              onClick={onOpenCreateFormulaModal}
+            >
+              CREATE NEW FORMULA
+            </Button>
           </div>
           <div className="card">
             {false && (
@@ -259,35 +278,6 @@ export default function Formulas() {
                 FORMULA DETAILS:{" "}
                 {selectedFormula && selectedFormula.formulaDescription}
               </span>
-              <span style={{ width: "14rem" }}>
-                <Input
-                  label="QUANTITY"
-                  labelPlacement="outside-left"
-                  size="sm"
-                  fullWidth={false}
-                  type="number"
-                  value={formulaQuantityAsString}
-                  onValueChange={setFormulaQuantityAsString}
-                  endContent={
-                    <div className="flex items-center">
-                      <label className="sr-only" htmlFor="currency">
-                        Currency
-                      </label>
-                      <select
-                        className="outline-none border-0 bg-transparent text-default-400 text-small"
-                        id="currency"
-                        name="currency"
-                        value={formulaUnit}
-                        onChange={handleFormulaUnitSelectionChange}
-                      >
-                        <option value="g">g</option>
-                        <option value="kg">kg</option>
-                        <option value="lb">lb</option>
-                      </select>
-                    </div>
-                  }
-                />
-              </span>
             </div>
             <div
               className="card"
@@ -308,8 +298,38 @@ export default function Formulas() {
                     formulaQuantity={parseFloat(formulaQuantityAsString)}
                     formulaUnit={formulaUnit}
                   />
+                  <Divider className="my-4" />
                   <div className="buttonsAndTotalRow">
-                    <div className="totalLabel">TOTAL: 97,70 $</div>
+                    <span style={{ width: "14rem" }}>
+                      <Input
+                        label="QUANTITY"
+                        labelPlacement="outside-left"
+                        size="sm"
+                        fullWidth={false}
+                        type="number"
+                        value={formulaQuantityAsString}
+                        onValueChange={setFormulaQuantityAsString}
+                        endContent={
+                          <div className="flex items-center">
+                            <label className="sr-only" htmlFor="currency">
+                              Currency
+                            </label>
+                            <select
+                              className="outline-none border-0 bg-transparent text-default-400 text-small"
+                              id="currency"
+                              name="currency"
+                              value={formulaUnit}
+                              onChange={handleFormulaUnitSelectionChange}
+                            >
+                              <option value="g">g</option>
+                              <option value="kg">kg</option>
+                              <option value="lb">lb</option>
+                            </select>
+                          </div>
+                        }
+                      />
+                    </span>
+                    <span className="totalLabel">TOTAL: 97,70 $</span>
                     <div className="buttonsContainer">
                       <ReusableButton
                         className="underlineButton"

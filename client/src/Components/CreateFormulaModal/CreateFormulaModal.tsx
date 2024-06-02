@@ -136,6 +136,10 @@ export default function CreateFormulaModal({
     setNewFormulaColor(newFormulaHexColor);
   }
 
+  function handleFormulaWeightChange(value: number) {
+    console.log(value);
+  }
+
   function handleAddFormulaComponent() {
     setValidationMessage("");
 
@@ -370,6 +374,9 @@ export default function CreateFormulaModal({
                     min={0}
                     placeholder="000"
                     labelPlacement="inside"
+                    onValueChange={(value) => {
+                      handleFormulaWeightChange(Number(value));
+                    }}
                     endContent={
                       <div className="pointer-events-none flex items-center">
                         <span className="text-default-400 text-small">g</span>
