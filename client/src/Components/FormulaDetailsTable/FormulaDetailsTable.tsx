@@ -1,13 +1,5 @@
 import "./FormulaDetailsTable.scss";
 import { FormulaInterface } from "../../interfaces/interfaces";
-// import {
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableColumn,
-//   TableHeader,
-//   TableRow,
-// } from "@nextui-org/table";
 import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
 import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 
@@ -38,13 +30,6 @@ const columns = [
   },
 ];
 
-// type TableComponent = {
-//   componentCode: string;
-//   componentDescription: string;
-//   percentage: number;
-//   hex?: string;
-// };
-
 interface FormulaDetailsTableProps {
   formula: FormulaInterface;
   formulaQuantity: number;
@@ -56,38 +41,6 @@ export default function FormulaDetailsTable({
   formulaQuantity,
   formulaUnit,
 }: FormulaDetailsTableProps) {
-  
-  // const givenComponentsList = formula.components.map(({ componentCode }) => {
-  //   return componentCode;
-  // });
-  // const { data: fetchedComponents } = useGetGivenComponentsQuery(givenComponentsList);
-
-  // const renderCell = React.useCallback(
-  //   (component: TableComponent, columnKey: React.Key) => {
-  //     const cellValue = component[columnKey as keyof TableComponent];
-
-  //     switch (columnKey) {
-  //       case "hex":
-  //         return (
-  //           <>
-  //             <span
-  //               className="miniSwatch"
-  //               style={{ backgroundColor: "#" + component.hex }}
-  //             ></span>
-  //           </>
-  //         );
-  //       case "quantity":
-  //         return (
-  //           <div>
-  //             {(formulaQuantity * component.percentage) / 100} {formulaUnit}
-  //           </div>
-  //         );
-  //       default:
-  //         return cellValue;
-  //     }
-  //   },
-  //   [formulaQuantity, formulaUnit]
-  // );
 
   return (
     <>
@@ -125,26 +78,6 @@ export default function FormulaDetailsTable({
           })}
         </Tbody>
       </Table>
-      {/* <Table
-        color="default"
-        aria-label="Example static collection table"
-        removeWrapper
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn key={column.key}>{column.label}</TableColumn>
-          )}
-        </TableHeader>
-        <TableBody items={formula.components}>
-          {(component) => (
-            <TableRow key={component.componentCode}>
-              {(columnKey) => (
-                <TableCell>{renderCell(component, columnKey)}</TableCell>
-              )}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table> */}
     </>
   );
 }

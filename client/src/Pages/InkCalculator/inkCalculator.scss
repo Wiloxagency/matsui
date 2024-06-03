@@ -1,0 +1,39 @@
+.inkCalculatorLayout {
+    display  : flex;
+    gap      : 2rem;
+    flex-wrap: wrap;
+    width    : 100%;
+
+    .leftSection {
+        max-width: 40vw;
+        min-width: 350px;
+    }
+
+    .rightSection {
+        flex: 1;
+    }
+}
+
+.inkCalculatorLayout.mobileLayout {
+    margin-bottom: 5rem;
+
+    .sectionHeader {
+        padding-inline: 1rem;
+    }
+
+    .leftSection {
+        max-width: 100vw;
+        width    : 100vw;
+    }
+
+    .rightSection {
+        width: 100%;
+    }
+}
+
+.inkCalculatorTable {
+    Td {
+        font-weight: 400;
+        text-align : center;
+    }
+}

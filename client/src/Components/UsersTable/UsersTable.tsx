@@ -1,3 +1,4 @@
+import "./UsersTable.scss";
 import { Button } from "@nextui-org/button";
 import {
   Dropdown,
@@ -8,16 +9,6 @@ import {
 import { Dispatch, SetStateAction } from "react";
 import { FaEllipsisV } from "react-icons/fa";
 import { UserInterface } from "../../interfaces/interfaces";
-import "./UsersTable.scss";
-// import {
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableColumn,
-//   TableHeader,
-//   TableRow,
-// } from "@nextui-org/table";
-
 import { Checkbox } from "@nextui-org/checkbox";
 import { useMediaQuery } from "react-responsive";
 import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
@@ -64,7 +55,7 @@ interface UsersTableProps {
   setSelectedRowsIds: Dispatch<SetStateAction<Set<string>>>;
   indexRowToEdit: number | null;
   handleEditRow: (userId: string) => void;
-  
+
   // setIndexRowToEdit: Dispatch<SetStateAction<number | null>>;
 }
 
@@ -97,9 +88,9 @@ export default function UsersTable({
                 <Td>
                   <Checkbox></Checkbox>
                 </Td>
-                <Td>{user.username}</Td>
+                <Td>{user.username !== "" ? user.username : "unset"}</Td>
                 <Td>{user.email}</Td>
-                <Td>{user.company}</Td>
+                <Td>{user.company !== "" ? user.company : "unset"}</Td>
                 <Td>{user.status}</Td>
                 <Td>{user.registrationDate}</Td>
                 <Td>{user.createdFormulas}</Td>
