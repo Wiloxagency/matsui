@@ -11,7 +11,7 @@ import { useMediaQuery } from "react-responsive";
 export default function InkCalculator() {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
-  const [calculatorUnit, setCalculatorUnit] = useState<"inch" | "cm">("inch");
+  const [calculatorUnit, setCalculatorUnit] = useState<string>("inch");
   const columns = [
     {
       key: "mesh",
@@ -25,8 +25,8 @@ export default function InkCalculator() {
     },
     {
       key: "inches",
-      label: "IN² PER GALLON",
-      mobileLabel: "IN² / GALLON",
+      label: "UNIT PER GALLON",
+      mobileLabel: "UNIT / GALLON",
     },
     {
       key: "prints",
@@ -44,7 +44,8 @@ export default function InkCalculator() {
     {
       meshCount: number;
       depositThickness: string;
-      inchesPerGallon: number;
+      squareInchesPerGallon: number;
+      squareCmPerGallon: number;
       printsPerGallon: number;
       costPerShirt: number;
     }[]
@@ -52,42 +53,48 @@ export default function InkCalculator() {
     {
       meshCount: 355,
       depositThickness: "1 mil",
-      inchesPerGallon: 230.4,
+      squareInchesPerGallon: 230.4,
+      squareCmPerGallon: 148644864,
       printsPerGallon: 0,
       costPerShirt: 0,
     },
     {
       meshCount: 200,
       depositThickness: "2 mil",
-      inchesPerGallon: 115.2,
+      squareInchesPerGallon: 115.2,
+      squareCmPerGallon: 74322432,
       printsPerGallon: 0,
       costPerShirt: 0,
     },
     {
       meshCount: 130,
       depositThickness: "3 mil",
-      inchesPerGallon: 76.752,
+      squareInchesPerGallon: 76.752,
+      squareCmPerGallon: 49517320,
       printsPerGallon: 0,
       costPerShirt: 0,
     },
     {
       meshCount: 110,
       depositThickness: "3.5 mil",
-      inchesPerGallon: 61.176,
+      squareInchesPerGallon: 61.176,
+      squareCmPerGallon: 43339268,
       printsPerGallon: 0,
       costPerShirt: 0,
     },
     {
       meshCount: 96,
       depositThickness: "4 mil",
-      inchesPerGallon: 57.6,
+      squareInchesPerGallon: 57.6,
+      squareCmPerGallon: 37161216,
       printsPerGallon: 0,
       costPerShirt: 0,
     },
     {
       meshCount: 60,
       depositThickness: "5 mil",
-      inchesPerGallon: 46.08,
+      squareInchesPerGallon: 46.08,
+      squareCmPerGallon: 29728973,
       printsPerGallon: 0,
       costPerShirt: 0,
     },
@@ -207,7 +214,11 @@ export default function InkCalculator() {
                   <Tr key={row.meshCount}>
                     <Td>{row.meshCount}</Td>
                     <Td>{row.depositThickness}</Td>
-                    <Td>{row.inchesPerGallon}</Td>
+                    <Td>
+                      {calculatorUnit === "inch"
+                        ? row.squareInchesPerGallon + " in"
+                        : row.squareCmPerGallon + " cm"}
+                    </Td>
                     <Td>{row.printsPerGallon}</Td>
                     <Td>{row.costPerShirt}</Td>
                   </Tr>
