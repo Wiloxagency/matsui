@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import CustomDropzone from "../../Components/Dropzone/Dropzone";
 import { useMediaQuery } from "react-responsive";
 import { Button } from "@nextui-org/button";
+import { FaDownload } from "react-icons/fa";
+import ImportFormulaTemplate from '../../assets/Matsui_import_formula_template.xlsx'
 
 interface ImportFormulaHeaderColumnIndexesInterface {
   indexFormulaCode: number;
@@ -115,6 +117,16 @@ export default function ImportFormulas() {
         <div className="leftSection">
           <div className="sectionHeader">
             <span>STEP 1: UPLOAD FILE</span>
+            <Button
+              startContent={<FaDownload />}
+              color="primary"
+              // onClick={onOpenCreateFormulaModal}
+            >
+              DOWNLOAD TEMPLATE
+            </Button>
+            <a href={ImportFormulaTemplate} download="ImportFormulaTemplate" target="_blank">
+              <Button>My Example Doc</Button>
+            </a>
           </div>
           <div className="card">
             <p className="row">Upload an .xls file containing a series.</p>
