@@ -2,7 +2,7 @@ import "./inkCalculator.scss";
 import { Input } from "@nextui-org/input";
 import { Radio, RadioGroup } from "@nextui-org/radio";
 import { cn } from "@nextui-org/system";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
 // import "../node_modules/react-super-responsive-table/dist/SuperResponsive";
@@ -99,6 +99,10 @@ export default function InkCalculator() {
       costPerShirt: 0,
     },
   ]);
+
+  useEffect(() => {
+    setResultValues(resultValues);
+  }, [resultValues]);
 
   return (
     <div
