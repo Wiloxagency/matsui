@@ -14,23 +14,12 @@ interface SwatchesProps {
   selectedSeries: string;
 }
 
-// function returnHexColorBasedOnFormulaName(formulaName: string): string {
-//   const indexFormula = formulaNames.findIndex(
-//     (formula) => formulaName.toLowerCase() === formula.toLowerCase()
-//   );
-//   const colorFormula = "#" + formulaColors[indexFormula];
-//   return colorFormula;
-// }
-
 export default function Swatches({
   formulas,
   setSelectedFormula,
   selectedFormula,
   selectedSeries,
 }: SwatchesProps) {
-  // const [trigger, { data }] = api.endpoints.getFormulas.useLazyQuery();
-  // data;
-
   function handleSelectFormula(clickedFormula: GetFormulasResultInterface) {
     console.log(clickedFormula);
 

@@ -6,7 +6,7 @@ import CustomDropzone from "../../Components/Dropzone/Dropzone";
 import { useMediaQuery } from "react-responsive";
 import { Button } from "@nextui-org/button";
 import { FaDownload } from "react-icons/fa";
-import ImportFormulaTemplate from '../../assets/Matsui_import_formula_template.xlsx'
+import axios from "axios";
 
 interface ImportFormulaHeaderColumnIndexesInterface {
   indexFormulaCode: number;
@@ -31,6 +31,27 @@ export default function ImportFormulas() {
   const [isSwitchSelected, setIsSwitchSelected] = useState(true);
   const [JSONFormulas, setJSONFormulas] = useState<unknown[]>([]);
   const [validationMessage, setValidationMessage] = useState<string>("");
+
+  const handleTemplateDownload = () => {
+    axios({
+      url: "https://sophieassets.blob.core.windows.net/files/MatsuiImportFormulaTemplate.xlsx",
+      method: "GET",
+      responseType: "blob",
+    })
+      .then((response) => {
+        const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
+
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.setAttribute("download", "MatsuiImportFormulaTemplate.xlsx");
+        document.body.appendChild(link);
+        link.click();
+        window.URL.revokeObjectURL(blobUrl);
+      })
+      .catch((error) => {
+        console.error("Error downloading file: ", error);
+      });
+  };
 
   const [columnIndexes, setColumnIndexes] =
     useState<ImportFormulaHeaderColumnIndexesInterface>({
@@ -120,13 +141,10 @@ export default function ImportFormulas() {
             <Button
               startContent={<FaDownload />}
               color="primary"
-              // onClick={onOpenCreateFormulaModal}
+              onPress={handleTemplateDownload}
             >
               DOWNLOAD TEMPLATE
             </Button>
-            <a href={ImportFormulaTemplate} download="ImportFormulaTemplate" target="_blank">
-              <Button>My Example Doc</Button>
-            </a>
           </div>
           <div className="card">
             <p className="row">Upload an .xls file containing a series.</p>
