@@ -5,8 +5,10 @@ import { useEffect, useState } from "react";
 import CustomDropzone from "../../Components/Dropzone/Dropzone";
 import { useMediaQuery } from "react-responsive";
 import { Button } from "@nextui-org/button";
-import { FaDownload } from "react-icons/fa";
+import { FaDownload, FaTrash } from "react-icons/fa";
 import axios from "axios";
+import DeleteSeriesModal from "../../Components/DeleteSeriesModal/DeleteSeriesModal";
+import { useDisclosure } from "@nextui-org/modal";
 
 interface ImportFormulaHeaderColumnIndexesInterface {
   indexFormulaCode: number;
@@ -31,6 +33,13 @@ export default function ImportFormulas() {
   const [isSwitchSelected, setIsSwitchSelected] = useState(true);
   const [JSONFormulas, setJSONFormulas] = useState<unknown[]>([]);
   const [validationMessage, setValidationMessage] = useState<string>("");
+  const [seriesToDelete, setSeriesToDelete] = useState<string>("");
+
+  const {
+    isOpen: isOpenDeleteSeriesModal,
+    onOpen: onOpenDeleteSeriesModal,
+    onOpenChange: onOpenChangeDeleteSeriesModal,
+  } = useDisclosure();
 
   const handleTemplateDownload = () => {
     axios({
@@ -124,12 +133,19 @@ export default function ImportFormulas() {
     console.log("Transformed Components: ", transformedComponents);
   }
 
+  function handleDeleteSeries() {
+    console.log(seriesToDelete);
+    onOpenDeleteSeriesModal()
+  }
+
   useEffect(() => {
     console.log(columnIndexes);
   }, [columnIndexes]);
 
   return (
     <>
+      <DeleteSeriesModal isOpenDeleteSeriesModal={isOpenDeleteSeriesModal}
+        onOpenChangeDeleteSeriesModal={onOpenChangeDeleteSeriesModal}></DeleteSeriesModal>
       <div
         className={
           isMobile ? "importFormulaLayout mobileLayout" : "importFormulaLayout"
@@ -213,6 +229,25 @@ export default function ImportFormulas() {
                 {validationMessage}
               </p>
               <Button onPress={handleConfirmColumnHeaders}>Confirm</Button>
+            </div>
+
+            <div className="card mt-4">
+              Temp: Delete series
+              <Input
+                className="my-4"
+                label="Type here the name of the series to be deleted"
+                color="primary"
+                value={seriesToDelete}
+                onValueChange={setSeriesToDelete}
+              ></Input>
+              <Button
+                color="danger"
+                variant="ghost"
+                startContent={<FaTrash />}
+                onPress={handleDeleteSeries}
+              >
+                Delete series
+              </Button>
             </div>
           </div>
         </div>
