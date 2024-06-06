@@ -222,15 +222,19 @@ export default function ImportFormulas() {
             >
               {isSwitchSelected ? "YES" : "NO"}
             </Switch>
-            <div
-              className={newSeriesName === "" ? "disabledDropzone" : undefined}
-            >
+            <div className={newSeriesName === "" ? "disabled" : undefined}>
               <CustomDropzone setJSONFormulas={setJSONFormulas} />
             </div>
           </div>
         </div>
         <div className="rightSection" style={{ minWidth: "350px" }}>
-          <div className="formulaDetailsContainer">
+          <div
+            className={
+              JSONFormulas.length === 0
+                ? "disabled formulaDetailsContainer"
+                : "formulaDetailsContainer"
+            }
+          >
             <div className="sectionHeader">
               <span>STEP 2: MATCH THE COLUMNS TO THE CORRESPONDING VALUES</span>
             </div>
@@ -270,7 +274,9 @@ export default function ImportFormulas() {
               >
                 {validationMessage}
               </p>
-              <Button onPress={handleConfirmColumnHeaders}>Confirm</Button>
+              <Button onPress={handleConfirmColumnHeaders}>
+                Confirm order and upload series
+              </Button>
             </div>
 
             <div className="card mt-4">

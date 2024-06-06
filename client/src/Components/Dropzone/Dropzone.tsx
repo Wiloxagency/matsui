@@ -71,6 +71,7 @@ export default function CustomDropzone({
       setJSONFormulas
     );
   }, []);
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
       "application/vnd.ms-exce": [".xls"],
