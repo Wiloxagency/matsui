@@ -43,7 +43,7 @@ export default function ImportFormulas() {
 
   const {
     isOpen: isOpenDeleteSeriesModal,
-    onOpen: onOpenDeleteSeriesModal,
+    // onOpen: onOpenDeleteSeriesModal,
     onOpenChange: onOpenChangeDeleteSeriesModal,
   } = useDisclosure();
 
