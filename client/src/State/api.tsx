@@ -62,6 +62,13 @@ export const api = createApi({
         body: payload,
       }),
     }),
+    deleteSeries: builder.mutation<void, { seriesName: string }>({
+      query: (payload) => ({
+        url: "series",
+        method: "DELETE",
+        body: payload,
+      }),
+    }),
   }),
 });
 
@@ -74,4 +81,5 @@ export const {
   useGetCodesOfFormulasInSeriesQuery,
   useGetPigmentsQuery,
   useAddFormulaMutation,
+  useDeleteSeriesMutation,
 } = api;

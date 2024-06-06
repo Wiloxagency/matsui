@@ -9,6 +9,7 @@ import { FaDownload, FaTrash } from "react-icons/fa";
 import axios from "axios";
 import DeleteSeriesModal from "../../Components/DeleteSeriesModal/DeleteSeriesModal";
 import { useDisclosure } from "@nextui-org/modal";
+import { useDeleteSeriesMutation } from "../../State/api";
 
 interface ImportFormulaHeaderColumnIndexesInterface {
   indexFormulaCode: number;
@@ -34,12 +35,19 @@ export default function ImportFormulas() {
   const [JSONFormulas, setJSONFormulas] = useState<unknown[]>([]);
   const [validationMessage, setValidationMessage] = useState<string>("");
   const [seriesToDelete, setSeriesToDelete] = useState<string>("");
+  const [wasSeriesDeleted, setWasSeriesDeleted] = useState<boolean | undefined>(
+    undefined
+  );
+  const [numberOfDeletedComponents, setNumberOfDeletedComponents] =
+    useState<number>(0);
 
   const {
     isOpen: isOpenDeleteSeriesModal,
     onOpen: onOpenDeleteSeriesModal,
     onOpenChange: onOpenChangeDeleteSeriesModal,
   } = useDisclosure();
+
+  const [deleteSeries] = useDeleteSeriesMutation();
 
   const handleTemplateDownload = () => {
     axios({
@@ -133,9 +141,26 @@ export default function ImportFormulas() {
     console.log("Transformed Components: ", transformedComponents);
   }
 
-  function handleDeleteSeries() {
-    console.log(seriesToDelete);
-    onOpenDeleteSeriesModal()
+  async function handleDeleteSeries(): Promise<void> {
+    const deleteSeriesResponse = await deleteSeries({
+      seriesName: seriesToDelete,
+    })
+      .unwrap()
+      .then((payload: any) => {
+        console.log("fulfilled", payload);
+        const wasSeriesDeletedComputation =
+          payload.deleteSeries.deletedCount > 0 ? true : false;
+        setWasSeriesDeleted(wasSeriesDeletedComputation);
+        setNumberOfDeletedComponents(payload.deleteComponents.deletedCount);
+      })
+      .catch((error) => console.error("rejected", error));
+    deleteSeriesResponse;
+  }
+
+  function handleCloseDeleteSeriesModal() {
+    onOpenChangeDeleteSeriesModal();
+    setWasSeriesDeleted(undefined);
+    setNumberOfDeletedComponents(0);
   }
 
   useEffect(() => {
@@ -144,8 +169,15 @@ export default function ImportFormulas() {
 
   return (
     <>
-      <DeleteSeriesModal isOpenDeleteSeriesModal={isOpenDeleteSeriesModal}
-        onOpenChangeDeleteSeriesModal={onOpenChangeDeleteSeriesModal}></DeleteSeriesModal>
+      <DeleteSeriesModal
+        isOpenDeleteSeriesModal={isOpenDeleteSeriesModal}
+        onOpenChangeDeleteSeriesModal={onOpenChangeDeleteSeriesModal}
+        seriesToDelete={seriesToDelete}
+        handleDeleteSeries={handleDeleteSeries}
+        wasSeriesDeleted={wasSeriesDeleted}
+        numberOfDeletedComponents={numberOfDeletedComponents}
+        handleCloseDeleteSeriesModal={handleCloseDeleteSeriesModal}
+      ></DeleteSeriesModal>
       <div
         className={
           isMobile ? "importFormulaLayout mobileLayout" : "importFormulaLayout"
@@ -244,7 +276,8 @@ export default function ImportFormulas() {
                 color="danger"
                 variant="ghost"
                 startContent={<FaTrash />}
-                onPress={handleDeleteSeries}
+                onPress={onOpenChangeDeleteSeriesModal}
+                isDisabled={seriesToDelete == ""}
               >
                 Delete series
               </Button>

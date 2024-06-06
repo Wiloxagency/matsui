@@ -4,14 +4,15 @@ import { createMongoDBConnection } from "../shared/mongodbConfig";
 const router = Router();
 
 router.delete("/", async (req: Request, res: Response) => {
+  // console.log(req.body);
   const db = await createMongoDBConnection();
   const series = db.collection("series");
   const components = db.collection("components");
   const deleteSeries = await series.deleteOne({
-    seriesName: req.query.seriesName,
+    seriesName: req.body.seriesName,
   });
   const deleteComponents = await components.deleteMany({
-    FormulaSerie: req.query.seriesName,
+    FormulaSerie: req.body.seriesName,
   });
   res.json({ deleteSeries: deleteSeries, deleteComponents: deleteComponents });
 });
