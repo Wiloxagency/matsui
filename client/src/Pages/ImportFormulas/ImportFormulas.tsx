@@ -34,6 +34,7 @@ export default function ImportFormulas() {
   const [isSwitchSelected, setIsSwitchSelected] = useState(true);
   const [JSONFormulas, setJSONFormulas] = useState<unknown[]>([]);
   const [validationMessage, setValidationMessage] = useState<string>("");
+  const [newSeriesName, setNewSeriesName] = useState<string>("");
   const [seriesToDelete, setSeriesToDelete] = useState<string>("");
   const [wasSeriesDeleted, setWasSeriesDeleted] = useState<boolean | undefined>(
     undefined
@@ -204,8 +205,13 @@ export default function ImportFormulas() {
               Formula code, formula description, component code, component
               description, and component percentage.
             </p>
-            <div className="row title">SERIES NAME</div>
-            <Input type="text" className="row"></Input>
+            <div className="row title">NEW SERIES NAME</div>
+            <Input
+              type="text"
+              className="row"
+              value={newSeriesName}
+              onValueChange={setNewSeriesName}
+            ></Input>
             <div className="row title">
               DOES THE FIRST ROW CONTAIN THE HEADERS?
             </div>
@@ -216,7 +222,11 @@ export default function ImportFormulas() {
             >
               {isSwitchSelected ? "YES" : "NO"}
             </Switch>
-            <CustomDropzone setJSONFormulas={setJSONFormulas} />
+            <div
+              className={newSeriesName === "" ? "disabledDropzone" : undefined}
+            >
+              <CustomDropzone setJSONFormulas={setJSONFormulas} />
+            </div>
           </div>
         </div>
         <div className="rightSection" style={{ minWidth: "350px" }}>

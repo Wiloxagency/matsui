@@ -29,3 +29,8 @@
         width    : 100vw;
     }
 }
+
+.disabledDropzone {
+    opacity       : .35;
+    pointer-events: none;
+}
