@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useState } from "react";
+import { Dispatch, SetStateAction, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import "./Dropzone.scss";
@@ -18,51 +18,23 @@ async function parseSpreadsheet(
   const sheetToJson = XLSX.utils.sheet_to_json(firstSpreadsheet);
   setJSONFormulas(sheetToJson);
 
-  // Temporal binding replacement
-  // const columnsMatchOrder = [4, 5, 1, 2, 3];
-
   const headers: string[] = Object.keys(sheetToJson[0] as []);
-  // console.log("Headers: ", headers);
 
-  // const columnsMatch = {
-  //   FormulaCode: headers[columnsMatchOrder[0] - 1],
-  //   FormulaDescription: headers[columnsMatchOrder[1] - 1],
-  //   ComponentCode: headers[columnsMatchOrder[2] - 1],
-  //   ComponentDescription: headers[columnsMatchOrder[3] - 1],
-  //   Percentage: headers[columnsMatchOrder[4] - 1],
-  // };
-
-  // console.log(sheetToJson);
   setExtractedHeaders(headers);
-
-  // const transformComponent = (component: any) => {
-  //   const transformed: any = {};
-  //   for (const [newKey, oldKey] of Object.entries(columnsMatch)) {
-  //     transformed[newKey] = component[oldKey];
-  //   }
-  //   return transformed;
-  // };
-
-  // const transformedComponents = sheetToJson.map(transformComponent);
-  // console.log("Transformed Components: ", transformedComponents);
-  // setTransformedComponents(transformedComponents);
 }
 
 interface CustomDropzonePropsInterface {
-  // JSONFormulas: unknown[];
   setJSONFormulas: Dispatch<SetStateAction<unknown[]>>;
+  setExtractedHeaders: Dispatch<SetStateAction<string[]>>;
 }
 
 export default function CustomDropzone({
   setJSONFormulas,
+  setExtractedHeaders,
 }: CustomDropzonePropsInterface) {
-  const [extractedHeaders, setExtractedHeaders] = useState<string[]>([]);
-  // const [transformedComponents, setTransformedComponents] = useState<any[]>([]);
-  // transformedComponents;
+  // const [extractedHeaders, setExtractedHeaders] = useState<string[]>([]);
 
   const onDrop = useCallback((acceptedFiles: Array<File>) => {
-    // setJSONFormulas([1, 2, 3]);
-
     if (acceptedFiles[0] === undefined) return;
     parseSpreadsheet(
       acceptedFiles[0],
@@ -100,19 +72,6 @@ export default function CustomDropzone({
           </p>
         </div>
       </div>
-
-      {extractedHeaders.length > 0 ? (
-        <>
-          <div className="mt-3">
-            Extracted headers:
-            {extractedHeaders.map((header: string) => {
-              return <span key={header}> {header},</span>;
-            })}
-          </div>
-        </>
-      ) : (
-        <div></div>
-      )}
     </>
   );
 }

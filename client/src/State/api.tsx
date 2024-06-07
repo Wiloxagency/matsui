@@ -62,6 +62,20 @@ export const api = createApi({
         body: payload,
       }),
     }),
+    addSeries: builder.mutation<void, { seriesName: string }>({
+      query: (payload) => ({
+        url: "series",
+        method: "POST",
+        body: payload,
+      }),
+    }),
+    importFormulas: builder.mutation<void, FormulaComponentInterface[]>({
+      query: (payload) => ({
+        url: "components/ImportFormulas",
+        method: "POST",
+        body: payload,
+      }),
+    }),
     deleteSeries: builder.mutation<void, { seriesName: string }>({
       query: (payload) => ({
         url: "series",
@@ -82,4 +96,6 @@ export const {
   useGetPigmentsQuery,
   useAddFormulaMutation,
   useDeleteSeriesMutation,
+  useAddSeriesMutation,
+  useImportFormulasMutation,
 } = api;

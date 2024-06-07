@@ -1,15 +1,19 @@
-import "./ImportFormulas.scss";
-import { Input } from "@nextui-org/input";
-import { Switch } from "@nextui-org/switch";
-import { useEffect, useState } from "react";
-import CustomDropzone from "../../Components/Dropzone/Dropzone";
-import { useMediaQuery } from "react-responsive";
 import { Button } from "@nextui-org/button";
-import { FaDownload, FaTrash } from "react-icons/fa";
-import axios from "axios";
-import DeleteSeriesModal from "../../Components/DeleteSeriesModal/DeleteSeriesModal";
+import { Input } from "@nextui-org/input";
 import { useDisclosure } from "@nextui-org/modal";
-import { useDeleteSeriesMutation } from "../../State/api";
+import { Switch } from "@nextui-org/switch";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { FaDownload, FaTrash } from "react-icons/fa";
+import { useMediaQuery } from "react-responsive";
+import DeleteSeriesModal from "../../Components/DeleteSeriesModal/DeleteSeriesModal";
+import CustomDropzone from "../../Components/Dropzone/Dropzone";
+import {
+  useAddSeriesMutation,
+  useDeleteSeriesMutation,
+  useImportFormulasMutation,
+} from "../../State/api";
+import "./ImportFormulas.scss";
 
 interface ImportFormulaHeaderColumnIndexesInterface {
   indexFormulaCode: number;
@@ -33,6 +37,8 @@ export default function ImportFormulas() {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
   const [isSwitchSelected, setIsSwitchSelected] = useState(true);
   const [JSONFormulas, setJSONFormulas] = useState<unknown[]>([]);
+  const [extractedHeaders, setExtractedHeaders] = useState<string[]>([]);
+
   const [validationMessage, setValidationMessage] = useState<string>("");
   const [newSeriesName, setNewSeriesName] = useState<string>("");
   const [seriesToDelete, setSeriesToDelete] = useState<string>("");
@@ -48,6 +54,8 @@ export default function ImportFormulas() {
     onOpenChange: onOpenChangeDeleteSeriesModal,
   } = useDisclosure();
 
+  const [addSeries] = useAddSeriesMutation();
+  const [importFormulas] = useImportFormulasMutation();
   const [deleteSeries] = useDeleteSeriesMutation();
 
   const handleTemplateDownload = () => {
@@ -91,7 +99,7 @@ export default function ImportFormulas() {
     setColumnIndexes(columnIndexesShallowCopy);
   }
 
-  function handleConfirmColumnHeaders() {
+  async function handleConfirmColumnHeaders() {
     setValidationMessage("");
     const columnValues: number[] = [];
     for (const header of Object.keys(columnIndexes)) {
@@ -110,6 +118,23 @@ export default function ImportFormulas() {
       return;
     }
     remapJSONFormulas(columnValues);
+
+    await addSeries({ seriesName: newSeriesName })
+      .unwrap()
+      .then(async (response) => {
+        console.log(response);
+
+        const importFormulasPayload = JSONFormulas.map((component: any) => {
+          // (component: FormulaComponentInterface) => {
+          return { ...component, FormulaSerie: newSeriesName };
+        });
+
+        await importFormulas(importFormulasPayload)
+          .unwrap()
+          .then((importFormulasResponse) => {
+            console.log("importFormulasResponse: ", importFormulasResponse);
+          });
+      });
   }
 
   function remapJSONFormulas(columnsMatchOrder: number[]) {
@@ -223,7 +248,10 @@ export default function ImportFormulas() {
               {isSwitchSelected ? "YES" : "NO"}
             </Switch>
             <div className={newSeriesName === "" ? "disabled" : undefined}>
-              <CustomDropzone setJSONFormulas={setJSONFormulas} />
+              <CustomDropzone
+                setJSONFormulas={setJSONFormulas}
+                setExtractedHeaders={setExtractedHeaders}
+              />
             </div>
           </div>
         </div>
@@ -240,8 +268,32 @@ export default function ImportFormulas() {
             </div>
             <div className="card">
               <div className="row title">
-                <span style={{ flex: "3" }}>HEADER</span>
-                <span style={{ flex: "1" }}>COLUMN</span>
+                <span style={{ flex: "2" }}>SOURCE HEADER</span>
+                <span style={{ flex: "1" }}>SOURCE COLUMN</span>
+              </div>
+
+              <div className="mt-3">
+                {extractedHeaders.map((header: string, indexHeader) => {
+                  return (
+                    <div key={header} className="row">
+                      <span style={{ flex: "3" }}>{header}</span>
+                      <span style={{ flex: "1" }}>
+                        <Input
+                          type="number"
+                          size="sm"
+                          disabled
+                          placeholder={String(indexHeader + 1)}
+                        ></Input>
+                      </span>
+                    </div>
+                  );
+                  //  <span key={header}> {header}, </span>;
+                })}
+              </div>
+
+              <div className="row title">
+                <span style={{ flex: "2" }}>TARGET HEADER</span>
+                <span style={{ flex: "1" }}>TARGET COLUMN</span>
               </div>
               {Object.entries(columnIndexes).map(
                 ([key, value], indexHeader) => {
@@ -274,30 +326,37 @@ export default function ImportFormulas() {
               >
                 {validationMessage}
               </p>
-              <Button onPress={handleConfirmColumnHeaders}>
+              <Button
+                color="primary"
+                variant="ghost"
+                onPress={handleConfirmColumnHeaders}
+              >
                 Confirm order and upload series
               </Button>
             </div>
-
-            <div className="card mt-4">
-              Temp: Delete series
-              <Input
-                className="my-4"
-                label="Type here the name of the series to be deleted"
-                color="primary"
-                value={seriesToDelete}
-                onValueChange={setSeriesToDelete}
-              ></Input>
-              <Button
-                color="danger"
-                variant="ghost"
-                startContent={<FaTrash />}
-                onPress={onOpenChangeDeleteSeriesModal}
-                isDisabled={seriesToDelete == ""}
-              >
-                Delete series
-              </Button>
-            </div>
+          </div>
+        </div>
+        <div className="tempRightmostSectiom">
+          <div className="sectionHeader">
+            <span>Temp: Delete series</span>
+          </div>
+          <div className="card mt-4">
+            <Input
+              className="my-4"
+              label="Type here the name of the series to be deleted"
+              color="primary"
+              value={seriesToDelete}
+              onValueChange={setSeriesToDelete}
+            ></Input>
+            <Button
+              color="danger"
+              variant="ghost"
+              startContent={<FaTrash />}
+              onPress={onOpenChangeDeleteSeriesModal}
+              isDisabled={seriesToDelete == ""}
+            >
+              Delete series
+            </Button>
           </div>
         </div>
       </div>

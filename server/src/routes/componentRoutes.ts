@@ -312,4 +312,32 @@ router.post("/CreateFormula", async (req: Request, res: Response) => {
   }
 });
 
+router.post("/ImportFormulas", async (req: Request, res: Response) => {
+  const db = await createMongoDBConnection();
+  const components = db.collection("components");
+  const formulaSwatchColors = db.collection("formulaSwatchColors");
+
+  const formulaCodes = Array.from(
+    new Set(
+      req.body.map(({ FormulaCode }: any) => {
+        return FormulaCode;
+      })
+    )
+  );
+
+  const newFormulasSwatches = formulaCodes.map((formulaCode) => {
+    return { formulaCode: formulaCode, formulaColor: "red" };
+  });
+
+  await formulaSwatchColors.insertMany(newFormulasSwatches);
+
+  try {
+    const insertManyResponse = await components.insertMany(req.body);
+    res.json(insertManyResponse);
+  } catch (error) {
+    console.error("Error importing compoents:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 export default router;
