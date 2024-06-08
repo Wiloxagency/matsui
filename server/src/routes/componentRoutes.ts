@@ -1,6 +1,10 @@
 import { Request, Response, Router } from "express";
 import { createMongoDBConnection } from "../shared/mongodbConfig";
-import { FormulaSwatchInterface } from "../interfaces/interfaces";
+import {
+  FormulaComponentInterface,
+  FormulaInterface,
+  FormulaSwatchInterface,
+} from "../interfaces/interfaces";
 import { returnHexColor } from "../shared/returnHexColor";
 
 const router = Router();
@@ -286,6 +290,23 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
       })
     )
   );
+
+  // console.log(req.body);
+
+  const receivedComponents: FormulaComponentInterface[] = req.body;
+
+  const componentsGroupedInFormulas = Map.groupBy(
+    receivedComponents,
+    ({ FormulaCode }) => FormulaCode
+  );
+  console.log(
+    "componentsGroupedInFormulas: ",
+    componentsGroupedInFormulas
+  );
+
+  // console.log("componentsGroupedInFormulas: ", componentsGroupedInFormulas);
+
+  return;
 
   const newFormulasSwatches = formulaCodes.map((formulaCode) => {
     return { formulaCode: formulaCode, formulaColor: "red" };

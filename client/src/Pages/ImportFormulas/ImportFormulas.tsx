@@ -117,7 +117,7 @@ export default function ImportFormulas() {
       );
       return;
     }
-    remapJSONFormulas(columnValues);
+    await remapJSONFormulas(columnValues);
 
     await addSeries({ seriesName: newSeriesName })
       .unwrap()
@@ -137,7 +137,7 @@ export default function ImportFormulas() {
       });
   }
 
-  function remapJSONFormulas(columnsMatchOrder: number[]) {
+  async function remapJSONFormulas(columnsMatchOrder: number[]) {
     // console.log(JSONFormulas);
     // console.log("columnsMatchOrder: ", columnsMatchOrder)
     // console.log("columnIndexes: ", columnIndexes);
@@ -165,6 +165,7 @@ export default function ImportFormulas() {
 
     const transformedComponents = JSONFormulas.map(transformComponent);
     console.log("Transformed Components: ", transformedComponents);
+    setJSONFormulas(transformedComponents);
   }
 
   async function handleDeleteSeries(): Promise<void> {

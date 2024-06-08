@@ -20,3 +20,13 @@ export interface FormulaSwatchInterface {
   formulaCode: string;
   formulaColor: string;
 }
+
+export interface FormulaComponentInterface {
+  FormulaSerie: string;
+  FormulaCode: string;
+  FormulaDescription: string;
+  ComponentCode: string;
+  ComponentDescription: string;
+  Percentage: number;
+  isFormulaActive?: boolean;
+}
