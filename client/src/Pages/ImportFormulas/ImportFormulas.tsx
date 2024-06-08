@@ -9,11 +9,13 @@ import { useMediaQuery } from "react-responsive";
 import DeleteSeriesModal from "../../Components/DeleteSeriesModal/DeleteSeriesModal";
 import CustomDropzone from "../../Components/Dropzone/Dropzone";
 import {
+  api,
   useAddSeriesMutation,
   useDeleteSeriesMutation,
   useImportFormulasMutation,
 } from "../../State/api";
 import "./ImportFormulas.scss";
+import ImportedSeriesModal from "../../Components/ImportedSeriesModal/ImportedSeriesModal";
 
 interface ImportFormulaHeaderColumnIndexesInterface {
   indexFormulaCode: number;
@@ -48,15 +50,25 @@ export default function ImportFormulas() {
   const [numberOfDeletedComponents, setNumberOfDeletedComponents] =
     useState<number>(0);
 
+  const [numberOfImportedComponents, setNumberOfImportedComponents] =
+    useState<number>(0);
+
   const {
     isOpen: isOpenDeleteSeriesModal,
     // onOpen: onOpenDeleteSeriesModal,
     onOpenChange: onOpenChangeDeleteSeriesModal,
   } = useDisclosure();
 
+  const {
+    isOpen: isOpenImportedSeriesModal,
+    onOpenChange: onOpenChangeImportedSeriesModal,
+  } = useDisclosure();
+
   const [addSeries] = useAddSeriesMutation();
   const [importFormulas] = useImportFormulasMutation();
   const [deleteSeries] = useDeleteSeriesMutation();
+
+  const [triggerGetSeries] = api.endpoints.getSeries.useLazyQuery();
 
   const handleTemplateDownload = () => {
     axios({
@@ -122,17 +134,26 @@ export default function ImportFormulas() {
     await addSeries({ seriesName: newSeriesName })
       .unwrap()
       .then(async (response) => {
-        response
+        response;
 
-        const importFormulasPayload = remappedJSONFormulas.map((component: any) => {
-          // (component: FormulaComponentInterface) => {
-          return { ...component, FormulaSerie: newSeriesName };
-        });
+        const importFormulasPayload = remappedJSONFormulas.map(
+          (component: any) => {
+            // (component: FormulaComponentInterface) => {
+            return { ...component, FormulaSerie: newSeriesName };
+          }
+        );
 
         await importFormulas(importFormulasPayload)
           .unwrap()
-          .then((importFormulasResponse) => {
+          .then((importFormulasResponse: any) => {
             console.log("importFormulasResponse: ", importFormulasResponse);
+            console.log(
+              "importFormulasResponse: ",
+              importFormulasResponse.insertedCount
+            );
+            setNumberOfImportedComponents(importFormulasResponse.insertedCount);
+            triggerGetSeries();
+            onOpenChangeImportedSeriesModal();
           });
       });
   }
@@ -166,7 +187,7 @@ export default function ImportFormulas() {
     const transformedComponents = JSONFormulas.map(transformComponent);
     console.log("Transformed Components: ", transformedComponents);
     setJSONFormulas(transformedComponents);
-    return transformedComponents
+    return transformedComponents;
   }
 
   async function handleDeleteSeries(): Promise<void> {
@@ -206,6 +227,12 @@ export default function ImportFormulas() {
         numberOfDeletedComponents={numberOfDeletedComponents}
         handleCloseDeleteSeriesModal={handleCloseDeleteSeriesModal}
       ></DeleteSeriesModal>
+      <ImportedSeriesModal
+        isOpenImportedSeriesModal={isOpenImportedSeriesModal}
+        onOpenChangeImportedSeriesModal={onOpenChangeImportedSeriesModal}
+        numberOfImportedComponents={numberOfImportedComponents}
+        newSeriesName={newSeriesName}
+      ></ImportedSeriesModal>
       <div
         className={
           isMobile ? "importFormulaLayout mobileLayout" : "importFormulaLayout"
