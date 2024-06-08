@@ -34,6 +34,7 @@ export default function Formulas() {
   // formulasInSeries;
 
   const [selectedSeries, setSelectedSeries] = useState<string>("301");
+  const [formulaSearchQuery, setFormulaSearchQuery] = useState<string>("");
 
   const [formulaQuantityAsString, setFormulaQuantityAsString] =
     useState<string>("1000");
@@ -57,6 +58,7 @@ export default function Formulas() {
   } = useGetFormulasQuery({
     isInitialRequest: true,
     formulaSeries: selectedSeries,
+    formulaSearchQuery: formulaSearchQuery,
   });
 
   const {
@@ -111,6 +113,21 @@ export default function Formulas() {
   };
 
   function handleExportFormulas() {}
+
+  function handleFormulaSearch(
+    event?: React.KeyboardEvent<HTMLInputElement> | KeyboardEvent
+  ) {
+    if (formulaSearchQuery === "") return;
+    if (event === undefined) {
+      console.log("Search clicked");
+      refetchFormulasColors();
+      return;
+    }
+    if (event && event.key === "Enter") {
+      console.log("Pressed enter");
+      refetchFormulasColors();
+    }
+  }
 
   useEffect(() => {
     // if (isGetFormulasSuccessful) {
@@ -231,8 +248,18 @@ export default function Formulas() {
               </span>
             </div>
             <div className="searchBarRow">
-              <input type="text" placeholder="SEARCH BY COLOR NAME OR CODE" />
-              <FaSearch></FaSearch>
+              <Input
+                type="text"
+                variant="bordered"
+                placeholder="SEARCH BY COLOR NAME OR CODE"
+                radius="full"
+                value={formulaSearchQuery}
+                onValueChange={setFormulaSearchQuery}
+                onKeyUp={(e) => handleFormulaSearch(e)}
+                startContent={
+                  <FaSearch onClick={() => handleFormulaSearch()} />
+                }
+              />
             </div>
             <div className="checkboxRow">
               <span>

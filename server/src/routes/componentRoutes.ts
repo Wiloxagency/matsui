@@ -15,6 +15,9 @@ router.post("/GetFormulas", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const components = db.collection("components");
   let initialRequestFormulaCodes: string[] = [];
+  const searchQuery = req.body.formulaSearchQuery;
+
+  console.log("searchQuery: ", searchQuery);
 
   if (req.body.isInitialRequest === true) {
     const formulaSwatchColors = db.collection("formulaSwatchColors");
@@ -28,7 +31,7 @@ router.post("/GetFormulas", async (req: Request, res: Response) => {
     );
   }
 
-  console.log(initialRequestFormulaCodes);
+  // console.log(initialRequestFormulaCodes);
 
   const pipeline = [
     { $match: { FormulaSerie: req.body.formulaSeries } },
