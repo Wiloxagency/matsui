@@ -4,7 +4,7 @@ import { Input } from "@nextui-org/input";
 import { useDisclosure } from "@nextui-org/modal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Spinner } from "@nextui-org/spinner";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   FaClone,
   FaFileExport,
@@ -28,11 +28,6 @@ import { FormulaInterface } from "../../interfaces/interfaces";
 import "./Formulas.scss";
 
 export default function Formulas() {
-  // const [formulasInSeries, setFormulasInSeries] = useState<
-  //   string[] | undefined
-  // >(undefined);
-  // formulasInSeries;
-
   const [selectedSeries, setSelectedSeries] = useState<string>("301");
   const [formulaSearchQuery, setFormulaSearchQuery] = useState<string>("");
 
@@ -79,16 +74,6 @@ export default function Formulas() {
     FormulaInterface | undefined
   >();
 
-  // const formulaSeries = Array.from(
-  //   new Set(
-  //     fetchedFormulas?.map(({ formulaSeries }) => {
-  //       return formulaSeries;
-  //     })
-  //   )
-  // ).map((series) => {
-  //   return { value: series };
-  // });
-
   // const isSmallScreen = useMediaQuery({ query: "(max-width: 1200px)" });
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
@@ -109,7 +94,7 @@ export default function Formulas() {
   const handleSelectSeries = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedSeries(e.target.value);
 
-    refetchFormulasColors();
+    // refetchFormulasColors();
   };
 
   function handleExportFormulas() {}
@@ -120,31 +105,18 @@ export default function Formulas() {
     if (formulaSearchQuery === "") return;
     if (event === undefined) {
       console.log("Search clicked");
-      refetchFormulasColors();
+      // refetchFormulasColors();
       return;
     }
     if (event && event.key === "Enter") {
       console.log("Pressed enter");
-      refetchFormulasColors();
+      // refetchFormulasColors();
     }
   }
 
-  useEffect(() => {
-    // if (isGetFormulasSuccessful) {
-    //   setSelectedFormula(fetchedFormulas[0]);
-    // }
-    // console.log("fetchedFormulas: ", fetchedFormulas);
-  }, [fetchedFormulas, isGetFormulasSuccessful]);
-
-  // useEffect(() => {
-  //   return;
-  //   setFormulasInSeries(undefined);
-
-  //   trigger(selectedSeries).then((response) => {
-  //     if (response.data === undefined) return;
-  //     setFormulasInSeries(response.data);
-  //   });
-  // }, [selectedSeries, trigger]);
+  // TODO: IMPLEMENT THIS TO PREVENT FORMULAS REFETCHING EVERY TIME
+  // A LETTER IS TYPED 👇🏻
+  // function handleSearchBarValueChange() {}
 
   return (
     <>
@@ -392,14 +364,6 @@ export default function Formulas() {
                 <br />
                 (under construction)
               </span>
-              {/* <div className="swatchesComponentContainer"> */}
-              {/* <img
-              src="src/assets/underConstruction.jpg"
-              className="m-auto rounded-lg"
-              // style={{ height: "100%" }}
-            ></img> */}
-              {/* <Swatches formulas={[]} /> */}
-              {/* </div> */}
             </div>
           </div>
         </div>

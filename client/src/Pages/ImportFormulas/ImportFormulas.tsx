@@ -55,7 +55,6 @@ export default function ImportFormulas() {
 
   const {
     isOpen: isOpenDeleteSeriesModal,
-    // onOpen: onOpenDeleteSeriesModal,
     onOpenChange: onOpenChangeDeleteSeriesModal,
   } = useDisclosure();
 
@@ -159,14 +158,7 @@ export default function ImportFormulas() {
   }
 
   async function remapJSONFormulas(columnsMatchOrder: number[]) {
-    // console.log(JSONFormulas);
-    // console.log("columnsMatchOrder: ", columnsMatchOrder)
-    // console.log("columnIndexes: ", columnIndexes);
-
-    // return
     const headers: string[] = Object.keys(JSONFormulas[0] as []);
-
-    // const columnsMatchOrder = [4, 5, 1, 2, 3];
 
     const columnsMatch = {
       FormulaCode: headers[columnsMatchOrder[0] - 1],
@@ -207,9 +199,10 @@ export default function ImportFormulas() {
   }
 
   function handleCloseDeleteSeriesModal() {
-    onOpenChangeDeleteSeriesModal();
     setWasSeriesDeleted(undefined);
     setNumberOfDeletedComponents(0);
+    triggerGetSeries();
+    onOpenChangeDeleteSeriesModal();
   }
 
   useEffect(() => {
