@@ -1,11 +1,13 @@
 import { Request, Response, Router } from "express";
-import { createMongoDBConnection } from "../shared/mongodbConfig";
 import {
   FormulaComponentInterface,
-  FormulaInterface,
   FormulaSwatchInterface,
 } from "../interfaces/interfaces";
-import { returnHexColor } from "../shared/returnHexColor";
+import { createMongoDBConnection } from "../shared/mongodbConfig";
+import {
+  returnHexColor,
+  returnHexColorPrepping,
+} from "../shared/returnHexColor";
 
 const router = Router();
 
@@ -231,37 +233,14 @@ router.post("/CreateFormula", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const formulaSwatchColors = db.collection("formulaSwatchColors");
   const components = db.collection("components");
-  const pigments = db.collection("pigments");
-
-  // Extract ComponentCode values and map them with their respective percentages
-  const componentData = req.body.map((item: any) => ({
-    code: item.ComponentCode,
-    percentage: item.Percentage,
-  }));
-
-  // Extract just the codes for the query
-  const componentCodes = componentData.map((item: any) => item.code);
+  const receivedComponents: FormulaComponentInterface[] = req.body;
 
   try {
-    // Query pigments collection for matching ComponentCode values
-    const matchingPigments = await pigments
-      .find({
-        code: { $in: componentCodes },
-      })
-      .toArray();
+    const componentsHexValues = await returnHexColorPrepping(
+      receivedComponents
+    );
 
-    // Map the pigments with their respective percentages
-    const hexValues = matchingPigments.map((pigment: any) => {
-      const component = componentData.find(
-        (item: any) => item.code === pigment.code
-      );
-      return {
-        hex: pigment.hex,
-        percentage: component ? component.percentage : 0,
-      };
-    });
-
-    const finalHexColor = returnHexColor(hexValues);
+    const finalHexColor = returnHexColor(componentsHexValues);
 
     const newFormulaSwatch: FormulaSwatchInterface = {
       formulaCode: req.body[0].FormulaCode,
@@ -291,28 +270,25 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
     )
   );
 
-  // console.log(req.body);
-
   const receivedComponents: FormulaComponentInterface[] = req.body;
 
-  const componentsGroupedInFormulas = Map.groupBy(
+  const componentsGroupedByFormula = Map.groupBy(
     receivedComponents,
     ({ FormulaCode }) => FormulaCode
   );
-  console.log(
-    "componentsGroupedInFormulas: ",
-    componentsGroupedInFormulas
-  );
 
-  // console.log("componentsGroupedInFormulas: ", componentsGroupedInFormulas);
+  let newFormulaColorSwatches: FormulaSwatchInterface[] = [];
 
-  return;
+  for (const [indexFormula, formula] of componentsGroupedByFormula.entries()) {
+    const componentsHexValues = await returnHexColorPrepping(formula);
+    const finalHexColor = returnHexColor(componentsHexValues);
+    newFormulaColorSwatches.push({
+      formulaCode: formula[0].FormulaCode,
+      formulaColor: finalHexColor,
+    });
+  }
 
-  const newFormulasSwatches = formulaCodes.map((formulaCode) => {
-    return { formulaCode: formulaCode, formulaColor: "red" };
-  });
-
-  await formulaSwatchColors.insertMany(newFormulasSwatches);
+  await formulaSwatchColors.insertMany(newFormulaColorSwatches);
 
   try {
     const insertManyResponse = await components.insertMany(req.body);

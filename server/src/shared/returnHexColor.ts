@@ -1,3 +1,8 @@
+import { FormulaComponentInterface } from "../interfaces/interfaces";
+import { createMongoDBConnection } from "./mongodbConfig";
+
+//TODO: COMBINE BOTH FUNCTIONS INTO 1 👇🏻
+
 export function returnHexColor(
   formulaComponents: {
     // OLD FORMULAS HAVE THEIR COMPONENT PERCENTAGES SET AS STRINGS 👇🏻
@@ -7,9 +12,11 @@ export function returnHexColor(
 ): string {
   //   console.log("formulaComponents: ", formulaComponents);
 
-  const convertedFormulaComponentsPercentagesToNumbers = formulaComponents.map((component) => {
-    return { color: component.hex, percentage: Number(component.percentage) };
-  });
+  const convertedFormulaComponentsPercentagesToNumbers = formulaComponents.map(
+    (component) => {
+      return { color: component.hex, percentage: Number(component.percentage) };
+    }
+  );
 
   const hexValues = convertedFormulaComponentsPercentagesToNumbers;
 
@@ -55,4 +62,45 @@ export function returnHexColor(
   //   console.info("finalHexColor", finalHexColor);
 
   return "#" + finalHexColor;
+}
+
+export async function returnHexColorPrepping(
+  receivedComponents: FormulaComponentInterface[]
+): Promise<
+  {
+    hex: string;
+    percentage: number;
+  }[]
+> {
+  const db = await createMongoDBConnection();
+  const pigments = db.collection("pigments");
+
+  // Extract ComponentCode values and map them with their respective percentages
+  const componentData = receivedComponents.map((item: any) => ({
+    code: item.ComponentCode,
+    percentage: item.Percentage,
+  }));
+
+  // Extract just the codes for the query
+  const componentCodes = componentData.map((item: any) => item.code);
+
+  // Query pigments collection for matching ComponentCode values
+  const matchingPigments = await pigments
+    .find({
+      code: { $in: componentCodes },
+    })
+    .toArray();
+
+  // Map the pigments with their respective percentages
+  const hexValues = matchingPigments.map((pigment: any) => {
+    const component = componentData.find(
+      (item: any) => item.code === pigment.code
+    );
+    return {
+      hex: pigment.hex,
+      percentage: component ? component.percentage : 0,
+    };
+  });
+
+  return hexValues;
 }

@@ -117,14 +117,14 @@ export default function ImportFormulas() {
       );
       return;
     }
-    await remapJSONFormulas(columnValues);
+    const remappedJSONFormulas = await remapJSONFormulas(columnValues);
 
     await addSeries({ seriesName: newSeriesName })
       .unwrap()
       .then(async (response) => {
-        console.log(response);
+        response
 
-        const importFormulasPayload = JSONFormulas.map((component: any) => {
+        const importFormulasPayload = remappedJSONFormulas.map((component: any) => {
           // (component: FormulaComponentInterface) => {
           return { ...component, FormulaSerie: newSeriesName };
         });
@@ -166,6 +166,7 @@ export default function ImportFormulas() {
     const transformedComponents = JSONFormulas.map(transformComponent);
     console.log("Transformed Components: ", transformedComponents);
     setJSONFormulas(transformedComponents);
+    return transformedComponents
   }
 
   async function handleDeleteSeries(): Promise<void> {
