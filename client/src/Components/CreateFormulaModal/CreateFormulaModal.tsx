@@ -77,6 +77,8 @@ export default function CreateFormulaModal({
 
   const [validationMessage, setValidationMessage] = useState<string>("");
 
+  const [newFormulaWeight, setNewFormulaWeight] = useState<number>(0);
+
   const [formulaUnit, setFormulaUnit] = useState<string>("Grams");
 
   const [addFormula] = useAddFormulaMutation();
@@ -137,7 +139,8 @@ export default function CreateFormulaModal({
   }
 
   function handleFormulaWeightChange(value: number) {
-    console.log(value);
+    setNewFormulaWeight(value);
+    // console.log(value);
   }
 
   function handleAddFormulaComponent() {
@@ -221,9 +224,9 @@ export default function CreateFormulaModal({
 
     const roundedTotalPercentages = parseFloat(totalPercentages.toPrecision(5));
 
-    if (roundedTotalPercentages !== 100) {
+    if (roundedTotalPercentages !== newFormulaWeight) {
       setValidationMessage(
-        `Component percentages must add up to exactly 100. Current value is ${roundedTotalPercentages}`
+        `Component percentages must add up to exactly ${newFormulaWeight}. Current value is ${roundedTotalPercentages}`
       );
       return;
     }
