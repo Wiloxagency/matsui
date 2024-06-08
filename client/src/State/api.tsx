@@ -48,10 +48,10 @@ export const api = createApi({
     getSeries: builder.query<Array<{ seriesName: string }>, void>({
       query: () => "components/GetSeries",
     }),
-    getCodesOfFormulasInSeries: builder.query<Array<string>, string>({
-      query: (seriesName) =>
-        "components/GetCodesOfFormulasInSeries/" + seriesName,
-    }),
+    // getCodesOfFormulasInSeries: builder.query<Array<string>, string>({
+    //   query: (seriesName) =>
+    //     "components/GetCodesOfFormulasInSeries/" + seriesName,
+    // }),
     getPigments: builder.query<Array<PigmentInterface>, void>({
       query: () => "components/GetPigments",
     }),
@@ -92,7 +92,7 @@ export const {
   useGetGivenComponentsQuery,
   useGetSeriesQuery,
   useGetInkSystemsQuery,
-  useGetCodesOfFormulasInSeriesQuery,
+  // useGetCodesOfFormulasInSeriesQuery,
   useGetPigmentsQuery,
   useAddFormulaMutation,
   useDeleteSeriesMutation,

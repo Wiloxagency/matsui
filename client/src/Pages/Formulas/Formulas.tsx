@@ -1,3 +1,5 @@
+import { Button } from "@nextui-org/button";
+import { Divider } from "@nextui-org/divider";
 import { Input } from "@nextui-org/input";
 import { useDisclosure } from "@nextui-org/modal";
 import { Select, SelectItem } from "@nextui-org/select";
@@ -17,7 +19,6 @@ import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/Fo
 import ReusableButton from "../../Components/ReusableButton/ReusableButton";
 import Swatches from "../../Components/Swatches/Swatches";
 import {
-  api,
   useGetFormulasQuery,
   useGetInkSystemsQuery,
   useGetPigmentsQuery,
@@ -25,8 +26,6 @@ import {
 } from "../../State/api";
 import { FormulaInterface } from "../../interfaces/interfaces";
 import "./Formulas.scss";
-import { Divider } from "@nextui-org/divider";
-import { Button } from "@nextui-org/button";
 
 export default function Formulas() {
   const [formulasInSeries, setFormulasInSeries] = useState<
@@ -55,7 +54,10 @@ export default function Formulas() {
     data: fetchedFormulas,
     isSuccess: isGetFormulasSuccessful,
     refetch: refetchFormulasColors,
-  } = useGetFormulasQuery({ isInitialRequest: true, formulaSeries: "301" });
+  } = useGetFormulasQuery({
+    isInitialRequest: true,
+    formulaSeries: selectedSeries,
+  });
 
   const {
     data: fetchedInkSystems,
@@ -96,9 +98,6 @@ export default function Formulas() {
 
   // const [triggerGetFormulaComponents, { data: getFormulaComponentsData }] = api.endpoints.getFormulaComponents.useLazyQuery();
 
-  const [trigger, { data }] =
-    api.endpoints.getCodesOfFormulasInSeries.useLazyQuery();
-
   const handleFormulaUnitSelectionChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -106,13 +105,9 @@ export default function Formulas() {
   };
 
   const handleSelectSeries = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    return;
     setSelectedSeries(e.target.value);
 
-    trigger(selectedSeries).then((response) => {
-      response;
-      data;
-    });
+    refetchFormulasColors();
   };
 
   function handleExportFormulas() {}
@@ -124,15 +119,15 @@ export default function Formulas() {
     // console.log("fetchedFormulas: ", fetchedFormulas);
   }, [fetchedFormulas, isGetFormulasSuccessful]);
 
-  useEffect(() => {
-    return;
-    setFormulasInSeries(undefined);
+  // useEffect(() => {
+  //   return;
+  //   setFormulasInSeries(undefined);
 
-    trigger(selectedSeries).then((response) => {
-      if (response.data === undefined) return;
-      setFormulasInSeries(response.data);
-    });
-  }, [selectedSeries, trigger]);
+  //   trigger(selectedSeries).then((response) => {
+  //     if (response.data === undefined) return;
+  //     setFormulasInSeries(response.data);
+  //   });
+  // }, [selectedSeries, trigger]);
 
   return (
     <>
