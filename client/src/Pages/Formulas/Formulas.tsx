@@ -28,10 +28,10 @@ import { FormulaInterface } from "../../interfaces/interfaces";
 import "./Formulas.scss";
 
 export default function Formulas() {
-  const [formulasInSeries, setFormulasInSeries] = useState<
-    string[] | undefined
-  >(undefined);
-  formulasInSeries;
+  // const [formulasInSeries, setFormulasInSeries] = useState<
+  //   string[] | undefined
+  // >(undefined);
+  // formulasInSeries;
 
   const [selectedSeries, setSelectedSeries] = useState<string>("301");
 
