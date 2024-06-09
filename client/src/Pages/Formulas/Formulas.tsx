@@ -37,6 +37,7 @@ export default function Formulas() {
   const [formulaUnit, setFormulaUnit] = useState<"g" | "kg" | "lb" | string>(
     "g"
   );
+
   // const { data: fetchedFormulas, isSuccess: isGetFormulasSuccessful } =
   //   useGetFormulasQuery();
 
@@ -51,7 +52,6 @@ export default function Formulas() {
     isSuccess: isGetFormulasSuccessful,
     refetch: refetchFormulasColors,
   } = useGetFormulasQuery({
-    isInitialRequest: true,
     formulaSeries: selectedSeries,
     formulaSearchQuery: formulaSearchQuery,
   });

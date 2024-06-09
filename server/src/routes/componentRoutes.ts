@@ -22,11 +22,11 @@ router.post("/GetFormulas", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const components = db.collection("components");
   let initialRequestFormulaCodes: string[] = [];
-  const searchQuery = req.body.formulaSearchQuery;
+  const searchQuery: string = req.body.formulaSearchQuery;
 
   console.log("searchQuery: ", searchQuery);
 
-  if (req.body.isInitialRequest === true) {
+  if (searchQuery === "") {
     const formulaSwatchColors = db.collection("formulaSwatchColors");
     const latest20FormulaSwatchColors = await formulaSwatchColors
       .find()
@@ -42,15 +42,20 @@ router.post("/GetFormulas", async (req: Request, res: Response) => {
 
   const pipeline = [
     { $match: { FormulaSerie: req.body.formulaSeries } },
-    {
-      $match: {
-        FormulaCode: {
-          $in: req.body.isInitialRequest
-            ? initialRequestFormulaCodes
-            : req.body.formulaCodes,
+    searchQuery === ""
+      ? {
+          $match: {
+            FormulaCode: {
+              $in: initialRequestFormulaCodes,
+            },
+          },
+        }
+      : {
+          $match: {
+            // FormulaCode: { "$regex": searchQuery, "$options": "i" },  
+            FormulaDescription: { "$regex": searchQuery, "$options": "i" },
+          },
         },
-      },
-    },
     {
       $lookup: {
         from: "pigments",

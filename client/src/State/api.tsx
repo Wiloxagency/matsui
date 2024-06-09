@@ -19,16 +19,15 @@ export const api = createApi({
       GetFormulasResultInterface[],
       {
         formulaSeries: string;
-        isInitialRequest: boolean;
-        formulaSearchQuery?: string;
+        formulaSearchQuery: string;
       }
     >({
       query: (arg) => {
-        const { formulaSeries, isInitialRequest, formulaSearchQuery } = arg;
+        const { formulaSeries, formulaSearchQuery } = arg;
         return {
           method: "POST",
           url: "components/GetFormulas",
-          body: { formulaSeries, isInitialRequest, formulaSearchQuery },
+          body: { formulaSeries, formulaSearchQuery },
         };
       },
     }),
