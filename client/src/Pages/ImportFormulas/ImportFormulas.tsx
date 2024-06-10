@@ -18,23 +18,23 @@ import {
 import "./ImportFormulas.scss";
 import ImportedSeriesModal from "../../Components/ImportedSeriesModal/ImportedSeriesModal";
 
-interface ImportFormulaHeaderColumnIndexesInterface {
-  indexFormulaCode: number;
-  indexFormulaDescription: number;
-  indexComponentCode: number;
-  indexComponentDescription: number;
-  indexPercentage: number;
-}
+// interface ImportFormulaHeaderColumnIndexesInterface {
+//   indexFormulaCode: number;
+//   indexFormulaDescription: number;
+//   indexComponentCode: number;
+//   indexComponentDescription: number;
+//   indexPercentage: number;
+// }
 
 // TODO: OPTIMIZE THIS LATER. THE LABELS SHOULD BE PART OF AN ARRAY
 // OF HEADER OBJECTS 👇🏻
-const labels = [
-  "FORMULA CODE",
-  "FORMULA DESCRIPTION",
-  "COMPONENT CODE",
-  "COMPONENT DESCRIPTION",
-  "COMPONENT PERCENTAGE",
-];
+// const labels = [
+//   "FORMULA CODE",
+//   "FORMULA DESCRIPTION",
+//   "COMPONENT CODE",
+//   "COMPONENT DESCRIPTION",
+//   "COMPONENT PERCENTAGE",
+// ];
 
 export default function ImportFormulas() {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
@@ -93,25 +93,25 @@ export default function ImportFormulas() {
       });
   };
 
-  const [columnIndexes, setColumnIndexes] =
-    useState<ImportFormulaHeaderColumnIndexesInterface>({
-      indexFormulaCode: 1,
-      indexFormulaDescription: 1,
-      indexComponentCode: 1,
-      indexComponentDescription: 1,
-      indexPercentage: 1,
-    });
+  // const [columnIndexes, setColumnIndexes] =
+  //   useState<ImportFormulaHeaderColumnIndexesInterface>({
+  //     indexFormulaCode: 1,
+  //     indexFormulaDescription: 1,
+  //     indexComponentCode: 1,
+  //     indexComponentDescription: 1,
+  //     indexPercentage: 1,
+  //   });
 
-  function handleColumnIndexesChange(value: number, receivedHeader: string) {
-    const columnIndexesShallowCopy: ImportFormulaHeaderColumnIndexesInterface =
-      columnIndexes;
+  // function handleColumnIndexesChange(value: number, receivedHeader: string) {
+  //   const columnIndexesShallowCopy: ImportFormulaHeaderColumnIndexesInterface =
+  //     columnIndexes;
 
-    columnIndexesShallowCopy[
-      receivedHeader as keyof ImportFormulaHeaderColumnIndexesInterface
-    ] = value;
+  //   columnIndexesShallowCopy[
+  //     receivedHeader as keyof ImportFormulaHeaderColumnIndexesInterface
+  //   ] = value;
 
-    setColumnIndexes(columnIndexesShallowCopy);
-  }
+  //   setColumnIndexes(columnIndexesShallowCopy);
+  // }
 
   async function handleConfirmColumnHeaders() {
     setValidationMessage("");
@@ -241,9 +241,9 @@ export default function ImportFormulas() {
     onOpenChangeDeleteSeriesModal();
   }
 
-  useEffect(() => {
-    console.log(columnIndexes);
-  }, [columnIndexes]);
+  // useEffect(() => {
+  //   console.log(columnIndexes);
+  // }, [columnIndexes]);
 
   useEffect(() => {
     if (extractedHeaders.length > 0) {
