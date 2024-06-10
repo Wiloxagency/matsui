@@ -10,11 +10,11 @@
     gap      : 2rem;
     flex-wrap: wrap;
 
-    .leftSection {
+    .leftSection,
+    .rightSection {
         max-width: 40vw;
         min-width: 350px;
     }
-
 }
 
 .importFormulaLayout.mobileLayout {
@@ -29,10 +29,6 @@
         width    : 100vw;
     }
 
-    .tempRightmostSectiom {
-        max-width: 100vw;
-        width    : 100vw;
-    }
 }
 
 .disabled {

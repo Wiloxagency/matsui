@@ -12,6 +12,7 @@ import {
   api,
   useAddSeriesMutation,
   useDeleteSeriesMutation,
+  useGetPigmentsQuery,
   useImportFormulasMutation,
 } from "../../State/api";
 import "./ImportFormulas.scss";
@@ -40,7 +41,7 @@ export default function ImportFormulas() {
   const [isSwitchSelected, setIsSwitchSelected] = useState(true);
   const [JSONFormulas, setJSONFormulas] = useState<unknown[]>([]);
   const [extractedHeaders, setExtractedHeaders] = useState<string[]>([]);
-
+  const [missingPigments, setMissingPigments] = useState<string[]>([]);
   const [validationMessage, setValidationMessage] = useState<string>("");
   const [newSeriesName, setNewSeriesName] = useState<string>("");
   const [seriesToDelete, setSeriesToDelete] = useState<string>("");
@@ -52,6 +53,8 @@ export default function ImportFormulas() {
 
   const [numberOfImportedComponents, setNumberOfImportedComponents] =
     useState<number>(0);
+
+  const { data: fetchedPigments } = useGetPigmentsQuery();
 
   const {
     isOpen: isOpenDeleteSeriesModal,
@@ -112,35 +115,35 @@ export default function ImportFormulas() {
 
   async function handleConfirmColumnHeaders() {
     setValidationMessage("");
-    const columnValues: number[] = [];
-    for (const header of Object.keys(columnIndexes)) {
-      columnValues.push(
-        columnIndexes[header as keyof ImportFormulaHeaderColumnIndexesInterface]
-      );
-    }
-    const repeatedValues = columnValues.filter(
-      (e, i, a) => a.indexOf(e) !== i
-    ).length;
+    // const columnValues: number[] = [];
+    // for (const header of Object.keys(columnIndexes)) {
+    //   columnValues.push(
+    //     columnIndexes[header as keyof ImportFormulaHeaderColumnIndexesInterface]
+    //   );
+    // }
+    // const repeatedValues = columnValues.filter(
+    //   (e, i, a) => a.indexOf(e) !== i
+    // ).length;
 
-    if (repeatedValues > 0) {
-      setValidationMessage(
-        "All fields must be set. Can't use the same column twice"
-      );
-      return;
-    }
-    const remappedJSONFormulas = await remapJSONFormulas(columnValues);
+    // if (repeatedValues > 0) {
+    //   setValidationMessage(
+    //     "All fields must be set. Can't use the same column twice"
+    //   );
+    //   return;
+    // }
+    // const remappedJSONFormulas = await remapJSONFormulas(columnValues);
+
+    return;
 
     await addSeries({ seriesName: newSeriesName })
       .unwrap()
       .then(async (response) => {
         response;
 
-        const importFormulasPayload = remappedJSONFormulas.map(
-          (component: any) => {
-            // (component: FormulaComponentInterface) => {
-            return { ...component, FormulaSerie: newSeriesName };
-          }
-        );
+        const importFormulasPayload = JSONFormulas.map((component: any) => {
+          // (component: FormulaComponentInterface) => {
+          return { ...component, FormulaSerie: newSeriesName };
+        });
 
         await importFormulas(importFormulasPayload)
           .unwrap()
@@ -157,30 +160,63 @@ export default function ImportFormulas() {
       });
   }
 
-  async function remapJSONFormulas(columnsMatchOrder: number[]) {
-    const headers: string[] = Object.keys(JSONFormulas[0] as []);
+  async function validateUploadedComponents() {
+    const extractedComponents = Array.from(
+      new Set(
+        JSONFormulas.map(({ ComponentCode }: any) => {
+          return ComponentCode;
+        })
+      )
+    );
 
-    const columnsMatch = {
-      FormulaCode: headers[columnsMatchOrder[0] - 1],
-      FormulaDescription: headers[columnsMatchOrder[1] - 1],
-      ComponentCode: headers[columnsMatchOrder[2] - 1],
-      ComponentDescription: headers[columnsMatchOrder[3] - 1],
-      Percentage: headers[columnsMatchOrder[4] - 1],
-    };
+    if (fetchedPigments) {
+      const existingPigments = Array.from(
+        new Set(
+          fetchedPigments.map(({ code }: any) => {
+            return code;
+          })
+        )
+      );
 
-    const transformComponent = (component: any) => {
-      const transformed: any = {};
-      for (const [newKey, oldKey] of Object.entries(columnsMatch)) {
-        transformed[newKey] = component[oldKey];
+      const getMissingPigments = extractedComponents.filter(
+        (item) => existingPigments.indexOf(item) == -1
+      );
+
+      console.log(getMissingPigments);
+      setMissingPigments(getMissingPigments);
+
+      if (getMissingPigments.length > 0) {
+        setValidationMessage(
+          `Series can't be uploaded because the following pigments are missing:`
+        );
       }
-      return transformed;
-    };
-
-    const transformedComponents = JSONFormulas.map(transformComponent);
-    console.log("Transformed Components: ", transformedComponents);
-    setJSONFormulas(transformedComponents);
-    return transformedComponents;
+    }
   }
+
+  // async function remapJSONFormulas(columnsMatchOrder: number[]) {
+  //   const headers: string[] = Object.keys(JSONFormulas[0] as []);
+
+  //   const columnsMatch = {
+  //     FormulaCode: headers[columnsMatchOrder[0] - 1],
+  //     FormulaDescription: headers[columnsMatchOrder[1] - 1],
+  //     ComponentCode: headers[columnsMatchOrder[2] - 1],
+  //     ComponentDescription: headers[columnsMatchOrder[3] - 1],
+  //     Percentage: headers[columnsMatchOrder[4] - 1],
+  //   };
+
+  //   const transformComponent = (component: any) => {
+  //     const transformed: any = {};
+  //     for (const [newKey, oldKey] of Object.entries(columnsMatch)) {
+  //       transformed[newKey] = component[oldKey];
+  //     }
+  //     return transformed;
+  //   };
+
+  //   const transformedComponents = JSONFormulas.map(transformComponent);
+  //   console.log("Transformed Components: ", transformedComponents);
+  //   setJSONFormulas(transformedComponents);
+  //   return transformedComponents;
+  // }
 
   async function handleDeleteSeries(): Promise<void> {
     const deleteSeriesResponse = await deleteSeries({
@@ -209,6 +245,12 @@ export default function ImportFormulas() {
     console.log(columnIndexes);
   }, [columnIndexes]);
 
+  useEffect(() => {
+    if (extractedHeaders.length > 0) {
+      validateUploadedComponents();
+    }
+  }, [extractedHeaders]);
+
   return (
     <>
       <DeleteSeriesModal
@@ -233,7 +275,7 @@ export default function ImportFormulas() {
       >
         <div className="leftSection">
           <div className="sectionHeader">
-            <span>STEP 1: UPLOAD FILE</span>
+            <span>UPLOAD FILE</span>
             <Button
               startContent={<FaDownload />}
               color="primary"
@@ -243,15 +285,16 @@ export default function ImportFormulas() {
             </Button>
           </div>
           <div className="card">
-            <p className="row">Upload an .xls file containing a series.</p>
-            <p className="row">You can only upload one series at a time.</p>
             <p className="row">
-              Make sure the spreadsheet contains the following information:
+              You must fill out the provided template in order to upload a
+              series.
             </p>
-            <p className="row">
+            <p className="row">Upload the .xls file containing the series.</p>
+            <p className="row">You can only upload one series at a time.</p>
+            {/* <p className="row">
               Formula code, formula description, component code, component
               description, and component percentage.
-            </p>
+            </p> */}
             <div className="row title">NEW SERIES NAME</div>
             <Input
               type="text"
@@ -277,19 +320,18 @@ export default function ImportFormulas() {
             </div>
           </div>
         </div>
-        <div className="rightSection" style={{ minWidth: "350px" }}>
-          <div
-            className={
-              JSONFormulas.length === 0
-                ? "disabled formulaDetailsContainer"
-                : "formulaDetailsContainer"
-            }
-          >
-            <div className="sectionHeader">
-              <span>STEP 2: MATCH THE COLUMNS TO THE CORRESPONDING VALUES</span>
-            </div>
-            <div className="card">
-              <div className="row title">
+        <div className="rightSection">
+          <div className="sectionHeader">
+            <span>VALIDATION</span>
+          </div>
+          <div className={JSONFormulas.length === 0 ? "card disabled" : "card"}>
+            {missingPigments.length == 0 && (
+              <p className="mb-4">
+                Here you'll see a preview of the formulas before uploading them
+              </p>
+            )}
+
+            {/* <div className="row title">
                 <span style={{ flex: "2" }}>SOURCE HEADER</span>
                 <span style={{ flex: "1" }}>SOURCE COLUMN</span>
               </div>
@@ -337,30 +379,34 @@ export default function ImportFormulas() {
                     </div>
                   );
                 }
-              )}
-              <p
-                style={{ color: "red", textAlign: "center" }}
-                className={
-                  validationMessage !== ""
-                    ? "validationErrorMessage active"
-                    : "validationErrorMessage"
-                }
-              >
-                {validationMessage}
-              </p>
-              <Button
-                color="primary"
-                variant="ghost"
-                onPress={handleConfirmColumnHeaders}
-              >
-                Confirm order and upload series
-              </Button>
+              )} */}
+            <p
+              style={{ color: "red" }}
+              className={
+                validationMessage !== ""
+                  ? "validationErrorMessage active mb-4"
+                  : "validationErrorMessage"
+              }
+            >
+              {validationMessage}
+            </p>
+            <div className="mb-4">
+              {missingPigments.map((missingPigment, indexPigment) => {
+                return <span>{missingPigment}{indexPigment === missingPigments.length -1 ? "" : ", "}</span>;
+              })}
             </div>
+            <Button
+              color="primary"
+              variant="ghost"
+              isDisabled={missingPigments.length > 0}
+              onPress={handleConfirmColumnHeaders}
+            >
+              Confirm order and upload series
+            </Button>
           </div>
-        </div>
-        <div className="tempRightmostSectiom">
-          <div className="sectionHeader">
-            <span>Temp: Delete series</span>
+
+          <div className="sectionHeader mt-4">
+            <span>DELETE SERIES</span>
           </div>
           <div className="card mt-4">
             <Input
