@@ -52,8 +52,8 @@ router.post("/GetFormulas", async (req: Request, res: Response) => {
         }
       : {
           $match: {
-            // FormulaCode: { "$regex": searchQuery, "$options": "i" },  
-            FormulaDescription: { "$regex": searchQuery, "$options": "i" },
+            // FormulaCode: { "$regex": searchQuery, "$options": "i" },
+            FormulaDescription: { $regex: searchQuery, $options: "i" },
           },
         },
     {
@@ -302,6 +302,89 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
     console.error("Error importing compoents:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
+});
+
+router.get("/GetMissingPigments", async (req: Request, res: Response) => {
+  const existingPigments = [
+    "YEL M3G",
+    "GLDYEL MFR",
+    "ORNG MGD",
+    "RED MGD",
+    "RED MFB",
+    "GLOW ROSE MI5B-E",
+    "PINK",
+    "VLT MFB",
+    "Navy  B",
+    "BLU MB",
+    "BLU MG",
+    "GRN MB",
+    "BLK MK",
+    "ALPHA BASE",
+    "ALPHA TRANS WHITE",
+    "PNK MB",
+    "AP TRS WHT",
+    "EP WHT 301",
+    "MAT 301M",
+    "CLR 301C",
+  ];
+  const allPigments = [
+    "WHT 301W",
+    "YEL M3G",
+    "ORNG MGD",
+    "GRN MB",
+    "MAT 301M",
+    "BLK MK",
+    "BLU MG",
+    "GLDYEL MFR",
+    "RED MGD",
+    "RED MFB",
+    "BLU MB",
+    "PNK MB",
+    "VLT MFB",
+    "VLT ECGR",
+    "ROSE MB",
+    "NEO VIOLET MSGR",
+    "NEO BLACK BK",
+    "STRETCH WHITER 301-5",
+    "BLU ECBR",
+    "YEL ECGG",
+    "GRN EC5G",
+    "ORNG ECR",
+    "RED ECB",
+    "PNK EC5B",
+    "ROSE EC5B",
+    "SLVRSM 602",
+    "CLR 301C",
+    "YEL ECB",
+    "AP DC BASE",
+    "AP TRS WHT",
+    "NEO YELLOW MRG",
+    "SLVRSM 620",
+    "GLOW BLUE MIBR-E",
+    "GLOW YELLOW MI2G-E",
+    "GLOW GREEN MI8G-E",
+    "GLOW ORANGE MI2G-E",
+    "GLOW PINK MIB-E",
+    "GLOW ROSE MI5B-E",
+    "GLOW PURPLE MIGR-E",
+    "METALLIC BINDER 301",
+    "BRT DC BASE",
+    "EP WHT 301",
+    "EP CLR 301",
+    "EPRETCH WHITER 301-5",
+    "HM DC BASE",
+    "ST WHT 301",
+    "ST CLR 301",
+    "ALPHA TRANS WHITE",
+    "ALPHA BASE",
+    "PINK",
+  ];
+
+  const getMissingPigments = allPigments.filter(
+    (item) => existingPigments.indexOf(item) == -1
+  );
+
+  res.json(getMissingPigments);
 });
 
 export default router;
