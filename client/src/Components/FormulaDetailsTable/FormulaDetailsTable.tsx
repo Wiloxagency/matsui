@@ -2,6 +2,7 @@ import "./FormulaDetailsTable.scss";
 import { FormulaInterface } from "../../interfaces/interfaces";
 import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
 import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
+import { useGetPigmentsQuery } from "../../State/api";
 
 const columns = [
   {
@@ -41,6 +42,17 @@ export default function FormulaDetailsTable({
   formulaQuantity,
   formulaUnit,
 }: FormulaDetailsTableProps) {
+  const { data: fetchedPigments } = useGetPigmentsQuery();
+
+  function returnComponentPrice(receivedComponentCode: string) {
+    const selectedPigment = fetchedPigments?.filter(
+      (pigment) => pigment.code === receivedComponentCode
+    );
+    if (selectedPigment && selectedPigment.length > 0) {
+      return selectedPigment[0].pricePerKg;
+    }
+    return "❌";
+  }
 
   return (
     <>
@@ -61,10 +73,14 @@ export default function FormulaDetailsTable({
             return (
               <Tr key={component.componentCode}>
                 <Td>
-                  <span
-                    className="miniSwatch"
-                    style={{ backgroundColor: "#" + component.hex }}
-                  ></span>
+                  {component.hex ? (
+                    <span
+                      className="miniSwatch"
+                      style={{ backgroundColor: "#" + component.hex }}
+                    ></span>
+                  ) : (
+                    "❌"
+                  )}
                 </Td>
                 <Td>{component.componentCode}</Td>
                 <Td>{component.componentDescription}</Td>
@@ -72,7 +88,7 @@ export default function FormulaDetailsTable({
                 <Td>
                   {(formulaQuantity * component.percentage) / 100} {formulaUnit}
                 </Td>
-                <Td>0.00</Td>
+                <Td>{returnComponentPrice(component.componentCode)}</Td>
               </Tr>
             );
           })}

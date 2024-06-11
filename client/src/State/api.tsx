@@ -31,16 +31,16 @@ export const api = createApi({
         };
       },
     }),
-    getGivenComponents: builder.query<
-      Array<FormulaComponentInterface>,
-      string[]
-    >({
-      query: (body) => ({
-        url: "components/",
-        method: "POST",
-        body: body,
-      }),
-    }),
+    // getGivenComponents: builder.query<
+    //   Array<FormulaComponentInterface>,
+    //   string[]
+    // >({
+    //   query: (body) => ({
+    //     url: "components/",
+    //     method: "POST",
+    //     body: body,
+    //   }),
+    // }),
     getInkSystems: builder.query<Array<InkSystemInterface>, void>({
       query: () => "inkSystems/",
     }),
@@ -88,7 +88,7 @@ export const api = createApi({
 export const {
   useGetUsersQuery,
   useGetFormulasQuery,
-  useGetGivenComponentsQuery,
+  // useGetGivenComponentsQuery,
   useGetSeriesQuery,
   useGetInkSystemsQuery,
   // useGetCodesOfFormulasInSeriesQuery,

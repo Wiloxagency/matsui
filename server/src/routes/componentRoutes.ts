@@ -31,7 +31,7 @@ router.post("/GetFormulas", async (req: Request, res: Response) => {
     const latest20FormulaSwatchColors = await formulaSwatchColors
       .find()
       .sort({ _id: -1 })
-      .limit(50)
+      .limit(150)
       .toArray();
     initialRequestFormulaCodes = latest20FormulaSwatchColors.map(
       (formula) => formula.formulaCode

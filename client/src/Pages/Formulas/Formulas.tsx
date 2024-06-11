@@ -97,7 +97,10 @@ export default function Formulas() {
     // refetchFormulasColors();
   };
 
-  function handleExportFormulas() {}
+  function handleExportFormulas() {
+    console.log(fetchedFormulas);
+    console.log(fetchedPigments);
+  }
 
   function handleFormulaSearch(
     event?: React.KeyboardEvent<HTMLInputElement> | KeyboardEvent
