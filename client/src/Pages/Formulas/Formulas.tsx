@@ -30,7 +30,7 @@ import "./Formulas.scss";
 export default function Formulas() {
   const [selectedSeries, setSelectedSeries] = useState<string>("301");
   const [formulaSearchQuery, setFormulaSearchQuery] = useState<string>("");
-  const [totalFormulaCost, setTotalFormulaCost] = useState<number>(0)
+  const [totalFormulaCost, setTotalFormulaCost] = useState<number>(0);
   const [formulaQuantityAsString, setFormulaQuantityAsString] =
     useState<string>("1000");
   // const [formulaQuantity, setFormulaQuantity] = useState<number>(1000);
@@ -294,6 +294,8 @@ export default function Formulas() {
                     formula={selectedFormula}
                     formulaQuantity={parseFloat(formulaQuantityAsString)}
                     formulaUnit={formulaUnit}
+                    totalFormulaCost={totalFormulaCost}
+                    setTotalFormulaCost={setTotalFormulaCost}
                   />
                   <Divider className="my-4" />
                   <div className="buttonsAndTotalRow">
@@ -326,7 +328,9 @@ export default function Formulas() {
                         }
                       />
                     </span>
-                    <span className="totalLabel">TOTAL: {totalFormulaCost} $</span>
+                    <span className="totalLabel">
+                      TOTAL: {totalFormulaCost} $
+                    </span>
                     <div className="buttonsContainer">
                       <ReusableButton
                         className="underlineButton"

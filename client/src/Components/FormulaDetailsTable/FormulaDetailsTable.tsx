@@ -1,11 +1,9 @@
-import "./FormulaDetailsTable.scss";
-import {
-  FormulaComponentInterface,
-  FormulaInterface,
-} from "../../interfaces/interfaces";
 import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
 import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import { useGetPigmentsQuery } from "../../State/api";
+import { FormulaInterface } from "../../interfaces/interfaces";
+import "./FormulaDetailsTable.scss";
+import { Dispatch, SetStateAction } from "react";
 
 const columns = [
   {
@@ -38,14 +36,22 @@ interface FormulaDetailsTableProps {
   formula: FormulaInterface;
   formulaQuantity: number;
   formulaUnit: "g" | "kg" | "lb" | string;
+  totalFormulaCost: number;
+  setTotalFormulaCost: Dispatch<SetStateAction<number>>;
 }
 
 export default function FormulaDetailsTable({
   formula,
   formulaQuantity,
   formulaUnit,
+  totalFormulaCost,
+  setTotalFormulaCost,
 }: FormulaDetailsTableProps) {
   const { data: fetchedPigments } = useGetPigmentsQuery();
+
+  function updateTotalFormulaCost(receivedComponentCost: number) {
+    setTotalFormulaCost(totalFormulaCost + receivedComponentCost);
+  }
 
   function returnComponentPrice(receivedComponent: {
     componentCode: string;
@@ -61,6 +67,7 @@ export default function FormulaDetailsTable({
       const componentPrice =
         (componentWeight * selectedPigment[0].pricePerKg) / 1000;
 
+      updateTotalFormulaCost(componentPrice);
       return componentPrice;
     }
     return "❌";
