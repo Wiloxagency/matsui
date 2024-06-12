@@ -83,6 +83,33 @@ export default function Formulas() {
     onOpenChange: onOpenChangeCreateFormulaModal,
   } = useDisclosure();
 
+  function returnTotalFormulaCost() {
+    // console.log(selectedFormula)
+    let formulaPrice: number = 0;
+
+    for (const component of selectedFormula!.components) {
+      const selectedPigment = fetchedPigments?.filter(
+        (pigment) => pigment.code === component.componentCode
+      );
+
+      if (selectedPigment && selectedPigment.length > 0) {
+        const componentWeight =
+          Number(formulaQuantityAsString) * component.percentage;
+        const componentPrice =
+          (componentWeight * selectedPigment[0].pricePerKg) / 10000;
+
+        // setTotalFormulaCost(totalFormulaCost + componentPrice);
+
+        // updateTotalFormulaCost(componentPrice);
+        formulaPrice = parseFloat(
+          (formulaPrice + componentPrice).toPrecision(5)
+        );
+      }
+    }
+
+    return formulaPrice;
+  }
+
   // const [triggerGetFormulaComponents, { data: getFormulaComponentsData }] = api.endpoints.getFormulaComponents.useLazyQuery();
 
   const handleFormulaUnitSelectionChange = (
@@ -329,7 +356,8 @@ export default function Formulas() {
                       />
                     </span>
                     <span className="totalLabel">
-                      TOTAL: {totalFormulaCost} $
+                      {/* TOTAL: {totalFormulaCost} $ */}
+                      TOTAL: {returnTotalFormulaCost()} $
                     </span>
                     <div className="buttonsContainer">
                       <ReusableButton

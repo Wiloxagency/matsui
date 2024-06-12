@@ -21,7 +21,7 @@ export default function Swatches({
   selectedSeries,
 }: SwatchesProps) {
   function handleSelectFormula(clickedFormula: GetFormulasResultInterface) {
-    console.log(clickedFormula);
+    // console.log(clickedFormula);
 
     const fullFormula: FormulaInterface = {
       formulaSeries: selectedSeries,
