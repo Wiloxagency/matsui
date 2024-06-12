@@ -65,7 +65,7 @@ export default function FormulaDetailsTable({
       // setTotalFormulaCost(totalFormulaCost + componentPrice);
 
       // updateTotalFormulaCost(componentPrice);
-      return componentPrice;
+      return componentPrice.toPrecision(2);
     }
     return "❌";
   }
@@ -102,7 +102,10 @@ export default function FormulaDetailsTable({
                 <Td>{component.componentDescription}</Td>
                 <Td>{Number(component.percentage)}</Td>
                 <Td>
-                  {(formulaQuantity * component.percentage) / 100} {formulaUnit}
+                  {((formulaQuantity * component.percentage) / 100).toPrecision(
+                    3
+                  )}{" "}
+                  {formulaUnit}
                 </Td>
                 <Td>{returnComponentPrice(component)}</Td>
               </Tr>
