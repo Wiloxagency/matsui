@@ -1,7 +1,9 @@
-import "./FormulaDetailsTable.scss";
-import { FormulaInterface } from "../../interfaces/interfaces";
 import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
 import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
+import { useGetPigmentsQuery } from "../../State/api";
+import { FormulaInterface } from "../../interfaces/interfaces";
+import "./FormulaDetailsTable.scss";
+import { Dispatch, SetStateAction } from "react";
 
 const columns = [
   {
@@ -34,6 +36,8 @@ interface FormulaDetailsTableProps {
   formula: FormulaInterface;
   formulaQuantity: number;
   formulaUnit: "g" | "kg" | "lb" | string;
+  totalFormulaCost: number;
+  setTotalFormulaCost: Dispatch<SetStateAction<number>>;
 }
 
 export default function FormulaDetailsTable({
@@ -41,6 +45,30 @@ export default function FormulaDetailsTable({
   formulaQuantity,
   formulaUnit,
 }: FormulaDetailsTableProps) {
+  const { data: fetchedPigments } = useGetPigmentsQuery();
+
+  function returnComponentPrice(receivedComponent: {
+    componentCode: string;
+    componentDescription: string;
+    percentage: number;
+  }) {
+    // console.log(receivedComponent);
+
+    const selectedPigment = fetchedPigments?.filter(
+      (pigment) => pigment.code === receivedComponent.componentCode
+    );
+    if (selectedPigment && selectedPigment.length > 0) {
+      const componentWeight = formulaQuantity * receivedComponent.percentage;
+      const componentPrice =
+        (componentWeight * selectedPigment[0].pricePerKg) / 10000;
+
+      // setTotalFormulaCost(totalFormulaCost + componentPrice);
+
+      // updateTotalFormulaCost(componentPrice);
+      return componentPrice.toPrecision(2);
+    }
+    return "❌";
+  }
 
   return (
     <>
@@ -61,18 +89,25 @@ export default function FormulaDetailsTable({
             return (
               <Tr key={component.componentCode}>
                 <Td>
-                  <span
-                    className="miniSwatch"
-                    style={{ backgroundColor: "#" + component.hex }}
-                  ></span>
+                  {component.hex ? (
+                    <span
+                      className="miniSwatch"
+                      style={{ backgroundColor: "#" + component.hex }}
+                    ></span>
+                  ) : (
+                    "❌"
+                  )}
                 </Td>
                 <Td>{component.componentCode}</Td>
                 <Td>{component.componentDescription}</Td>
-                <Td>{component.percentage}</Td>
+                <Td>{Number(component.percentage)}</Td>
                 <Td>
-                  {(formulaQuantity * component.percentage) / 100} {formulaUnit}
+                  {((formulaQuantity * component.percentage) / 100).toPrecision(
+                    3
+                  )}{" "}
+                  {formulaUnit}
                 </Td>
-                <Td>0.00</Td>
+                <Td>{returnComponentPrice(component)}</Td>
               </Tr>
             );
           })}

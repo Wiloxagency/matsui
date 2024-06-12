@@ -18,40 +18,39 @@ export const api = createApi({
     getFormulas: builder.query<
       GetFormulasResultInterface[],
       {
-        isInitialRequest: boolean;
         formulaSeries: string;
-        formulaCodes?: string[];
+        formulaSearchQuery: string;
       }
     >({
       query: (arg) => {
-        const { formulaSeries, formulaCodes, isInitialRequest } = arg;
+        const { formulaSeries, formulaSearchQuery } = arg;
         return {
           method: "POST",
           url: "components/GetFormulas",
-          body: { formulaSeries, formulaCodes, isInitialRequest },
+          body: { formulaSeries, formulaSearchQuery },
         };
       },
     }),
-    getGivenComponents: builder.query<
-      Array<FormulaComponentInterface>,
-      string[]
-    >({
-      query: (body) => ({
-        url: "components/",
-        method: "POST",
-        body: body,
-      }),
-    }),
+    // getGivenComponents: builder.query<
+    //   Array<FormulaComponentInterface>,
+    //   string[]
+    // >({
+    //   query: (body) => ({
+    //     url: "components/",
+    //     method: "POST",
+    //     body: body,
+    //   }),
+    // }),
     getInkSystems: builder.query<Array<InkSystemInterface>, void>({
       query: () => "inkSystems/",
     }),
     getSeries: builder.query<Array<{ seriesName: string }>, void>({
       query: () => "components/GetSeries",
     }),
-    getCodesOfFormulasInSeries: builder.query<Array<string>, string>({
-      query: (seriesName) =>
-        "components/GetCodesOfFormulasInSeries/" + seriesName,
-    }),
+    // getCodesOfFormulasInSeries: builder.query<Array<string>, string>({
+    //   query: (seriesName) =>
+    //     "components/GetCodesOfFormulasInSeries/" + seriesName,
+    // }),
     getPigments: builder.query<Array<PigmentInterface>, void>({
       query: () => "components/GetPigments",
     }),
@@ -89,10 +88,10 @@ export const api = createApi({
 export const {
   useGetUsersQuery,
   useGetFormulasQuery,
-  useGetGivenComponentsQuery,
+  // useGetGivenComponentsQuery,
   useGetSeriesQuery,
   useGetInkSystemsQuery,
-  useGetCodesOfFormulasInSeriesQuery,
+  // useGetCodesOfFormulasInSeriesQuery,
   useGetPigmentsQuery,
   useAddFormulaMutation,
   useDeleteSeriesMutation,

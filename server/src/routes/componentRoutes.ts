@@ -1,6 +1,13 @@
 import { Request, Response, Router } from "express";
+import {
+  FormulaComponentInterface,
+  FormulaSwatchInterface,
+} from "../interfaces/interfaces";
 import { createMongoDBConnection } from "../shared/mongodbConfig";
-import { FormulaSwatchInterface } from "../interfaces/interfaces";
+import {
+  returnHexColor,
+  returnHexColorPrepping,
+} from "../shared/returnHexColor";
 
 const router = Router();
 
@@ -15,32 +22,40 @@ router.post("/GetFormulas", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const components = db.collection("components");
   let initialRequestFormulaCodes: string[] = [];
+  const searchQuery: string = req.body.formulaSearchQuery;
 
-  if (req.body.isInitialRequest === true) {
+  console.log("searchQuery: ", searchQuery);
+
+  if (searchQuery === "") {
     const formulaSwatchColors = db.collection("formulaSwatchColors");
     const latest20FormulaSwatchColors = await formulaSwatchColors
       .find()
       .sort({ _id: -1 })
-      .limit(50)
+      .limit(150)
       .toArray();
     initialRequestFormulaCodes = latest20FormulaSwatchColors.map(
       (formula) => formula.formulaCode
     );
   }
 
-  console.log(initialRequestFormulaCodes);
+  // console.log(initialRequestFormulaCodes);
 
   const pipeline = [
     { $match: { FormulaSerie: req.body.formulaSeries } },
-    {
-      $match: {
-        FormulaCode: {
-          $in: req.body.isInitialRequest
-            ? initialRequestFormulaCodes
-            : req.body.formulaCodes,
+    searchQuery === ""
+      ? {
+          $match: {
+            FormulaCode: {
+              $in: initialRequestFormulaCodes,
+            },
+          },
+        }
+      : {
+          $match: {
+            // FormulaCode: { "$regex": searchQuery, "$options": "i" },
+            FormulaDescription: { $regex: searchQuery, $options: "i" },
+          },
         },
-      },
-    },
     {
       $lookup: {
         from: "pigments",
@@ -172,25 +187,25 @@ router.get("/GetSeries", async (req: Request, res: Response) => {
   res.json(allSeries);
 });
 
-router.get(
-  "/GetCodesOfFormulasInSeries/:seriesName",
-  async (req: Request, res: Response) => {
-    const db = await createMongoDBConnection();
-    const components = db.collection("components");
-    const filteredComponents = await components
-      .find({ FormulaSerie: req.params.seriesName })
-      .toArray();
+// router.get(
+//   "/GetCodesOfFormulasInSeries/:seriesName",
+//   async (req: Request, res: Response) => {
+//     const db = await createMongoDBConnection();
+//     const components = db.collection("components");
+//     const filteredComponents = await components
+//       .find({ FormulaSerie: req.params.seriesName })
+//       .toArray();
 
-    const formulaCodes = Array.from(
-      new Set(
-        filteredComponents?.map(({ FormulaCode }) => {
-          return FormulaCode;
-        })
-      )
-    );
-    res.json(formulaCodes);
-  }
-);
+//     const formulaCodes = Array.from(
+//       new Set(
+//         filteredComponents?.map(({ FormulaCode }) => {
+//           return FormulaCode;
+//         })
+//       )
+//     );
+//     res.json(formulaCodes);
+//   }
+// );
 
 // router.post("/", async (req: Request, res: Response) => {
 //   const db = await createMongoDBConnection();
@@ -223,76 +238,14 @@ router.post("/CreateFormula", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const formulaSwatchColors = db.collection("formulaSwatchColors");
   const components = db.collection("components");
-  const pigments = db.collection("pigments");
-
-  // Extract ComponentCode values and map them with their respective percentages
-  const componentData = req.body.map((item: any) => ({
-    code: item.ComponentCode,
-    percentage: item.Percentage,
-  }));
-
-  // Extract just the codes for the query
-  const componentCodes = componentData.map((item: any) => item.code);
+  const receivedComponents: FormulaComponentInterface[] = req.body;
 
   try {
-    // Query pigments collection for matching ComponentCode values
-    const matchingPigments = await pigments
-      .find({
-        code: { $in: componentCodes },
-      })
-      .toArray();
-
-    // Map the pigments with their respective percentages
-    const hexValues = matchingPigments.map((pigment: any) => {
-      const component = componentData.find(
-        (item: any) => item.code === pigment.code
-      );
-      return {
-        color: pigment.hex,
-        percentage: component ? component.percentage : 0,
-      };
-    });
-
-    // Function to convert hex to RGB
-    const hexToRgb = (hex: string) => {
-      const bigint = parseInt(hex, 16);
-      return {
-        r: (bigint >> 16) & 255,
-        g: (bigint >> 8) & 255,
-        b: bigint & 255,
-      };
-    };
-
-    // Function to convert RGB to hex
-    const rgbToHex = (r: number, g: number, b: number) => {
-      const toHex = (val: number) => val.toString(16).padStart(2, "0");
-      return `${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
-    };
-
-    // Calculate the weighted average of RGB values
-    const totalPercentage = hexValues.reduce(
-      (sum, item) => sum + item.percentage,
-      0
-    );
-    const weightedRgb = hexValues.reduce(
-      (acc, item) => {
-        const rgb = hexToRgb(item.color);
-        acc.r += (rgb.r * item.percentage) / totalPercentage;
-        acc.g += (rgb.g * item.percentage) / totalPercentage;
-        acc.b += (rgb.b * item.percentage) / totalPercentage;
-        return acc;
-      },
-      { r: 0, g: 0, b: 0 }
+    const componentsHexValues = await returnHexColorPrepping(
+      receivedComponents
     );
 
-    // Convert the averaged RGB values back to hex
-    const finalHexColor = rgbToHex(
-      Math.round(weightedRgb.r),
-      Math.round(weightedRgb.g),
-      Math.round(weightedRgb.b)
-    );
-
-    console.info("finalHexColor", finalHexColor);
+    const finalHexColor = returnHexColor(componentsHexValues);
 
     const newFormulaSwatch: FormulaSwatchInterface = {
       formulaCode: req.body[0].FormulaCode,
@@ -301,9 +254,6 @@ router.post("/CreateFormula", async (req: Request, res: Response) => {
 
     await formulaSwatchColors.insertOne(newFormulaSwatch);
     await components.insertMany(req.body);
-    console.info("req.body:", req.body);
-    console.info("newFormulaSwatch", newFormulaSwatch);
-    console.info("hexValues", hexValues);
 
     res.json("Received");
   } catch (error) {
@@ -325,11 +275,25 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
     )
   );
 
-  const newFormulasSwatches = formulaCodes.map((formulaCode) => {
-    return { formulaCode: formulaCode, formulaColor: "red" };
-  });
+  const receivedComponents: FormulaComponentInterface[] = req.body;
 
-  await formulaSwatchColors.insertMany(newFormulasSwatches);
+  const componentsGroupedByFormula = Map.groupBy(
+    receivedComponents,
+    ({ FormulaCode }) => FormulaCode
+  );
+
+  let newFormulaColorSwatches: FormulaSwatchInterface[] = [];
+
+  for (const [indexFormula, formula] of componentsGroupedByFormula.entries()) {
+    const componentsHexValues = await returnHexColorPrepping(formula);
+    const finalHexColor = returnHexColor(componentsHexValues);
+    newFormulaColorSwatches.push({
+      formulaCode: formula[0].FormulaCode,
+      formulaColor: finalHexColor,
+    });
+  }
+
+  await formulaSwatchColors.insertMany(newFormulaColorSwatches);
 
   try {
     const insertManyResponse = await components.insertMany(req.body);
@@ -338,6 +302,89 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
     console.error("Error importing compoents:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
+});
+
+router.get("/GetMissingPigments", async (req: Request, res: Response) => {
+  const existingPigments = [
+    "YEL M3G",
+    "GLDYEL MFR",
+    "ORNG MGD",
+    "RED MGD",
+    "RED MFB",
+    "GLOW ROSE MI5B-E",
+    "PINK",
+    "VLT MFB",
+    "Navy  B",
+    "BLU MB",
+    "BLU MG",
+    "GRN MB",
+    "BLK MK",
+    "ALPHA BASE",
+    "ALPHA TRANS WHITE",
+    "PNK MB",
+    "AP TRS WHT",
+    "EP WHT 301",
+    "MAT 301M",
+    "CLR 301C",
+  ];
+  const allPigments = [
+    "WHT 301W",
+    "YEL M3G",
+    "ORNG MGD",
+    "GRN MB",
+    "MAT 301M",
+    "BLK MK",
+    "BLU MG",
+    "GLDYEL MFR",
+    "RED MGD",
+    "RED MFB",
+    "BLU MB",
+    "PNK MB",
+    "VLT MFB",
+    "VLT ECGR",
+    "ROSE MB",
+    "NEO VIOLET MSGR",
+    "NEO BLACK BK",
+    "STRETCH WHITER 301-5",
+    "BLU ECBR",
+    "YEL ECGG",
+    "GRN EC5G",
+    "ORNG ECR",
+    "RED ECB",
+    "PNK EC5B",
+    "ROSE EC5B",
+    "SLVRSM 602",
+    "CLR 301C",
+    "YEL ECB",
+    "AP DC BASE",
+    "AP TRS WHT",
+    "NEO YELLOW MRG",
+    "SLVRSM 620",
+    "GLOW BLUE MIBR-E",
+    "GLOW YELLOW MI2G-E",
+    "GLOW GREEN MI8G-E",
+    "GLOW ORANGE MI2G-E",
+    "GLOW PINK MIB-E",
+    "GLOW ROSE MI5B-E",
+    "GLOW PURPLE MIGR-E",
+    "METALLIC BINDER 301",
+    "BRT DC BASE",
+    "EP WHT 301",
+    "EP CLR 301",
+    "EPRETCH WHITER 301-5",
+    "HM DC BASE",
+    "ST WHT 301",
+    "ST CLR 301",
+    "ALPHA TRANS WHITE",
+    "ALPHA BASE",
+    "PINK",
+  ];
+
+  const getMissingPigments = allPigments.filter(
+    (item) => existingPigments.indexOf(item) == -1
+  );
+
+  res.json(getMissingPigments);
 });
 
 export default router;

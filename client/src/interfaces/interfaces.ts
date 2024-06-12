@@ -64,6 +64,7 @@ export interface PigmentInterface {
   hex: string;
   cmyk: number[];
   rgb: number[];
+  pricePerKg: number
 }
 
 export interface GetFormulasResultInterface {

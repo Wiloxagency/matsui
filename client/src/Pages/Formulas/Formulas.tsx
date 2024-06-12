@@ -1,8 +1,10 @@
+import { Button } from "@nextui-org/button";
+import { Divider } from "@nextui-org/divider";
 import { Input } from "@nextui-org/input";
 import { useDisclosure } from "@nextui-org/modal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Spinner } from "@nextui-org/spinner";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   FaClone,
   FaFileExport,
@@ -17,7 +19,6 @@ import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/Fo
 import ReusableButton from "../../Components/ReusableButton/ReusableButton";
 import Swatches from "../../Components/Swatches/Swatches";
 import {
-  api,
   useGetFormulasQuery,
   useGetInkSystemsQuery,
   useGetPigmentsQuery,
@@ -25,23 +26,18 @@ import {
 } from "../../State/api";
 import { FormulaInterface } from "../../interfaces/interfaces";
 import "./Formulas.scss";
-import { Divider } from "@nextui-org/divider";
-import { Button } from "@nextui-org/button";
 
 export default function Formulas() {
-  const [formulasInSeries, setFormulasInSeries] = useState<
-    string[] | undefined
-  >(undefined);
-  formulasInSeries;
-
   const [selectedSeries, setSelectedSeries] = useState<string>("301");
-
+  const [formulaSearchQuery, setFormulaSearchQuery] = useState<string>("");
+  const [totalFormulaCost, setTotalFormulaCost] = useState<number>(0);
   const [formulaQuantityAsString, setFormulaQuantityAsString] =
     useState<string>("1000");
   // const [formulaQuantity, setFormulaQuantity] = useState<number>(1000);
   const [formulaUnit, setFormulaUnit] = useState<"g" | "kg" | "lb" | string>(
     "g"
   );
+
   // const { data: fetchedFormulas, isSuccess: isGetFormulasSuccessful } =
   //   useGetFormulasQuery();
 
@@ -55,7 +51,10 @@ export default function Formulas() {
     data: fetchedFormulas,
     isSuccess: isGetFormulasSuccessful,
     refetch: refetchFormulasColors,
-  } = useGetFormulasQuery({ isInitialRequest: true, formulaSeries: "301" });
+  } = useGetFormulasQuery({
+    formulaSeries: selectedSeries,
+    formulaSearchQuery: formulaSearchQuery,
+  });
 
   const {
     data: fetchedInkSystems,
@@ -75,16 +74,6 @@ export default function Formulas() {
     FormulaInterface | undefined
   >();
 
-  // const formulaSeries = Array.from(
-  //   new Set(
-  //     fetchedFormulas?.map(({ formulaSeries }) => {
-  //       return formulaSeries;
-  //     })
-  //   )
-  // ).map((series) => {
-  //   return { value: series };
-  // });
-
   // const isSmallScreen = useMediaQuery({ query: "(max-width: 1200px)" });
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
@@ -94,10 +83,34 @@ export default function Formulas() {
     onOpenChange: onOpenChangeCreateFormulaModal,
   } = useDisclosure();
 
-  // const [triggerGetFormulaComponents, { data: getFormulaComponentsData }] = api.endpoints.getFormulaComponents.useLazyQuery();
+  function returnTotalFormulaCost() {
+    // console.log(selectedFormula)
+    let formulaPrice: number = 0;
 
-  const [trigger, { data }] =
-    api.endpoints.getCodesOfFormulasInSeries.useLazyQuery();
+    for (const component of selectedFormula!.components) {
+      const selectedPigment = fetchedPigments?.filter(
+        (pigment) => pigment.code === component.componentCode
+      );
+
+      if (selectedPigment && selectedPigment.length > 0) {
+        const componentWeight =
+          Number(formulaQuantityAsString) * component.percentage;
+        const componentPrice =
+          (componentWeight * selectedPigment[0].pricePerKg) / 10000;
+
+        // setTotalFormulaCost(totalFormulaCost + componentPrice);
+
+        // updateTotalFormulaCost(componentPrice);
+        formulaPrice = parseFloat(
+          (formulaPrice + componentPrice).toPrecision(2)
+        );
+      }
+    }
+
+    return formulaPrice;
+  }
+
+  // const [triggerGetFormulaComponents, { data: getFormulaComponentsData }] = api.endpoints.getFormulaComponents.useLazyQuery();
 
   const handleFormulaUnitSelectionChange = (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -106,33 +119,34 @@ export default function Formulas() {
   };
 
   const handleSelectSeries = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    return;
     setSelectedSeries(e.target.value);
 
-    trigger(selectedSeries).then((response) => {
-      response;
-      data;
-    });
+    // refetchFormulasColors();
   };
 
-  function handleExportFormulas() {}
+  function handleExportFormulas() {
+    console.log(fetchedFormulas);
+    console.log(fetchedPigments);
+  }
 
-  useEffect(() => {
-    // if (isGetFormulasSuccessful) {
-    //   setSelectedFormula(fetchedFormulas[0]);
-    // }
-    // console.log("fetchedFormulas: ", fetchedFormulas);
-  }, [fetchedFormulas, isGetFormulasSuccessful]);
+  function handleFormulaSearch(
+    event?: React.KeyboardEvent<HTMLInputElement> | KeyboardEvent
+  ) {
+    if (formulaSearchQuery === "") return;
+    if (event === undefined) {
+      console.log("Search clicked");
+      // refetchFormulasColors();
+      return;
+    }
+    if (event && event.key === "Enter") {
+      console.log("Pressed enter");
+      // refetchFormulasColors();
+    }
+  }
 
-  useEffect(() => {
-    return;
-    setFormulasInSeries(undefined);
-
-    trigger(selectedSeries).then((response) => {
-      if (response.data === undefined) return;
-      setFormulasInSeries(response.data);
-    });
-  }, [selectedSeries, trigger]);
+  // TODO: IMPLEMENT THIS TO PREVENT FORMULAS REFETCHING EVERY TIME
+  // A LETTER IS TYPED 👇🏻
+  // function handleSearchBarValueChange() {}
 
   return (
     <>
@@ -236,8 +250,18 @@ export default function Formulas() {
               </span>
             </div>
             <div className="searchBarRow">
-              <input type="text" placeholder="SEARCH BY COLOR NAME OR CODE" />
-              <FaSearch></FaSearch>
+              <Input
+                type="text"
+                variant="bordered"
+                placeholder="SEARCH BY COLOR NAME OR CODE"
+                radius="full"
+                value={formulaSearchQuery}
+                onValueChange={setFormulaSearchQuery}
+                onKeyUp={(e) => handleFormulaSearch(e)}
+                startContent={
+                  <FaSearch onClick={() => handleFormulaSearch()} />
+                }
+              />
             </div>
             <div className="checkboxRow">
               <span>
@@ -297,6 +321,8 @@ export default function Formulas() {
                     formula={selectedFormula}
                     formulaQuantity={parseFloat(formulaQuantityAsString)}
                     formulaUnit={formulaUnit}
+                    totalFormulaCost={totalFormulaCost}
+                    setTotalFormulaCost={setTotalFormulaCost}
                   />
                   <Divider className="my-4" />
                   <div className="buttonsAndTotalRow">
@@ -329,7 +355,10 @@ export default function Formulas() {
                         }
                       />
                     </span>
-                    <span className="totalLabel">TOTAL: 97,70 $</span>
+                    <span className="totalLabel">
+                      {/* TOTAL: {totalFormulaCost} $ */}
+                      TOTAL: {returnTotalFormulaCost()} $
+                    </span>
                     <div className="buttonsContainer">
                       <ReusableButton
                         className="underlineButton"
@@ -370,14 +399,6 @@ export default function Formulas() {
                 <br />
                 (under construction)
               </span>
-              {/* <div className="swatchesComponentContainer"> */}
-              {/* <img
-              src="src/assets/underConstruction.jpg"
-              className="m-auto rounded-lg"
-              // style={{ height: "100%" }}
-            ></img> */}
-              {/* <Swatches formulas={[]} /> */}
-              {/* </div> */}
             </div>
           </div>
         </div>

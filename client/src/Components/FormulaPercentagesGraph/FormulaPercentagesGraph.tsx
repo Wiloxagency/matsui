@@ -8,6 +8,10 @@ interface FormulaPercentagesGraphProps {
 export default function FormulaPercentagesGraph({
   formula,
 }: FormulaPercentagesGraphProps) {
+  function roundPercentage(receivedPercentage: number) {
+    const roundedPercentage: string = Number(receivedPercentage).toPrecision(3);
+    return roundedPercentage;
+  }
   return (
     <>
       <div className="formulaPercentagesGraphContainer">
@@ -22,7 +26,7 @@ export default function FormulaPercentagesGraph({
                 minWidth: "fit-content",
               }}
             >
-              {component.percentage}%
+              {roundPercentage(component.percentage)}%
             </span>
           );
         })}
