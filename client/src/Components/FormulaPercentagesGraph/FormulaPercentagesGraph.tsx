@@ -9,8 +9,8 @@ export default function FormulaPercentagesGraph({
   formula,
 }: FormulaPercentagesGraphProps) {
   function roundPercentage(receivedPercentage: number) {
-    const roundedPercentage: string = Number(receivedPercentage).toPrecision(3);
-    return roundedPercentage;
+    const roundedPercentage: string = Number(receivedPercentage).toFixed(2);
+    return Number(roundedPercentage).toPrecision();
   }
   return (
     <>
