@@ -67,7 +67,13 @@ export function Login() {
       })
       .then((response: AxiosResponse) => {
         setIsSignInButtonLoading(false);
-        response && navigate("/formulas");
+
+        if (response.data.message === "User unverified") {
+          setLoginFormMessage("Please confirm your email before logging in");
+          return;
+        } else {
+          navigate("/formulas");
+        }
       })
       .catch((error) => {
         setIsSignInButtonLoading(false);

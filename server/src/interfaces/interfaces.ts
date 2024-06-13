@@ -6,7 +6,7 @@ export interface UserInterface {
   email: string;
   password: string;
   company: string;
-  status: "Active" | "Inactive";
+  status: "Active" | "Inactive" | "Unverified";
   registrationDate: Date;
   createdFormulas: number;
   lastAccess: Date;
