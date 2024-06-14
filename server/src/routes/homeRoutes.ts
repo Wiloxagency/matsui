@@ -78,6 +78,7 @@ router.post("/register", async (req: Request, res: Response) => {
 
       const insertNewUserResponse = await users.insertOne(newUser);
 
+      sendVerificationEmail();
       res.json(insertNewUserResponse);
     }
   } catch (error) {
@@ -88,19 +89,20 @@ router.post("/register", async (req: Request, res: Response) => {
 async function sendVerificationEmail() {
   const nodemailer = require("nodemailer");
   const transporter = nodemailer.createTransport({
-    host: "smtp.ethereal.email",
+    host: "smtp.mailgun.org",
     port: 587,
     secure: false, // Use `true` for port 465, `false` for all other ports
     auth: {
-      user: "maddison53@ethereal.email",
-      pass: "jn7jnAPss4f63QBp6D",
+      user: "postmaster@sandboxd15c86dfa0e8480ea7c4711442934f64.mailgun.org",
+      // TODO: MAKE THIS AN ENVIRONMENT VARIABLE 👇🏻
+      pass: "59cb90079cf814da4a7a0418f95b110a-51356527-dcd086a7",
     },
   });
 
   // send mail with defined transport object
   const info = await transporter.sendMail({
-    from: '"Maddison Foo Koch 👻" <maddison53@ethereal.email>', // sender address
-    to: "Lexp2008@gmail.com", // list of receivers
+    from: '"This is a test 👻" <postmaster@sandboxd15c86dfa0e8480ea7c4711442934f64.mailgun.org>', // sender address
+    to: "LeoLeto@proton.me", // list of receivers
     subject: "Hello ✔", // Subject line
     text: "Hello world?", // plain text body
     html: "<b>Hello world?</b>", // html body
