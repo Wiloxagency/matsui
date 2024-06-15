@@ -10,6 +10,7 @@ import { getUserByEmail } from "../shared/userServices";
 // initializePassport(passport);
 
 const router = Router();
+const MAILGUN_PASSWORD: string = process.env.MAILGUN_PASSWORD as string;
 
 router.get("/wakeUpServer", (req: Request, res: Response) => {
   //   axios
@@ -94,8 +95,7 @@ async function sendVerificationEmail() {
     secure: false, // Use `true` for port 465, `false` for all other ports
     auth: {
       user: "postmaster@sandboxd15c86dfa0e8480ea7c4711442934f64.mailgun.org",
-      // TODO: MAKE THIS AN ENVIRONMENT VARIABLE 👇🏻
-      pass: "59cb90079cf814da4a7a0418f95b110a-51356527-dcd086a7",
+      pass: MAILGUN_PASSWORD,
     },
   });
 
