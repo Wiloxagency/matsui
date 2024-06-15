@@ -5,6 +5,7 @@ import AdminDashboard from "./Pages/AdminDashboard/AdminDashboard";
 import MainLayout from "./Pages/MainLayout/MainLayout";
 import ImportFormulas from "./Pages/ImportFormulas/ImportFormulas";
 import InkCalculator from "./Pages/InkCalculator/InkCalculator";
+import EmailVerification from "./Pages/EmailVerification/EmailVerification";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
         <Route index path="calculator" element={<InkCalculator />} />
       </Route>
       <Route path="*" element={<Navigate to="login" />} />
+      <Route path="verification/:verificationCode" element={<EmailVerification />} />
     </Routes>
   );
 }

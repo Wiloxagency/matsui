@@ -16,6 +16,7 @@ const readFile = promisify(fs.readFile);
 
 const router = Router();
 const MAILGUN_PASSWORD: string = process.env.MAILGUN_PASSWORD as string;
+const FRONTEND_URL: string = process.env.FRONTEND_URL as string;
 
 router.get("/wakeUpServer", (req: Request, res: Response) => {
   //   axios
@@ -31,7 +32,6 @@ router.get("/wakeUpServer", (req: Request, res: Response) => {
 router.post("/login", async (req: Request, res: Response) => {
   try {
     const fetchedUser = await getUserByEmail(req.body.email);
-    // console.log(fetchedUser);
 
     if (fetchedUser === null) {
       res.status(401).json({ message: "No user with provided email" });
@@ -46,14 +46,6 @@ router.post("/login", async (req: Request, res: Response) => {
         res.status(401).json({ message: "Wrong password" });
       }
     }
-    // passport.authenticate("local");
-    // console.log(req.user);
-    // const db = await createMongoDBConnection();
-    // const users = db.collection("users");
-    // let allUsers = await users.find().toArray();
-    // console.log(req.body);
-    // console.log(req.body.email);
-    // res.json(allUsers);
   } catch (error) {
     console.log(error);
   }
@@ -68,6 +60,7 @@ router.post("/register", async (req: Request, res: Response) => {
       const db = await createMongoDBConnection();
       const users = db.collection("users");
       const hashedId = await bcrypt.hash(req.body._id, 10);
+      const emailVerificationLink = FRONTEND_URL + "/verification/" + hashedId;
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
       const currentDate = new Date();
 
@@ -80,11 +73,13 @@ router.post("/register", async (req: Request, res: Response) => {
         registrationDate: currentDate,
         createdFormulas: 0,
         lastAccess: currentDate,
+        TEMP: emailVerificationLink
       };
 
       const insertNewUserResponse = await users.insertOne(newUser);
 
-      sendVerificationEmail();
+
+      // sendVerificationEmail(emailVerificationLink);
       res.json(insertNewUserResponse);
     }
   } catch (error) {
@@ -92,31 +87,38 @@ router.post("/register", async (req: Request, res: Response) => {
   }
 });
 
-async function sendVerificationEmail() {
+async function sendVerificationEmail(receivedEmailVerificationLink: string) {
   const nodemailer = require("nodemailer");
 
-  let emailVerificationLink;
+  // const transporter = nodemailer.createTransport({
+  //   host: "smtp.mailgun.org",
+  //   port: 587,
+  //   secure: false, // Use `true` for port 465, `false` for all other ports
+  //   auth: {
+  //     user: "postmaster@sandboxd15c86dfa0e8480ea7c4711442934f64.mailgun.org",
+  //     pass: MAILGUN_PASSWORD,
+  //   },
+  // });
   const transporter = nodemailer.createTransport({
-    host: "smtp.mailgun.org",
-    port: 587,
-    secure: false, // Use `true` for port 465, `false` for all other ports
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // Use `true` for port 465, `false` for all other ports
     auth: {
-      user: "postmaster@sandboxd15c86dfa0e8480ea7c4711442934f64.mailgun.org",
+      user: "lexp2008@gmail.com",
       pass: MAILGUN_PASSWORD,
     },
   });
 
   const source = fs
-    .readFileSync("nodemailer/templates/generic.html", "utf-8")
+    .readFileSync("server/src/Email templates/emailVerification.html ", "utf-8")
     .toString();
   const template = handlebars.compile(source);
 
   const replacements = {
-    emailVerificationLink: emailVerificationLink,
+    emailVerificationLink: receivedEmailVerificationLink,
   };
   const htmlToSend = template(replacements);
 
-  // send mail with defined transport object
   const info = await transporter.sendMail({
     from: '"This is a test 👻" <postmaster@sandboxd15c86dfa0e8480ea7c4711442934f64.mailgun.org>', // sender address
     to: "LeoLeto@proton.me", // list of receivers
@@ -126,7 +128,6 @@ async function sendVerificationEmail() {
   });
 
   console.log("Message sent: %s", info.messageId);
-  // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
 }
 
 export default router;

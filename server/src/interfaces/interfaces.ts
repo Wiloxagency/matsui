@@ -10,6 +10,8 @@ export interface UserInterface {
   registrationDate: Date;
   createdFormulas: number;
   lastAccess: Date;
+
+  TEMP?: string
 }
 
 export interface FormulaInterface {}
