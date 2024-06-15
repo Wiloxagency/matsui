@@ -6,6 +6,11 @@ import { UserInterface } from "../interfaces/interfaces";
 // import passport from "passport";
 // import { initializePassport } from "../shared/passportConfig";
 import { getUserByEmail } from "../shared/userServices";
+import handlebars = require("handlebars");
+
+import { promisify } from "util";
+const fs = require("fs");
+const readFile = promisify(fs.readFile);
 
 // initializePassport(passport);
 
@@ -89,6 +94,8 @@ router.post("/register", async (req: Request, res: Response) => {
 
 async function sendVerificationEmail() {
   const nodemailer = require("nodemailer");
+
+  let emailVerificationLink;
   const transporter = nodemailer.createTransport({
     host: "smtp.mailgun.org",
     port: 587,
@@ -99,13 +106,23 @@ async function sendVerificationEmail() {
     },
   });
 
+  const source = fs
+    .readFileSync("nodemailer/templates/generic.html", "utf-8")
+    .toString();
+  const template = handlebars.compile(source);
+
+  const replacements = {
+    emailVerificationLink: emailVerificationLink,
+  };
+  const htmlToSend = template(replacements);
+
   // send mail with defined transport object
   const info = await transporter.sendMail({
     from: '"This is a test 👻" <postmaster@sandboxd15c86dfa0e8480ea7c4711442934f64.mailgun.org>', // sender address
     to: "LeoLeto@proton.me", // list of receivers
     subject: "Hello ✔", // Subject line
-    text: "Hello world?", // plain text body
-    html: "<b>Hello world?</b>", // html body
+    // text: "Hello world?", // plain text body
+    html: htmlToSend, // html body
   });
 
   console.log("Message sent: %s", info.messageId);
