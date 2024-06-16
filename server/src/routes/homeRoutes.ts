@@ -1,21 +1,20 @@
-import { Router, Request, Response } from "express";
-import axios from "axios";
 import bcrypt from "bcrypt";
-import { createMongoDBConnection } from "../shared/mongodbConfig";
+import { Request, Response, Router } from "express";
 import { UserInterface } from "../interfaces/interfaces";
+import { createMongoDBConnection } from "../shared/mongodbConfig";
 // import passport from "passport";
 // import { initializePassport } from "../shared/passportConfig";
 import { getUserByEmail } from "../shared/userServices";
 import handlebars = require("handlebars");
 
+import { ObjectId } from "mongodb";
 import { promisify } from "util";
+import {
+  returnDecryptedString,
+  returnEncryptedString,
+} from "../shared/stringEncryption";
 const fs = require("fs");
 const readFile = promisify(fs.readFile);
-import * as crypto from "crypto";
-import { ObjectId } from "mongodb";
-
-// TODO: SECURE THIS? 👇🏻
-const encryptionKey = "0123456789abcdef0123456789abcdef";
 
 // initializePassport(passport);
 
@@ -76,14 +75,14 @@ router.post("/register", async (req: Request, res: Response) => {
         registrationDate: currentDate,
         createdFormulas: 0,
         lastAccess: currentDate,
-        // TEMP: emailVerificationLink
       };
 
       const insertNewUserResponse = await users.insertOne(newUser);
 
-      const encryptedId = encrypt(String(insertNewUserResponse.insertedId));
+      const encryptedId = returnEncryptedString(
+        String(insertNewUserResponse.insertedId)
+      );
 
-      const decryptedId = decrypt(encryptedId);
       const emailVerificationLink =
         "https://" + FRONTEND_URL + "/verification/" + encryptedId;
 
@@ -99,12 +98,21 @@ router.post("/register", async (req: Request, res: Response) => {
 router.post("/emailVerification", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const users = db.collection("users");
-  const decryptedId = new ObjectId(decrypt(req.body.encryptedId));
-  const activateUser = await users.updateOne(
-    { _id: decryptedId },
-    { $set: { status: "Active" } }
-  );
-  res.json(activateUser);
+
+  try {
+    const decryptedId = new ObjectId(
+      returnDecryptedString(req.body.encryptedId)
+    );
+    const activateUser = await users.updateOne(
+      { _id: decryptedId },
+      { $set: { status: "Active" } }
+    );
+    res.json(activateUser);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json();
+
+  }
 });
 
 async function sendVerificationEmail(receivedEmailVerificationLink: string) {
@@ -119,15 +127,6 @@ async function sendVerificationEmail(receivedEmailVerificationLink: string) {
       pass: "fa675f5f1506c7",
     },
   });
-  // const transporter = nodemailer.createTransport({
-  //   host: "smtp.mailgun.org",
-  //   port: 587,
-  //   secure: false, // Use `true` for port 465, `false` for all other ports
-  //   auth: {
-  //     user: "postmaster@sandboxd15c86dfa0e8480ea7c4711442934f64.mailgun.org",
-  //     pass: MAILGUN_PASSWORD,
-  //   },
-  // });
 
   const source = fs
     .readFileSync("./src/emailTemplates/emailVerification.html", "utf-8")
@@ -149,34 +148,6 @@ async function sendVerificationEmail(receivedEmailVerificationLink: string) {
   });
 
   console.log("Message sent: %s", info.messageId);
-}
-
-// Encryption function
-function encrypt(text: string): string {
-  const iv = crypto.randomBytes(16); // Initialization vector
-  const cipher = crypto.createCipheriv(
-    "aes-256-cbc",
-    Buffer.from(encryptionKey),
-    iv
-  );
-  let encrypted = cipher.update(text);
-  encrypted = Buffer.concat([encrypted, cipher.final()]);
-  return iv.toString("hex") + ":" + encrypted.toString("hex");
-}
-
-// Decryption function
-function decrypt(encryptedText: string): string {
-  const textParts = encryptedText.split(":");
-  const iv = Buffer.from(textParts.shift()!, "hex");
-  const encryptedTextHex = Buffer.from(textParts.join(":"), "hex");
-  const decipher = crypto.createDecipheriv(
-    "aes-256-cbc",
-    Buffer.from(encryptionKey),
-    iv
-  );
-  let decrypted = decipher.update(encryptedTextHex);
-  decrypted = Buffer.concat([decrypted, decipher.final()]);
-  return decrypted.toString();
 }
 
 export default router;

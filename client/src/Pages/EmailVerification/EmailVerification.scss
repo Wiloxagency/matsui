@@ -1,0 +1,10 @@
+.emailVerificationLayout {
+    display: flex;
+    width  : 100vw;
+    height : 100vh;
+
+    .card {
+        max-width: 350px;
+        min-width: 350px;
+    }
+}
