@@ -84,7 +84,6 @@ router.post("/register", async (req: Request, res: Response) => {
       const encryptedId = encrypt(String(insertNewUserResponse.insertedId));
 
       const decryptedId = decrypt(encryptedId);
-      console.log("decryptedId: ", decryptedId);
       const emailVerificationLink =
         FRONTEND_URL + "/verification/" + encryptedId;
 
@@ -146,10 +145,10 @@ async function sendVerificationEmail(receivedEmailVerificationLink: string) {
   const htmlToSend = template(replacements);
 
   const info = await transporter.sendMail({
-    from: '"This is a test 👻" <from@example.com', // sender address
+    from: '"Matsui Color 🖌️" <from@example.com', // sender address
     // from: '"This is a test 👻" <postmaster@sandboxd15c86dfa0e8480ea7c4711442934f64.mailgun.org>', // sender address
     to: "LeoLeto@proton.me", // list of receivers
-    subject: "Hello ✔", // Subject line
+    subject: "Verify your email 🚀", // Subject line
     // text: "Hello world?", // plain text body
     html: htmlToSend, // html body
   });
