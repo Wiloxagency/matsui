@@ -85,12 +85,7 @@ router.post("/register", async (req: Request, res: Response) => {
 
       const decryptedId = decrypt(encryptedId);
       const emailVerificationLink =
-        FRONTEND_URL + "/verification/" + encryptedId;
-
-      const addEmailVerificationLinkToUser = await users.updateOne(
-        { _id: insertNewUserResponse.insertedId },
-        { $set: { TEMP: emailVerificationLink } }
-      );
+        "https://" + FRONTEND_URL + "/verification/" + encryptedId;
 
       sendVerificationEmail(emailVerificationLink);
       // console.log(String(insertNewUserResponse.insertedId));
