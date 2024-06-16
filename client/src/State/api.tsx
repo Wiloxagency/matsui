@@ -82,6 +82,21 @@ export const api = createApi({
         body: payload,
       }),
     }),
+    verifyEmail: builder.query<
+      void,
+      {
+        encryptedId: string;
+      }
+    >({
+      query: (arg) => {
+        const { encryptedId } = arg;
+        return {
+          method: "POST",
+          url: "/emailVerification",
+          body: { encryptedId },
+        };
+      },
+    }),
   }),
 });
 
@@ -97,4 +112,5 @@ export const {
   useDeleteSeriesMutation,
   useAddSeriesMutation,
   useImportFormulasMutation,
+  useVerifyEmailQuery,
 } = api;

@@ -156,6 +156,7 @@ export function Login() {
             size="lg"
             isLoading={isRegisterButtonLoading}
             onClick={handleRegister}
+            isDisabled={email === "" || password === ""}
           >
             Create new account{" "}
           </Button>
