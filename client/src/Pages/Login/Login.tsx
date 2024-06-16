@@ -40,7 +40,7 @@ export function Login() {
       .then((response: AxiosResponse) => {
         setIsRegisterButtonLoading(false);
         if (response.status === 200) {
-          setLoginFormMessage("Account created. You can now login");
+          setLoginFormMessage("Account created. Check your email to verify it");
         }
       })
       .catch((error) => {
