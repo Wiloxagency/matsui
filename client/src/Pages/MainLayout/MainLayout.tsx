@@ -9,7 +9,7 @@ export default function MainLayout() {
   const navigate = useNavigate();
 
   const accessToken = localStorage.getItem("accessToken");
-  console.log("accessToken: ", accessToken);
+  // console.log("accessToken: ", accessToken);
 
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
   const isSmallScreen = useMediaQuery({ query: "(max-width: 1200px)" });

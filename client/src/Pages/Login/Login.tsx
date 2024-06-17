@@ -76,14 +76,16 @@ export function Login() {
           return;
         } else {
           // console.log(response);
-          localStorage.setItem('accessToken', response.data.accessToken)
+          localStorage.setItem("accessToken", response.data.accessToken);
+          localStorage.setItem("userEmail", email);
           const accessToken = response.data.accessToken;
+          accessToken
           // TODO: MAKE THIS WORK 👇🏻
           setAuth({
             email: response.data.email,
             accessToken: response.data.accessToken,
           });
-          console.log("accessToken: ", accessToken);
+          // console.log("accessToken: ", accessToken);
           navigate("/formulas");
         }
       })

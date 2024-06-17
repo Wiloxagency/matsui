@@ -11,6 +11,8 @@ interface HeaderProps {
 export default function Header({ handleLogout }: HeaderProps) {
   const location = useLocation();
 
+  const userEmail = localStorage.getItem("userEmail");
+
   return (
     <div className="headerContainer">
       <div className="logoAndNavbar">
@@ -34,7 +36,7 @@ export default function Header({ handleLogout }: HeaderProps) {
           </ul>
         </nav>
 
-        <p className="email">Email@email.com</p>
+        <p className="email">{userEmail}</p>
         <p className="logout" onClick={handleLogout}>
           Log out
         </p>
