@@ -2,7 +2,12 @@ import "./BottomBar.scss";
 import { Link, useLocation } from "react-router-dom";
 import { pages } from "../../Constants/pages";
 import { FaSignOutAlt } from "react-icons/fa";
-export default function BottomBar() {
+
+interface BottomBarProps {
+  handleLogout: () => void;
+}
+
+export default function BottomBar({ handleLogout }: BottomBarProps) {
   const location = useLocation();
 
   return (
@@ -17,10 +22,10 @@ export default function BottomBar() {
                   key={page.path}
                   className={location.pathname === page.path ? "active" : ""}
                 >
-                  <Link to={page.path}>
+                  <a onClick={handleLogout}>
                     <Icon className="bottomBarIcon" />
                     <div>{page.mobileLabel}</div>
-                  </Link>
+                  </a>
                 </li>
               );
             })}

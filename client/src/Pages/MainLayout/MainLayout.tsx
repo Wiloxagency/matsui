@@ -1,27 +1,48 @@
 import { useMediaQuery } from "react-responsive";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import BottomBar from "../../Components/BottomBar/BottomBar";
 import Header from "../../Components/Header/Header";
 import "./MainLayout.scss";
+import { useEffect } from "react";
 
 export default function MainLayout() {
+  const navigate = useNavigate();
 
-  // const accessToken = localStorage.getItem("accessToken");
-  // console.log("accessToken: ", accessToken);
-  
+  const accessToken = localStorage.getItem("accessToken");
+  console.log("accessToken: ", accessToken);
+
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
   const isSmallScreen = useMediaQuery({ query: "(max-width: 1200px)" });
 
-  return (
-    <>
-      {isSmallScreen ? <BottomBar /> : <Header />}
-      <div
-        className={
-          isMobile ? "outletContainer mobileLayout" : "outletContainer"
-        }
-      >
-        <Outlet />
-      </div>
-    </>
-  );
+  function handleLogout() {
+    navigate("/login");
+    localStorage.clear();
+  }
+
+  useEffect(() => {
+    if (!accessToken) {
+      navigate("/login");
+    }
+  }, []);
+
+  if (accessToken) {
+    return (
+      <>
+        {isSmallScreen ? (
+          <BottomBar handleLogout={handleLogout} />
+        ) : (
+          <Header handleLogout={handleLogout} />
+        )}
+        <div
+          className={
+            isMobile ? "outletContainer mobileLayout" : "outletContainer"
+          }
+        >
+          <Outlet />
+        </div>
+      </>
+    );
+  // } else {
+  //   navigate("/login");
+  }
 }

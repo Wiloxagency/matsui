@@ -4,7 +4,11 @@ import { pages } from "../../Constants/pages";
 import logo from "../../assets/matsui_logo.png";
 import spectrum from "../../assets/spectrum.png";
 
-export default function Header() {
+interface HeaderProps {
+  handleLogout: () => void;
+}
+
+export default function Header({ handleLogout }: HeaderProps) {
   const location = useLocation();
 
   return (
@@ -31,9 +35,9 @@ export default function Header() {
         </nav>
 
         <p className="email">Email@email.com</p>
-        <Link to="/login" className="logout">
+        <p className="logout" onClick={handleLogout}>
           Log out
-        </Link>
+        </p>
       </div>
       <img src={spectrum} className="spectrumBar" />
     </div>
