@@ -35,7 +35,7 @@ export const authenticateToken = (
 export const generateAccessToken = (userId: string) => {
   console.log("ACCESS TOKEN GENERATED");
   // return jwt.sign({ userId }, jwtSecret, { expiresIn: "15m" });
-  const accessToken = jwt.sign({ userId }, jwtSecret, { expiresIn: "1s" });
+  const accessToken = jwt.sign({ userId }, jwtSecret, { expiresIn: "5s" });
   return accessToken;
 };
 

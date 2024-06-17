@@ -11,18 +11,21 @@ import {
   PigmentInterface,
   UserInterface,
 } from "../interfaces/interfaces";
-import authStore from "./authStore";
+// import authStore from "./authStore";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL,
   credentials: "include",
   prepareHeaders: (headers) => {
-    const auth = authStore.getState().auth;
-    const token = auth?.accessToken;
-    console.log("token: ", token)
+    // const auth = authStore.getState().auth;
+    // const token = auth?.accessToken;
+    // console.log("token: ", token)
 
-    if (token) {
-      headers.set("authorization", `Bearer ${token}`);
+    const accessToken = localStorage.getItem("accessToken");
+    console.log("accessToken: ", accessToken);
+
+    if (accessToken) {
+      headers.set("authorization", `Bearer ${accessToken}`);
     }
 
     return headers;
@@ -36,9 +39,9 @@ const baseQueryWithReauth: BaseQueryFn<
 > = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
 
-  console.log("BASE QUERY RUNS");
-
-  if (result.error && result.error.status === 403) {
+  // if (result.error && result.error.originalStatus === 403) {
+  if (result.error) {
+    console.log("THIS RAN 2");
     // If access token is expired, attempt to refresh it
     const refreshResult = await baseQuery(
       {
@@ -50,6 +53,7 @@ const baseQueryWithReauth: BaseQueryFn<
     );
 
     if (refreshResult.data) {
+      console.log(refreshResult.data);
       // Retry the original query with the new access token
       result = await baseQuery(args, api, extraOptions);
     } else {

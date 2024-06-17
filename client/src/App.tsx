@@ -18,7 +18,10 @@ export default function App() {
         <Route index path="calculator" element={<InkCalculator />} />
       </Route>
       <Route path="*" element={<Navigate to="login" />} />
-      <Route path="verification/:verificationCode" element={<EmailVerification />} />
+      <Route
+        path="verification/:verificationCode"
+        element={<EmailVerification />}
+      />
     </Routes>
   );
 }

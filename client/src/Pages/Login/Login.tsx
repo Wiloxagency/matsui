@@ -76,7 +76,9 @@ export function Login() {
           return;
         } else {
           // console.log(response);
+          localStorage.setItem('accessToken', response.data.accessToken)
           const accessToken = response.data.accessToken;
+          // TODO: MAKE THIS WORK 👇🏻
           setAuth({
             email: response.data.email,
             accessToken: response.data.accessToken,
