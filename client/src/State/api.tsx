@@ -1,4 +1,9 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  BaseQueryFn,
+  FetchArgs,
+  createApi,
+  fetchBaseQuery,
+} from "@reduxjs/toolkit/query/react";
 import {
   FormulaComponentInterface,
   GetFormulasResultInterface,
@@ -6,9 +11,59 @@ import {
   PigmentInterface,
   UserInterface,
 } from "../interfaces/interfaces";
+import authStore from "./authStore";
+
+const baseQuery = fetchBaseQuery({
+  baseUrl: import.meta.env.VITE_API_URL,
+  credentials: "include",
+  prepareHeaders: (headers) => {
+    const auth = authStore.getState().auth;
+    const token = auth?.accessToken;
+    console.log("token: ", token)
+
+    if (token) {
+      headers.set("authorization", `Bearer ${token}`);
+    }
+
+    return headers;
+  },
+});
+
+const baseQueryWithReauth: BaseQueryFn<
+  string | FetchArgs,
+  unknown,
+  unknown
+> = async (args, api, extraOptions) => {
+  let result = await baseQuery(args, api, extraOptions);
+
+  console.log("BASE QUERY RUNS");
+
+  if (result.error && result.error.status === 403) {
+    // If access token is expired, attempt to refresh it
+    const refreshResult = await baseQuery(
+      {
+        url: "/refreshToken",
+        method: "POST",
+      },
+      api,
+      extraOptions
+    );
+
+    if (refreshResult.data) {
+      // Retry the original query with the new access token
+      result = await baseQuery(args, api, extraOptions);
+    } else {
+      // If refresh failed, log out the user
+      // Optionally, clear user state or redirect to login
+      console.error("Failed to refresh token");
+    }
+  }
+
+  return result;
+};
 
 export const api = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_URL }),
+  baseQuery: baseQueryWithReauth,
   reducerPath: "api",
   tagTypes: [],
   endpoints: (builder) => ({
@@ -22,14 +77,19 @@ export const api = createApi({
         formulaSearchQuery: string;
       }
     >({
-      query: (arg) => {
-        const { formulaSeries, formulaSearchQuery } = arg;
-        return {
-          method: "POST",
-          url: "components/GetFormulas",
-          body: { formulaSeries, formulaSearchQuery },
-        };
-      },
+      query: (arg) => ({
+        method: "POST",
+        url: "components/GetFormulas",
+        body: {
+          formulaSeries: arg.formulaSeries,
+          formulaSearchQuery: arg.formulaSearchQuery,
+        },
+        headers: {
+          Authorization: "",
+          // Authorization: `Bearer ${accessToken}`, // Example: Access token from context
+          "Content-Type": "application/json",
+        },
+      }),
     }),
     // getGivenComponents: builder.query<
     //   Array<FormulaComponentInterface>,

@@ -26,8 +26,14 @@ import {
 } from "../../State/api";
 import { FormulaInterface } from "../../interfaces/interfaces";
 import "./Formulas.scss";
+import authStore from "../../State/authStore";
 
 export default function Formulas() {
+
+  const auth = authStore.getState().auth;
+  const token = auth?.accessToken;
+  console.log("token: ", token)
+
   const [selectedSeries, setSelectedSeries] = useState<string>("301");
   const [formulaSearchQuery, setFormulaSearchQuery] = useState<string>("");
   const [totalFormulaCost, setTotalFormulaCost] = useState<number>(0);

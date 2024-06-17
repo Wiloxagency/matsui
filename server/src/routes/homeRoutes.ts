@@ -13,6 +13,15 @@ import {
   returnDecryptedString,
   returnEncryptedString,
 } from "../shared/stringEncryption";
+
+import {
+  authenticateToken,
+  generateAccessToken,
+  generateRefreshToken,
+  refreshSecret,
+} from "../shared/jwtMiddleware";
+import jwt, { JwtPayload } from "jsonwebtoken";
+
 const fs = require("fs");
 const readFile = promisify(fs.readFile);
 
@@ -37,22 +46,70 @@ router.post("/login", async (req: Request, res: Response) => {
   try {
     const fetchedUser = await getUserByEmail(req.body.email);
 
-    if (fetchedUser === null) {
-      res.status(401).json({ message: "No user with provided email" });
-    } else {
-      if (await bcrypt.compare(req.body.password, fetchedUser.password)) {
-        if (fetchedUser.status === "Unverified") {
-          res.json({ message: "User unverified" });
-          return;
-        }
-        res.json({ message: "Success" });
-      } else {
-        res.status(401).json({ message: "Wrong password" });
-      }
+    if (!fetchedUser) {
+      return res.status(401).json({ message: "No user with provided email" });
     }
+
+    const passwordMatch = await bcrypt.compare(
+      req.body.password,
+      fetchedUser.password
+    );
+
+    if (!passwordMatch) {
+      return res.status(401).json({ message: "Wrong password" });
+    }
+
+    if (fetchedUser.status === "Unverified") {
+      return res.json({ message: "User unverified" });
+    }
+
+    const accessToken = generateAccessToken(String(fetchedUser._id));
+    const refreshToken = generateRefreshToken(String(fetchedUser._id));
+
+    // res.cookie("accessToken", accessToken, { httpOnly: true, secure: true, maxAge: 900000 }); // 15 minutes
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 604800000,
+    }); // 7 days
+
+    res.json({
+      message: "Success",
+      accessToken,
+    });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
+});
+
+router.post("/refreshToken", (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    return res.sendStatus(401);
+  }
+
+  jwt.verify(refreshToken, refreshSecret, (err: any, decoded: any) => {
+    if (err || !decoded) {
+      return res.sendStatus(403);
+    }
+
+    const userId = (decoded as JwtPayload).userId;
+    const accessToken = generateAccessToken(userId);
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 900000,
+    }); // 15 minutes
+
+    res.json({ accessToken });
+  });
+});
+
+router.post("/logout", (req: Request, res: Response) => {
+  res.clearCookie("refreshToken", { httpOnly: true, secure: true });
+  res.sendStatus(204); // No Content
 });
 
 router.post("/register", async (req: Request, res: Response) => {
@@ -86,7 +143,7 @@ router.post("/register", async (req: Request, res: Response) => {
       const emailVerificationLink =
         "https://" + FRONTEND_URL + "/verification/" + encryptedId;
 
-      sendVerificationEmail(emailVerificationLink);
+      sendVerificationEmail(req.body.email, emailVerificationLink);
       // console.log(String(insertNewUserResponse.insertedId));
       res.json(insertNewUserResponse);
     }
@@ -111,11 +168,13 @@ router.post("/emailVerification", async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     res.status(500).json();
-
   }
 });
 
-async function sendVerificationEmail(receivedEmailVerificationLink: string) {
+async function sendVerificationEmail(
+  receivedRecipientEmail: string,
+  receivedEmailVerificationLink: string
+) {
   const nodemailer = require("nodemailer");
 
   const transporter = nodemailer.createTransport({
@@ -141,7 +200,7 @@ async function sendVerificationEmail(receivedEmailVerificationLink: string) {
   const info = await transporter.sendMail({
     from: '"Matsui Color 🖌️" <from@example.com', // sender address
     // from: '"This is a test 👻" <postmaster@sandboxd15c86dfa0e8480ea7c4711442934f64.mailgun.org>', // sender address
-    to: "LeoLeto@proton.me", // list of receivers
+    to: receivedRecipientEmail, // list of receivers
     subject: "Verify your email 🚀", // Subject line
     // text: "Hello world?", // plain text body
     html: htmlToSend, // html body

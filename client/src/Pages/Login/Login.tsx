@@ -1,15 +1,18 @@
+import { Button } from "@nextui-org/button";
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useRef, useState } from "react";
 import { FaEye, FaEyeSlash, FaLock, FaUser } from "react-icons/fa";
+import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../Context/AuthProvider";
 import video from "../../assets/doesthiswork.mp4";
 import logo from "../../assets/matsui_logo.png";
 import "./Login.scss";
-import { Button } from "@nextui-org/button";
-import { useMediaQuery } from "react-responsive";
 const API_URL = import.meta.env.VITE_API_URL;
 
 export function Login() {
+  const { setAuth } = useAuth();
+
   const emailRef = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,7 +38,7 @@ export function Login() {
     axios
       .post(API_URL + "register", JSON.stringify({ email, password }), {
         headers: { "Content-type": "application/json" },
-        // withCredentials: true,
+        withCredentials: true,
       })
       .then((response: AxiosResponse) => {
         setIsRegisterButtonLoading(false);
@@ -63,7 +66,7 @@ export function Login() {
     axios
       .post(API_URL + "login", JSON.stringify({ email, password }), {
         headers: { "Content-type": "application/json" },
-        // withCredentials: true,
+        withCredentials: true,
       })
       .then((response: AxiosResponse) => {
         setIsSignInButtonLoading(false);
@@ -72,6 +75,13 @@ export function Login() {
           setLoginFormMessage("Please confirm your email before logging in");
           return;
         } else {
+          // console.log(response);
+          const accessToken = response.data.accessToken;
+          setAuth({
+            email: response.data.email,
+            accessToken: response.data.accessToken,
+          });
+          console.log("accessToken: ", accessToken);
           navigate("/formulas");
         }
       })
