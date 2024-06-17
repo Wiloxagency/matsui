@@ -102,7 +102,7 @@ export default function Formulas() {
 
         // updateTotalFormulaCost(componentPrice);
         formulaPrice = parseFloat(
-          (formulaPrice + componentPrice).toPrecision(2)
+          (formulaPrice + componentPrice).toFixed(3)
         );
       }
     }

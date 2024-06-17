@@ -16,11 +16,14 @@ const app: Express = express();
 
 const port = process.env.PORT || 3000;
 
+const FRONTEND_URL: string = process.env.FRONTEND_URL as string;
+
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const corsOptions: CorsOptions = {
-  origin: "*",
+  origin: [FRONTEND_URL, "http://localhost:5173"],
   credentials: true,
   optionsSuccessStatus: 200,
 };
