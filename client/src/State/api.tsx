@@ -15,21 +15,21 @@ import {
 
 const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL,
-  credentials: "include",
-  prepareHeaders: (headers) => {
+  // credentials: "include",
+  // prepareHeaders: (headers) => {
     // const auth = authStore.getState().auth;
     // const token = auth?.accessToken;
     // console.log("token: ", token)
 
-    const accessToken = localStorage.getItem("accessToken");
-    console.log("accessToken: ", accessToken);
+    // const accessToken = localStorage.getItem("accessToken");
+    // console.log("accessToken: ", accessToken);
 
-    if (accessToken) {
-      headers.set("authorization", `Bearer ${accessToken}`);
-    }
+    // if (accessToken) {
+    //   headers.set("authorization", `Bearer ${accessToken}`);
+    // }
 
-    return headers;
-  },
+    // return headers;
+  // },
 });
 
 const baseQueryWithReauth: BaseQueryFn<

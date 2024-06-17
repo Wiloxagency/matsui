@@ -66,7 +66,7 @@ export function Login() {
     axios
       .post(API_URL + "login", JSON.stringify({ email, password }), {
         headers: { "Content-type": "application/json" },
-        withCredentials: true,
+        // withCredentials: true,
       })
       .then((response: AxiosResponse) => {
         setIsSignInButtonLoading(false);
