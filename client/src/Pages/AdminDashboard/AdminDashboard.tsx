@@ -1,9 +1,8 @@
 import { Button } from "@nextui-org/button";
 import { useDisclosure } from "@nextui-org/modal";
 import { useState } from "react";
-import { FaEnvelope, FaFileExport, FaLock } from "react-icons/fa";
+import { FaEnvelope, FaFileExport } from "react-icons/fa";
 // import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
-import ReusableButton from "../../Components/ReusableButton/ReusableButton";
 import SendEmailCard from "../../Components/SendEmailCard/SendEmailCard";
 // import Swatches from "../../Components/Swatches/Swatches";
 import { Spinner } from "@nextui-org/spinner";
@@ -35,7 +34,7 @@ export default function AdminDashboard() {
 
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
-  function handleClick() {
+  function handleSendEmail() {
     setIsSendEmailActive((previousValue) => !previousValue);
     // console.log(isSendEmailActive);
   }
@@ -110,24 +109,17 @@ export default function AdminDashboard() {
             >
               EXPORT USERS
             </Button>
-            {isSendEmailActive || selectedRowsIds.size == 0 ? null : (
-              <>
-                <span style={{ marginRight: "2rem" }}>
-                  <ReusableButton
-                    className="underlineButton"
-                    buttonText="SEND EMAIL"
-                    Icon={FaEnvelope}
-                    handleClick={handleClick}
-                  />
-                </span>
-                <ReusableButton
-                  className="underlineButton"
-                  buttonText="RESET PASSWORD"
-                  Icon={FaLock}
-                  handleClick={onOpenEditUserModal}
-                />
-              </>
-            )}
+            <span style={{ marginRight: "2rem" }}>
+              <Button
+                color="primary"
+                className="underlineButton"
+                startContent={<FaEnvelope />}
+                onClick={handleSendEmail}
+                isDisabled={true}
+              >
+                SEND EMAIL
+              </Button>
+            </span>
           </div>
           <div
             className="card"

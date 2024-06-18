@@ -73,14 +73,14 @@ export default function UsersTable({
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
   function returnFormattedDate(receivedDate: Date) {
-    console.log(receivedDate);
+    // console.log(receivedDate);
     const newDate = new Date(receivedDate);
     const formattedDate = newDate.toLocaleString("en-GB", {
       year: "numeric",
       month: "numeric",
       day: "numeric",
     });
-    console.log("formattedDate: ", formattedDate);
+    // console.log("formattedDate: ", formattedDate);
     return formattedDate;
   }
 
