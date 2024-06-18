@@ -6,7 +6,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/dropdown";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
 import { UserInterface } from "../../interfaces/interfaces";
 import { Checkbox } from "@nextui-org/checkbox";
@@ -72,6 +72,10 @@ export default function UsersTable({
 }: UsersTableProps) {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
+  const [indexesSelectedUsers, setIndexesSelectedUsers] = useState<number[]>(
+    []
+  );
+
   function returnFormattedDate(receivedDate: Date) {
     // console.log(receivedDate);
     const newDate = new Date(receivedDate);
@@ -82,6 +86,22 @@ export default function UsersTable({
     });
     // console.log("formattedDate: ", formattedDate);
     return formattedDate;
+  }
+
+  function handleCheckboxCheck(receivedUserIndex: number) {
+    const indexesSelectedUsersShallowCopy: number[] = indexesSelectedUsers;
+
+    console.log(indexesSelectedUsers.indexOf(receivedUserIndex));
+
+    if (indexesSelectedUsers.indexOf(receivedUserIndex)) {
+      console.log("Already included");
+    } else {
+      indexesSelectedUsersShallowCopy.push(receivedUserIndex);
+    }
+
+    setIndexesSelectedUsers(indexesSelectedUsersShallowCopy);
+
+    console.log("indexesSelectedUsers: ", indexesSelectedUsers);
   }
 
   return (
@@ -96,11 +116,13 @@ export default function UsersTable({
           </Tr>
         </Thead>
         <Tbody>
-          {users.map((user) => {
+          {users.map((user, indexUser) => {
             return (
               <Tr key={user._id}>
                 <Td>
-                  <Checkbox></Checkbox>
+                  <Checkbox
+                    onClick={() => handleCheckboxCheck(indexUser)}
+                  ></Checkbox>
                 </Td>
                 <Td>{user.username !== "" ? user.username : "unset"}</Td>
                 <Td>{user.email}</Td>
