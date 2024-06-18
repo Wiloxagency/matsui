@@ -6,7 +6,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/dropdown";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
 import { UserInterface } from "../../interfaces/interfaces";
 import { Checkbox } from "@nextui-org/checkbox";
@@ -89,20 +89,25 @@ export default function UsersTable({
   }
 
   function handleCheckboxCheck(receivedUserIndex: number) {
-    const indexesSelectedUsersShallowCopy: number[] = indexesSelectedUsers;
+    if (indexesSelectedUsers.indexOf(receivedUserIndex) !== -1) {
+      const filteredArray = indexesSelectedUsers.filter(
+        (indexSelectedUser) => indexSelectedUser !== receivedUserIndex
+      );
 
-    console.log(indexesSelectedUsers.indexOf(receivedUserIndex));
-
-    if (indexesSelectedUsers.indexOf(receivedUserIndex)) {
-      console.log("Already included");
+      setIndexesSelectedUsers(filteredArray);
     } else {
-      indexesSelectedUsersShallowCopy.push(receivedUserIndex);
+      const pushReceivedIndex: number[] = [
+        ...indexesSelectedUsers,
+        receivedUserIndex,
+      ];
+
+      setIndexesSelectedUsers(pushReceivedIndex);
     }
-
-    setIndexesSelectedUsers(indexesSelectedUsersShallowCopy);
-
-    console.log("indexesSelectedUsers: ", indexesSelectedUsers);
   }
+
+  useEffect(() => {
+    console.log(indexesSelectedUsers);
+  }, [indexesSelectedUsers]);
 
   return (
     <>
