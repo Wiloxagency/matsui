@@ -54,7 +54,8 @@ interface UsersTableProps {
   selectedRowsIds: Set<string>;
   setSelectedRowsIds: Dispatch<SetStateAction<Set<string>>>;
   indexRowToEdit: number | null;
-  handleEditRow: (userId: string) => void;
+  handleEditUser: (userId: string) => void;
+  handleResetUserPassword: () => void
 
   // setIndexRowToEdit: Dispatch<SetStateAction<number | null>>;
 }
@@ -66,7 +67,8 @@ export default function UsersTable({
   // indexRowToEdit,
 
   // setIndexRowToEdit,
-  handleEditRow,
+  handleEditUser,
+  handleResetUserPassword
 }: UsersTableProps) {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
@@ -99,7 +101,7 @@ export default function UsersTable({
                   {isMobile ? (
                     <Button
                       color="primary"
-                      onPress={() => handleEditRow(user._id)}
+                      onPress={() => handleEditUser(user._id)}
                     >
                       Edit user
                     </Button>
@@ -111,8 +113,16 @@ export default function UsersTable({
                         </Button>
                       </DropdownTrigger>
                       <DropdownMenu aria-label="dropdown">
-                        <DropdownItem onClick={() => handleEditRow(user._id)}>
+                        <DropdownItem onClick={() => handleEditUser(user._id)}>
                           Edit
+                        </DropdownItem>
+                        <DropdownItem
+                          className="text-danger"
+                          variant="solid"
+                          color="danger"
+                          onClick={()=> handleResetUserPassword()}
+                        >
+                          Reset user password
                         </DropdownItem>
                       </DropdownMenu>
                     </Dropdown>
