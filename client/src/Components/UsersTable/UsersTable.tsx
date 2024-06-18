@@ -55,7 +55,7 @@ interface UsersTableProps {
   setSelectedRowsIds: Dispatch<SetStateAction<Set<string>>>;
   indexRowToEdit: number | null;
   handleEditUser: (userId: string) => void;
-  handleResetUserPassword: () => void
+  handleResetUserPassword: () => void;
 
   // setIndexRowToEdit: Dispatch<SetStateAction<number | null>>;
 }
@@ -68,9 +68,21 @@ export default function UsersTable({
 
   // setIndexRowToEdit,
   handleEditUser,
-  handleResetUserPassword
+  handleResetUserPassword,
 }: UsersTableProps) {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
+
+  function returnFormattedDate(receivedDate: Date) {
+    console.log(receivedDate);
+    const newDate = new Date(receivedDate);
+    const formattedDate = newDate.toLocaleString("en-GB", {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    });
+    console.log("formattedDate: ", formattedDate);
+    return formattedDate;
+  }
 
   return (
     <>
@@ -94,9 +106,9 @@ export default function UsersTable({
                 <Td>{user.email}</Td>
                 <Td>{user.company !== "" ? user.company : "unset"}</Td>
                 <Td>{user.status}</Td>
-                <Td>{user.registrationDate}</Td>
+                <Td>{returnFormattedDate(user.registrationDate)}</Td>
                 <Td>{user.createdFormulas}</Td>
-                <Td>{user.lastAccess}</Td>
+                <Td>{returnFormattedDate(user.lastAccess)}</Td>
                 <Td>
                   {isMobile ? (
                     <Button
@@ -120,7 +132,7 @@ export default function UsersTable({
                           className="text-danger"
                           variant="solid"
                           color="danger"
-                          onClick={()=> handleResetUserPassword()}
+                          onClick={() => handleResetUserPassword()}
                         >
                           Reset user password
                         </DropdownItem>
