@@ -1,6 +1,6 @@
 import { Button } from "@nextui-org/button";
 import { useDisclosure } from "@nextui-org/modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaEnvelope, FaFileExport } from "react-icons/fa";
 // import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
 import SendEmailCard from "../../Components/SendEmailCard/SendEmailCard";
@@ -11,6 +11,7 @@ import EditUserModal from "../../Components/EditUserModal/EditUserModal";
 import ResetUserPasswordModal from "../../Components/ResetUserPasswordModal/ResetUserPasswordModal";
 import UsersTable from "../../Components/UsersTable/UsersTable";
 import { useGetUsersQuery } from "../../State/api";
+import { UserInterface } from "../../interfaces/interfaces";
 import "./AdminDashboard.scss";
 
 export default function AdminDashboard() {
@@ -31,20 +32,24 @@ export default function AdminDashboard() {
   const [idUserToEdit, setIdUserToEdit] = useState<string | undefined>(
     undefined
   );
+  idUserToEdit;
+  const [indexesSelectedUsers, setIndexesSelectedUsers] = useState<number[]>(
+    []
+  );
+
+  const [selectedUsers, setSelectedUsers] = useState<
+    UserInterface[] | undefined
+  >(undefined);
 
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
   function handleSendEmail() {
     setIsSendEmailActive((previousValue) => !previousValue);
-    // console.log(isSendEmailActive);
   }
 
   function handleEditUser(userId: string) {
-    // console.log(userId);
-    console.log(idUserToEdit);
     setIdUserToEdit(userId);
     setIndexRowToEdit(-1);
-    // console.log(fetchedUsers);
     onOpenEditUserModal();
   }
 
@@ -53,18 +58,46 @@ export default function AdminDashboard() {
   }
 
   // function handleCloseModal() {
-  //   console.log("test");
   //   setIndexRowToEdit(null);
   //   onOpenChangeEditUserModal();
   // }
 
   function handleExportUsers() {}
 
+  function handleCheckboxCheck(receivedUserIndex: number) {
+    if (indexesSelectedUsers.indexOf(receivedUserIndex) !== -1) {
+      const filteredArray = indexesSelectedUsers.filter(
+        (indexSelectedUser) => indexSelectedUser !== receivedUserIndex
+      );
+
+      setIndexesSelectedUsers(filteredArray);
+    } else {
+      const pushReceivedIndex: number[] = [
+        ...indexesSelectedUsers,
+        receivedUserIndex,
+      ];
+
+      setIndexesSelectedUsers(pushReceivedIndex);
+    }
+  }
+
+  function updateEmailRecipients() {
+    if (fetchedUsers) {
+      const filteredUsers = fetchedUsers.filter((user, indexUser) =>
+        indexesSelectedUsers.includes(indexUser)
+      );
+      setSelectedUsers(filteredUsers);
+    }
+  }
+
+  useEffect(() => {
+    if (indexesSelectedUsers !== undefined) updateEmailRecipients();
+  }, [indexesSelectedUsers]);
+
   // useEffect(() => {
   //   setSelectedRowsIds(new Set(""));
   //   if (fetchedUsers === undefined) return;
   //   const indexRow = fetchedUsers.findIndex((user) => user._id == idUserToEdit);
-  //   console.log(indexRow);
   //   if (indexRow !== -1) {
   //     setIndexRowToEdit(indexRow);
   //   }
@@ -76,7 +109,6 @@ export default function AdminDashboard() {
   //
   // useEffect(() => {
   //   if (!isOpen) {
-  //     console.log("CLOSED MODAL");
   //     // setIndexRowToEdit(null)
   //   }
   // }, [onOpenChange]);
@@ -115,7 +147,7 @@ export default function AdminDashboard() {
                 className="underlineButton"
                 startContent={<FaEnvelope />}
                 onClick={handleSendEmail}
-                isDisabled={true}
+                isDisabled={indexesSelectedUsers.length === 0}
               >
                 SEND EMAIL
               </Button>
@@ -134,6 +166,7 @@ export default function AdminDashboard() {
                 // setIndexRowToEdit={setIndexRowToEdit}
                 handleEditUser={handleEditUser}
                 handleResetUserPassword={handleResetUserPassword}
+                handleCheckboxCheck={handleCheckboxCheck}
               />
             ) : (
               <Spinner className="m-auto"></Spinner>
@@ -151,7 +184,10 @@ export default function AdminDashboard() {
           {isSendEmailActive ? (
             <>
               <div className="sectionHeader">SEND EMAIL</div>
-              <SendEmailCard setIsSendEmailActive={setIsSendEmailActive} />
+              <SendEmailCard
+                setIsSendEmailActive={setIsSendEmailActive}
+                selectedUsers={selectedUsers}
+              />
             </>
           ) : (
             <>

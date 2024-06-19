@@ -1,18 +1,18 @@
-import "./UsersTable.scss";
 import { Button } from "@nextui-org/button";
+import { Checkbox } from "@nextui-org/checkbox";
 import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/dropdown";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { FaEllipsisV } from "react-icons/fa";
-import { UserInterface } from "../../interfaces/interfaces";
-import { Checkbox } from "@nextui-org/checkbox";
 import { useMediaQuery } from "react-responsive";
 import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
 import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
+import { UserInterface } from "../../interfaces/interfaces";
+import "./UsersTable.scss";
 
 const columns = [
   {
@@ -56,7 +56,7 @@ interface UsersTableProps {
   indexRowToEdit: number | null;
   handleEditUser: (userId: string) => void;
   handleResetUserPassword: () => void;
-
+  handleCheckboxCheck: (value: number) => void;
   // setIndexRowToEdit: Dispatch<SetStateAction<number | null>>;
 }
 
@@ -69,12 +69,9 @@ export default function UsersTable({
   // setIndexRowToEdit,
   handleEditUser,
   handleResetUserPassword,
+  handleCheckboxCheck,
 }: UsersTableProps) {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
-
-  const [indexesSelectedUsers, setIndexesSelectedUsers] = useState<number[]>(
-    []
-  );
 
   function returnFormattedDate(receivedDate: Date) {
     // console.log(receivedDate);
@@ -87,27 +84,6 @@ export default function UsersTable({
     // console.log("formattedDate: ", formattedDate);
     return formattedDate;
   }
-
-  function handleCheckboxCheck(receivedUserIndex: number) {
-    if (indexesSelectedUsers.indexOf(receivedUserIndex) !== -1) {
-      const filteredArray = indexesSelectedUsers.filter(
-        (indexSelectedUser) => indexSelectedUser !== receivedUserIndex
-      );
-
-      setIndexesSelectedUsers(filteredArray);
-    } else {
-      const pushReceivedIndex: number[] = [
-        ...indexesSelectedUsers,
-        receivedUserIndex,
-      ];
-
-      setIndexesSelectedUsers(pushReceivedIndex);
-    }
-  }
-
-  useEffect(() => {
-    console.log(indexesSelectedUsers);
-  }, [indexesSelectedUsers]);
 
   return (
     <>
