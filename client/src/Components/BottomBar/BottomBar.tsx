@@ -22,16 +22,16 @@ export default function BottomBar({ handleLogout }: BottomBarProps) {
                   key={page.path}
                   className={location.pathname === page.path ? "active" : ""}
                 >
-                  <a onClick={handleLogout}>
+                  <Link to={page.path}>
                     <Icon className="bottomBarIcon" />
                     <div>{page.mobileLabel}</div>
-                  </a>
+                  </Link>
                 </li>
               );
             })}
-            <Link to="/login" className="logout">
+            <a onClick={handleLogout} className="logout">
               <FaSignOutAlt className="signOutIcon" />
-            </Link>
+            </a>
           </ul>
         </nav>
       </div>
