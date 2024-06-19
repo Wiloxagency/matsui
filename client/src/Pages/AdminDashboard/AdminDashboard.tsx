@@ -1,27 +1,29 @@
 import { Button } from "@nextui-org/button";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  useDisclosure,
-} from "@nextui-org/modal";
+import { useDisclosure } from "@nextui-org/modal";
 import { useEffect, useState } from "react";
-import { FaEnvelope, FaFileExport, FaLock } from "react-icons/fa";
+import { FaEnvelope, FaFileExport } from "react-icons/fa";
 // import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
-import ReusableButton from "../../Components/ReusableButton/ReusableButton";
 import SendEmailCard from "../../Components/SendEmailCard/SendEmailCard";
 // import Swatches from "../../Components/Swatches/Swatches";
-import UsersTable from "../../Components/UsersTable/UsersTable";
-import "./AdminDashboard.scss";
-import { Input } from "@nextui-org/input";
-import { useGetUsersQuery } from "../../State/api";
-import { useMediaQuery } from "react-responsive";
 import { Spinner } from "@nextui-org/spinner";
+import { useMediaQuery } from "react-responsive";
+import EditUserModal from "../../Components/EditUserModal/EditUserModal";
+import ResetUserPasswordModal from "../../Components/ResetUserPasswordModal/ResetUserPasswordModal";
+import UsersTable from "../../Components/UsersTable/UsersTable";
+import { useGetUsersQuery } from "../../State/api";
+import { UserInterface } from "../../interfaces/interfaces";
+import "./AdminDashboard.scss";
 
 export default function AdminDashboard() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const {
+    isOpen: isOpenEditUserModal,
+    onOpen: onOpenEditUserModal,
+    onOpenChange: onOpenChangeEditUserModal,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenResetUserPasswordModal,
+    onOpenChange: onOpenChangeResetUserPasswordModal,
+  } = useDisclosure();
   // MODAL VARIABLES ☝🏻
   const { data: fetchedUsers } = useGetUsersQuery();
   const [isSendEmailActive, setIsSendEmailActive] = useState(false);
@@ -30,39 +32,81 @@ export default function AdminDashboard() {
   const [idUserToEdit, setIdUserToEdit] = useState<string | undefined>(
     undefined
   );
+  idUserToEdit;
+  const [indexesSelectedUsers, setIndexesSelectedUsers] = useState<number[]>(
+    []
+  );
+
+  const [selectedUsers, setSelectedUsers] = useState<
+    UserInterface[] | undefined
+  >(undefined);
 
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
-  function handleClick() {
+  function handleSendEmail() {
     setIsSendEmailActive((previousValue) => !previousValue);
-    // console.log(isSendEmailActive);
   }
 
-  function handleEditRow(userId: string) {
-    // console.log(userId);
-    setIdUserToEdit(userId);
+  function handleEditUser(receivedUserId: string) {
+    setIdUserToEdit(receivedUserId);
     setIndexRowToEdit(-1);
-    // console.log(fetchedUsers);
-    onOpen();
+    onOpenEditUserModal();
+
+    const selectedUser = fetchedUsers!.filter(
+      (user) => user._id === receivedUserId
+    );
+    console.log("selectedUser: ", selectedUser);
   }
 
-  function handleCloseModal() {
-    console.log("test");
-    setIndexRowToEdit(null);
-    onOpenChange();
+  function handleResetUserPassword() {
+    onOpenChangeResetUserPasswordModal();
   }
+
+  // function handleCloseModal() {
+  //   setIndexRowToEdit(null);
+  //   onOpenChangeEditUserModal();
+  // }
 
   function handleExportUsers() {}
 
-  useEffect(() => {
-    setSelectedRowsIds(new Set(""));
-    if (fetchedUsers === undefined) return;
-    const indexRow = fetchedUsers.findIndex((user) => user._id == idUserToEdit);
-    console.log(indexRow);
-    if (indexRow !== -1) {
-      setIndexRowToEdit(indexRow);
+  function handleCheckboxCheck(receivedUserIndex: number) {
+    if (indexesSelectedUsers.indexOf(receivedUserIndex) !== -1) {
+      const filteredArray = indexesSelectedUsers.filter(
+        (indexSelectedUser) => indexSelectedUser !== receivedUserIndex
+      );
+
+      setIndexesSelectedUsers(filteredArray);
+    } else {
+      const pushReceivedIndex: number[] = [
+        ...indexesSelectedUsers,
+        receivedUserIndex,
+      ];
+
+      setIndexesSelectedUsers(pushReceivedIndex);
     }
-  }, [indexRowToEdit]);
+  }
+
+  function updateEmailRecipients() {
+    if (fetchedUsers) {
+      const filteredUsers = fetchedUsers.filter((_, indexUser) =>
+        indexesSelectedUsers.includes(indexUser)
+      );
+      setSelectedUsers(filteredUsers);
+    }
+  }
+
+  useEffect(() => {
+    if (indexesSelectedUsers !== undefined) updateEmailRecipients();
+  }, [indexesSelectedUsers]);
+
+  // useEffect(() => {
+  //   setSelectedRowsIds(new Set(""));
+  //   if (fetchedUsers === undefined) return;
+  //   const indexRow = fetchedUsers.findIndex((user) => user._id == idUserToEdit);
+  //   if (indexRow !== -1) {
+  //     setIndexRowToEdit(indexRow);
+  //   }
+  // }, [indexRowToEdit]);
 
   // useEffect(() => {
   //   setIndexRowToEdit(null);
@@ -70,76 +114,20 @@ export default function AdminDashboard() {
   //
   // useEffect(() => {
   //   if (!isOpen) {
-  //     console.log("CLOSED MODAL");
   //     // setIndexRowToEdit(null)
   //   }
   // }, [onOpenChange]);
 
   return (
     <>
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        backdrop="blur"
-        isDismissable={false}
-        isKeyboardDismissDisabled={true}
-        hideCloseButton={true}
-        scrollBehavior="outside"
-        placement="top-center"
-      >
-        <ModalContent>
-          {(onClose) =>
-            indexRowToEdit === null || indexRowToEdit === -1 ? (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  Reset password
-                </ModalHeader>
-                <ModalBody>
-                  <p>
-                    You're about to send this user an email with instructions to
-                    reset their password.
-                  </p>
-                  <p>Do you wish to proceed?</p>
-                </ModalBody>
-                <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    Close
-                  </Button>
-                  <Button color="primary" onPress={onClose}>
-                    Send reset password email
-                  </Button>
-                </ModalFooter>
-              </>
-            ) : (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  Edit user
-                </ModalHeader>
-                <ModalBody>
-                  <Input label="Username" type="text" variant="bordered" />
-                  <Input label="Company" type="text" variant="bordered" />
-                  <Input label="Email" type="text" disabled />
-                  <Input label="Registration date" type="text" disabled />
-                  <Input label="Last access" type="text" disabled />
-                  <Input label="Created formulas" type="number" disabled />
-                </ModalBody>
-                <ModalFooter>
-                  <Button
-                    color="danger"
-                    variant="light"
-                    onPress={handleCloseModal}
-                  >
-                    Close
-                  </Button>
-                  <Button color="primary" onPress={handleCloseModal}>
-                    Save changes
-                  </Button>
-                </ModalFooter>
-              </>
-            )
-          }
-        </ModalContent>
-      </Modal>
+      <ResetUserPasswordModal
+        isOpen={isOpenResetUserPasswordModal}
+        onOpenChange={onOpenChangeResetUserPasswordModal}
+      ></ResetUserPasswordModal>
+      <EditUserModal
+        isOpen={isOpenEditUserModal}
+        onOpenChange={onOpenChangeEditUserModal}
+      ></EditUserModal>
       <div
         className={
           isMobile
@@ -158,24 +146,17 @@ export default function AdminDashboard() {
             >
               EXPORT USERS
             </Button>
-            {isSendEmailActive || selectedRowsIds.size == 0 ? null : (
-              <>
-                <span style={{ marginRight: "2rem" }}>
-                  <ReusableButton
-                    className="underlineButton"
-                    buttonText="SEND EMAIL"
-                    Icon={FaEnvelope}
-                    handleClick={handleClick}
-                  />
-                </span>
-                <ReusableButton
-                  className="underlineButton"
-                  buttonText="RESET PASSWORD"
-                  Icon={FaLock}
-                  handleClick={onOpen}
-                />
-              </>
-            )}
+            <span style={{ marginRight: "2rem" }}>
+              <Button
+                color="primary"
+                className="underlineButton"
+                startContent={<FaEnvelope />}
+                onClick={handleSendEmail}
+                isDisabled={indexesSelectedUsers.length === 0}
+              >
+                SEND EMAIL
+              </Button>
+            </span>
           </div>
           <div
             className="card"
@@ -188,7 +169,9 @@ export default function AdminDashboard() {
                 setSelectedRowsIds={setSelectedRowsIds}
                 indexRowToEdit={indexRowToEdit}
                 // setIndexRowToEdit={setIndexRowToEdit}
-                handleEditRow={handleEditRow}
+                handleEditUser={handleEditUser}
+                handleResetUserPassword={handleResetUserPassword}
+                handleCheckboxCheck={handleCheckboxCheck}
               />
             ) : (
               <Spinner className="m-auto"></Spinner>
@@ -206,7 +189,10 @@ export default function AdminDashboard() {
           {isSendEmailActive ? (
             <>
               <div className="sectionHeader">SEND EMAIL</div>
-              <SendEmailCard setIsSendEmailActive={setIsSendEmailActive} />
+              <SendEmailCard
+                setIsSendEmailActive={setIsSendEmailActive}
+                selectedUsers={selectedUsers}
+              />
             </>
           ) : (
             <>

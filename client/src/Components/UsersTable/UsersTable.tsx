@@ -1,5 +1,5 @@
-import "./UsersTable.scss";
 import { Button } from "@nextui-org/button";
+import { Checkbox } from "@nextui-org/checkbox";
 import {
   Dropdown,
   DropdownItem,
@@ -8,11 +8,11 @@ import {
 } from "@nextui-org/dropdown";
 import { Dispatch, SetStateAction } from "react";
 import { FaEllipsisV } from "react-icons/fa";
-import { UserInterface } from "../../interfaces/interfaces";
-import { Checkbox } from "@nextui-org/checkbox";
 import { useMediaQuery } from "react-responsive";
 import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
 import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
+import { UserInterface } from "../../interfaces/interfaces";
+import "./UsersTable.scss";
 
 const columns = [
   {
@@ -54,8 +54,9 @@ interface UsersTableProps {
   selectedRowsIds: Set<string>;
   setSelectedRowsIds: Dispatch<SetStateAction<Set<string>>>;
   indexRowToEdit: number | null;
-  handleEditRow: (userId: string) => void;
-
+  handleEditUser: (userId: string) => void;
+  handleResetUserPassword: () => void;
+  handleCheckboxCheck: (value: number) => void;
   // setIndexRowToEdit: Dispatch<SetStateAction<number | null>>;
 }
 
@@ -66,9 +67,23 @@ export default function UsersTable({
   // indexRowToEdit,
 
   // setIndexRowToEdit,
-  handleEditRow,
+  handleEditUser,
+  handleResetUserPassword,
+  handleCheckboxCheck,
 }: UsersTableProps) {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
+
+  function returnFormattedDate(receivedDate: Date) {
+    // console.log(receivedDate);
+    const newDate = new Date(receivedDate);
+    const formattedDate = newDate.toLocaleString("en-GB", {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    });
+    // console.log("formattedDate: ", formattedDate);
+    return formattedDate;
+  }
 
   return (
     <>
@@ -82,24 +97,26 @@ export default function UsersTable({
           </Tr>
         </Thead>
         <Tbody>
-          {users.map((user) => {
+          {users.map((user, indexUser) => {
             return (
               <Tr key={user._id}>
                 <Td>
-                  <Checkbox></Checkbox>
+                  <Checkbox
+                    onClick={() => handleCheckboxCheck(indexUser)}
+                  ></Checkbox>
                 </Td>
                 <Td>{user.username !== "" ? user.username : "unset"}</Td>
                 <Td>{user.email}</Td>
                 <Td>{user.company !== "" ? user.company : "unset"}</Td>
                 <Td>{user.status}</Td>
-                <Td>{user.registrationDate}</Td>
+                <Td>{returnFormattedDate(user.registrationDate)}</Td>
                 <Td>{user.createdFormulas}</Td>
-                <Td>{user.lastAccess}</Td>
+                <Td>{returnFormattedDate(user.lastAccess)}</Td>
                 <Td>
                   {isMobile ? (
                     <Button
                       color="primary"
-                      onPress={() => handleEditRow(user._id)}
+                      onPress={() => handleEditUser(user._id)}
                     >
                       Edit user
                     </Button>
@@ -111,8 +128,16 @@ export default function UsersTable({
                         </Button>
                       </DropdownTrigger>
                       <DropdownMenu aria-label="dropdown">
-                        <DropdownItem onClick={() => handleEditRow(user._id)}>
+                        <DropdownItem onClick={() => handleEditUser(user._id)}>
                           Edit
+                        </DropdownItem>
+                        <DropdownItem
+                          className="text-danger"
+                          variant="solid"
+                          color="danger"
+                          onClick={() => handleResetUserPassword()}
+                        >
+                          Reset user password
                         </DropdownItem>
                       </DropdownMenu>
                     </Dropdown>

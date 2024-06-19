@@ -23,8 +23,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const corsOptions: CorsOptions = {
-  origin: [FRONTEND_URL, "http://localhost:5173"],
-  credentials: true,
+  // origin: [FRONTEND_URL, "http://localhost:5173"],
+  origin: "*",
+  // credentials: true,
   optionsSuccessStatus: 200,
 };
 

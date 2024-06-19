@@ -10,6 +10,10 @@ router.get("/", async (req: Request, res: Response) => {
   res.json(allUsers);
 });
 
+router.put("/", async (req: Request, res: Response) => {
+  res.json("Update user");
+});
+
 router.get("/:id", async (req: Request, res: Response) => {});
 
 export default router;

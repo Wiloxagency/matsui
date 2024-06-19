@@ -4,13 +4,16 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import "./SendEmailCard.scss";
+import { UserInterface } from "../../interfaces/interfaces";
 
 interface SendEmailCardProps {
   setIsSendEmailActive: Dispatch<SetStateAction<boolean>>;
+  selectedUsers: UserInterface[] | undefined;
 }
 
 export default function SendEmailCard({
   setIsSendEmailActive,
+  selectedUsers,
 }: SendEmailCardProps) {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
@@ -24,42 +27,17 @@ export default function SendEmailCard({
       <span className="sendEmailCardColumn">
         <div>RECIPIENTS</div>
         <ul className="emailRecipientsContainer">
-          <li>
-            <span>Anthony Hopkins</span>
-            <span>anthopkins@email.com</span>
-          </li>
-          <li>
-            <span>Anthony Hopkins</span>
-            <span>anthopkins@email.com</span>
-          </li>
-          <li>
-            <span>Anthony Hopkins</span>
-            <span>anthopkins@email.com</span>
-          </li>
-          <li>
-            <span>Anthony Hopkins</span>
-            <span>anthopkins@email.com</span>
-          </li>
-          <li>
-            <span>Anthony Hopkins</span>
-            <span>anthopkins@email.com</span>
-          </li>
-          <li>
-            <span>Anthony Hopkins</span>
-            <span>anthopkins@email.com</span>
-          </li>
-          <li>
-            <span>Anthony Hopkins</span>
-            <span>anthopkins@email.com</span>
-          </li>
-          <li>
-            <span>Anthony Hopkins</span>
-            <span>anthopkins@email.com</span>
-          </li>
-          <li>
-            <span>Anthony Hopkins</span>
-            <span>anthopkins@email.com</span>
-          </li>
+          {selectedUsers &&
+            selectedUsers.map((selectedUser) => {
+              return (
+                <li key={selectedUser._id}>
+                  <span>{selectedUser.email}</span>
+                </li>
+              );
+            })}
+          {selectedUsers && selectedUsers.length === 0 && (
+            <div>No recipients selected</div>
+          )}
         </ul>
       </span>
       <span className="sendEmailCardColumn">
@@ -81,25 +59,27 @@ export default function SendEmailCard({
           value={message}
           onValueChange={setMessage}
         />
-        <Button
-          variant="ghost"
-          color="danger"
-          size="sm"
-          startContent={<FaX />}
-          onClick={() => {
-            setIsSendEmailActive(false);
-          }}
-        >
-          Discard
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          startContent={<FaPaperPlane />}
-          onClick={handleSendEmail}
-        >
-          Send
-        </Button>
+        <div style={{ display: "flex", justifyContent: "end", gap: "1rem"}}>
+          <Button
+            variant="ghost"
+            color="danger"
+            size="sm"
+            startContent={<FaX />}
+            onClick={() => {
+              setIsSendEmailActive(false);
+            }}
+          >
+            Discard
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            startContent={<FaPaperPlane />}
+            onClick={handleSendEmail}
+          >
+            Send
+          </Button>
+        </div>
       </span>
     </div>
   );
