@@ -83,7 +83,7 @@ export default function AdminDashboard() {
 
   function updateEmailRecipients() {
     if (fetchedUsers) {
-      const filteredUsers = fetchedUsers.filter((user, indexUser) =>
+      const filteredUsers = fetchedUsers.filter((_, indexUser) =>
         indexesSelectedUsers.includes(indexUser)
       );
       setSelectedUsers(filteredUsers);

@@ -59,25 +59,27 @@ export default function SendEmailCard({
           value={message}
           onValueChange={setMessage}
         />
-        <Button
-          variant="ghost"
-          color="danger"
-          size="sm"
-          startContent={<FaX />}
-          onClick={() => {
-            setIsSendEmailActive(false);
-          }}
-        >
-          Discard
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          startContent={<FaPaperPlane />}
-          onClick={handleSendEmail}
-        >
-          Send
-        </Button>
+        <div style={{ display: "flex", justifyContent: "end", gap: "1rem"}}>
+          <Button
+            variant="ghost"
+            color="danger"
+            size="sm"
+            startContent={<FaX />}
+            onClick={() => {
+              setIsSendEmailActive(false);
+            }}
+          >
+            Discard
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            startContent={<FaPaperPlane />}
+            onClick={handleSendEmail}
+          >
+            Send
+          </Button>
+        </div>
       </span>
     </div>
   );
