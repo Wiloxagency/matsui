@@ -33,13 +33,13 @@ export const authenticateToken = (
 };
 
 export const generateAccessToken = (userId: string) => {
-  console.log("ACCESS TOKEN GENERATED");
+  // console.log("ACCESS TOKEN GENERATED");
   // return jwt.sign({ userId }, jwtSecret, { expiresIn: "15m" });
   const accessToken = jwt.sign({ userId }, jwtSecret, { expiresIn: "5s" });
   return accessToken;
 };
 
 export const generateRefreshToken = (userId: string) => {
-  console.log("REFRESH TOKEN GENERATED");
+  // console.log("REFRESH TOKEN GENERATED");
   return jwt.sign({ userId }, jwtSecret, { expiresIn: "7d" });
 };
