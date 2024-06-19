@@ -47,10 +47,15 @@ export default function AdminDashboard() {
     setIsSendEmailActive((previousValue) => !previousValue);
   }
 
-  function handleEditUser(userId: string) {
-    setIdUserToEdit(userId);
+  function handleEditUser(receivedUserId: string) {
+    setIdUserToEdit(receivedUserId);
     setIndexRowToEdit(-1);
     onOpenEditUserModal();
+
+    const selectedUser = fetchedUsers!.filter(
+      (user) => user._id === receivedUserId
+    );
+    console.log("selectedUser: ", selectedUser);
   }
 
   function handleResetUserPassword() {
