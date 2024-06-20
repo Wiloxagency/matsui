@@ -25,7 +25,7 @@ export default function AdminDashboard() {
     onOpenChange: onOpenChangeResetUserPasswordModal,
   } = useDisclosure();
   // MODAL VARIABLES ☝🏻
-  const { data: fetchedUsers } = useGetUsersQuery();
+  const { data: fetchedUsers, refetch: refetchUsers } = useGetUsersQuery();
   const [isSendEmailActive, setIsSendEmailActive] = useState(false);
   const [selectedRowsIds, setSelectedRowsIds] = useState(new Set(""));
   const [indexRowToEdit, setIndexRowToEdit] = useState<number | null>(null);
@@ -41,6 +41,10 @@ export default function AdminDashboard() {
     UserInterface[] | undefined
   >(undefined);
 
+  const [selectedUser, setSelectedUser] = useState<UserInterface | undefined>(
+    undefined
+  );
+
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
   function handleSendEmail() {
@@ -52,9 +56,10 @@ export default function AdminDashboard() {
     setIndexRowToEdit(-1);
     onOpenEditUserModal();
 
-    const selectedUser = fetchedUsers!.filter(
+    const getSelectedUser = fetchedUsers!.filter(
       (user) => user._id === receivedUserId
-    );
+    )[0];
+    setSelectedUser(getSelectedUser);
     console.log("selectedUser: ", selectedUser);
   }
 
@@ -127,6 +132,9 @@ export default function AdminDashboard() {
       <EditUserModal
         isOpen={isOpenEditUserModal}
         onOpenChange={onOpenChangeEditUserModal}
+        selectedUser={selectedUser}
+        setSelectedUser={setSelectedUser}
+        refetchUsers={refetchUsers}
       ></EditUserModal>
       <div
         className={

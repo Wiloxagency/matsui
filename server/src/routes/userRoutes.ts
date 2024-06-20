@@ -11,7 +11,18 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 router.put("/", async (req: Request, res: Response) => {
-  res.json("Update user");
+  const db = await createMongoDBConnection();
+  const users = db.collection("users");
+  const updateUser = await users.updateOne(
+    { email: req.body.email },
+    {
+      $set: {
+        username: req.body.username,
+        company: req.body.company,
+      },
+    }
+  );
+  res.json(updateUser);
 });
 
 router.get("/:id", async (req: Request, res: Response) => {});

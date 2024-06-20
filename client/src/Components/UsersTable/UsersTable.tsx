@@ -13,6 +13,7 @@ import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
 import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import { UserInterface } from "../../interfaces/interfaces";
 import "./UsersTable.scss";
+import { returnFormattedDate } from "../../Utilities/returnFormattedDate";
 
 const columns = [
   {
@@ -73,18 +74,6 @@ export default function UsersTable({
 }: UsersTableProps) {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
-  function returnFormattedDate(receivedDate: Date) {
-    // console.log(receivedDate);
-    const newDate = new Date(receivedDate);
-    const formattedDate = newDate.toLocaleString("en-GB", {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-    });
-    // console.log("formattedDate: ", formattedDate);
-    return formattedDate;
-  }
-
   return (
     <>
       <Table className="usersTable">
@@ -105,9 +94,18 @@ export default function UsersTable({
                     onClick={() => handleCheckboxCheck(indexUser)}
                   ></Checkbox>
                 </Td>
-                <Td>{user.username !== "" ? user.username : "unset"}</Td>
+                <Td>
+                  <span className={user.username === "" ? "unsetValue" : ""}>
+                    {user.username !== "" ? user.username : "unset"}
+                  </span>
+                </Td>
+
                 <Td>{user.email}</Td>
-                <Td>{user.company !== "" ? user.company : "unset"}</Td>
+                <Td>
+                  <span className={user.company === "" ? "unsetValue" : ""}>
+                    {user.company !== "" ? user.company : "unset"}
+                  </span>
+                </Td>
                 <Td>{user.status}</Td>
                 <Td>{returnFormattedDate(user.registrationDate)}</Td>
                 <Td>{user.createdFormulas}</Td>
