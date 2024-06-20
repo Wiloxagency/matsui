@@ -19,7 +19,12 @@ export default function SendEmailCard({
   const [message, setMessage] = useState("");
 
   const handleSendEmail = () => {
-    console.log(subject, message);
+    console.log(subject, message, selectedUsers);
+
+    const recipientEmails = selectedUsers?.map((selectedUser) => {
+      return selectedUser.email;
+    });
+    console.log("recipientEmails: ", recipientEmails);
   };
 
   return (
@@ -59,7 +64,7 @@ export default function SendEmailCard({
           value={message}
           onValueChange={setMessage}
         />
-        <div style={{ display: "flex", justifyContent: "end", gap: "1rem"}}>
+        <div style={{ display: "flex", justifyContent: "end", gap: "1rem" }}>
           <Button
             variant="ghost"
             color="danger"
