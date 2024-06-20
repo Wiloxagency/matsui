@@ -10,6 +10,7 @@ import {
 import { UserInterface } from "../../interfaces/interfaces";
 import { useUpdateUserMutation } from "../../State/api";
 import { useEffect, useState } from "react";
+import { Flip, ToastContainer, toast } from "react-toastify";
 
 interface EditUserModalProps {
   isOpen: boolean;
@@ -18,16 +19,20 @@ interface EditUserModalProps {
   setSelectedUser: React.Dispatch<
     React.SetStateAction<UserInterface | undefined>
   >;
+  refetchUsers: () => void;
 }
 export default function EditUserModal({
   isOpen,
   onOpenChange,
   selectedUser,
   setSelectedUser,
+  refetchUsers,
 }: EditUserModalProps) {
   const [updateUser] = useUpdateUserMutation();
   const [userUsername, setUserUsername] = useState<string>("");
   const [userCompany, setUserCompany] = useState<string>("");
+
+  const triggerUpdatedUserNotification = () => toast("😁 User updated!");
 
   async function handleSaveUser() {
     if (selectedUser) {
@@ -39,8 +44,11 @@ export default function EditUserModal({
       setSelectedUser(updatedUser);
       await updateUser(updatedUser)
         .unwrap()
-        .then(async (response) => {
-          console.log("response: ", response);
+        .then(async (response: any) => {
+          if (response.modifiedCount === 1) {
+            refetchUsers();
+            triggerUpdatedUserNotification();
+          }
           onOpenChange(false);
         });
     }
@@ -54,75 +62,80 @@ export default function EditUserModal({
   }, [selectedUser]);
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onOpenChange={onOpenChange}
-      backdrop="blur"
-      //   isDismissable={false}
-      //   isKeyboardDismissDisabled={true}
-      //   hideCloseButton={true}
-      scrollBehavior="outside"
-      placement="top-center"
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">Edit user</ModalHeader>
-            <ModalBody>
-              <Input
-                label="Username"
-                type="text"
-                variant="bordered"
-                value={userUsername}
-                onChange={(event) => {
-                  setUserUsername(event.target.value);
-                }}
-              />
-              <Input
-                label="Company"
-                type="text"
-                variant="bordered"
-                value={userCompany}
-                onChange={(event) => {
-                  setUserCompany(event.target.value);
-                }}
-              />
-              <Input
-                label="Email"
-                type="text"
-                disabled
-                value={selectedUser?.email}
-              />
-              <Input
-                label="Registration date"
-                type="text"
-                disabled
-                value={String(selectedUser?.registrationDate)}
-              />
-              <Input
-                label="Last access"
-                type="text"
-                disabled
-                value={String(selectedUser?.lastAccess)}
-              />
-              <Input
-                label="Created formulas"
-                type="number"
-                disabled
-                value={String(selectedUser?.createdFormulas)}
-              />
-            </ModalBody>
-            <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
-                Close
-              </Button>
-              <Button color="primary" onPress={handleSaveUser}>
-                Save changes
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+    <>
+      <ToastContainer transition={Flip} />
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        backdrop="blur"
+        //   isDismissable={false}
+        //   isKeyboardDismissDisabled={true}
+        //   hideCloseButton={true}
+        scrollBehavior="outside"
+        placement="top-center"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Edit user
+              </ModalHeader>
+              <ModalBody>
+                <Input
+                  label="Username"
+                  type="text"
+                  variant="bordered"
+                  value={userUsername}
+                  onChange={(event) => {
+                    setUserUsername(event.target.value);
+                  }}
+                />
+                <Input
+                  label="Company"
+                  type="text"
+                  variant="bordered"
+                  value={userCompany}
+                  onChange={(event) => {
+                    setUserCompany(event.target.value);
+                  }}
+                />
+                <Input
+                  label="Email"
+                  type="text"
+                  disabled
+                  value={selectedUser?.email}
+                />
+                <Input
+                  label="Registration date"
+                  type="text"
+                  disabled
+                  value={String(selectedUser?.registrationDate)}
+                />
+                <Input
+                  label="Last access"
+                  type="text"
+                  disabled
+                  value={String(selectedUser?.lastAccess)}
+                />
+                <Input
+                  label="Created formulas"
+                  type="number"
+                  disabled
+                  value={String(selectedUser?.createdFormulas)}
+                />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onPress={handleSaveUser}>
+                  Save changes
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
   );
 }

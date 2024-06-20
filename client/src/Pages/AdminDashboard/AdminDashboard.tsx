@@ -25,7 +25,7 @@ export default function AdminDashboard() {
     onOpenChange: onOpenChangeResetUserPasswordModal,
   } = useDisclosure();
   // MODAL VARIABLES ☝🏻
-  const { data: fetchedUsers } = useGetUsersQuery();
+  const { data: fetchedUsers, refetch: refetchUsers } = useGetUsersQuery();
   const [isSendEmailActive, setIsSendEmailActive] = useState(false);
   const [selectedRowsIds, setSelectedRowsIds] = useState(new Set(""));
   const [indexRowToEdit, setIndexRowToEdit] = useState<number | null>(null);
@@ -134,6 +134,7 @@ export default function AdminDashboard() {
         onOpenChange={onOpenChangeEditUserModal}
         selectedUser={selectedUser}
         setSelectedUser={setSelectedUser}
+        refetchUsers={refetchUsers}
       ></EditUserModal>
       <div
         className={
