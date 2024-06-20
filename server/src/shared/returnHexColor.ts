@@ -3,7 +3,46 @@ import { createMongoDBConnection } from "./mongodbConfig";
 
 //TODO: COMBINE BOTH FUNCTIONS INTO 1 👇🏻
 
-export function returnHexColor(
+type FormulaComponent = {
+  cmyk: { c: number; m: number; y: number; k: number };
+  percentage: number | string; // Porcentaje de este color en la mezcla (debe sumar 100% en total)
+};
+
+function cmykToHex(c: number, m: number, y: number, k: number): string {
+  const r = 255 * (1 - c) * (1 - k);
+  const g = 255 * (1 - m) * (1 - k);
+  const b = 255 * (1 - y) * (1 - k);
+
+  const toHex = (value: number) => {
+      const hex = Math.round(value).toString(16).padStart(2, '0');
+      return hex.length === 1 ? '0' + hex : hex;
+  };
+
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
+export function returnHexColor(formulaComponents: FormulaComponent[]): string {
+  let totalC = 0, totalM = 0, totalY = 0, totalK = 0;
+
+  formulaComponents.forEach(({ cmyk, percentage }) => {
+      const perc = typeof percentage === 'string' ? parseFloat(percentage) : percentage;
+      totalC += cmyk.c * (perc / 100);
+      totalM += cmyk.m * (perc / 100);
+      totalY += cmyk.y * (perc / 100);
+      totalK += cmyk.k * (perc / 100);
+  });
+
+  // Asegurarse de que los valores no excedan 1
+  totalC = Math.min(1, totalC);
+  totalM = Math.min(1, totalM);
+  totalY = Math.min(1, totalY);
+  totalK = Math.min(1, totalK);
+
+  return cmykToHex(totalC, totalM, totalY, totalK);
+}
+
+
+export function returnHexColorOld(
   formulaComponents: {
     // OLD FORMULAS HAVE THEIR COMPONENT PERCENTAGES SET AS STRINGS 👇🏻
     hex: string;
@@ -66,12 +105,8 @@ export function returnHexColor(
 
 export async function returnHexColorPrepping(
   receivedComponents: FormulaComponentInterface[]
-): Promise<
-  {
-    hex: string;
-    percentage: number;
-  }[]
-> {
+): Promise<FormulaComponent[]> {
+  
   const db = await createMongoDBConnection();
   const pigments = db.collection("pigments");
 
@@ -97,7 +132,7 @@ export async function returnHexColorPrepping(
       (item: any) => item.code === pigment.code
     );
     return {
-      hex: pigment.hex,
+      cmyk: pigment.cmyk,
       percentage: component ? component.percentage : 0,
     };
   });
