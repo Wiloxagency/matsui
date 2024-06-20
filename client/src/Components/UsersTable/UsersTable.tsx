@@ -13,6 +13,7 @@ import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
 import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import { UserInterface } from "../../interfaces/interfaces";
 import "./UsersTable.scss";
+import { returnFormattedDate } from "../../Utilities/returnFormattedDate";
 
 const columns = [
   {
@@ -72,18 +73,6 @@ export default function UsersTable({
   handleCheckboxCheck,
 }: UsersTableProps) {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
-
-  function returnFormattedDate(receivedDate: Date) {
-    // console.log(receivedDate);
-    const newDate = new Date(receivedDate);
-    const formattedDate = newDate.toLocaleString("en-GB", {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-    });
-    // console.log("formattedDate: ", formattedDate);
-    return formattedDate;
-  }
 
   return (
     <>

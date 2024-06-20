@@ -11,6 +11,7 @@ import { UserInterface } from "../../interfaces/interfaces";
 import { useUpdateUserMutation } from "../../State/api";
 import { useEffect, useState } from "react";
 import { Flip, ToastContainer, toast } from "react-toastify";
+import { returnFormattedDate } from "../../Utilities/returnFormattedDate";
 
 interface EditUserModalProps {
   isOpen: boolean;
@@ -109,13 +110,13 @@ export default function EditUserModal({
                   label="Registration date"
                   type="text"
                   disabled
-                  value={String(selectedUser?.registrationDate)}
+                  value={returnFormattedDate(selectedUser!.registrationDate)}
                 />
                 <Input
                   label="Last access"
                   type="text"
                   disabled
-                  value={String(selectedUser?.lastAccess)}
+                  value={returnFormattedDate(selectedUser!.lastAccess)}
                 />
                 <Input
                   label="Created formulas"
