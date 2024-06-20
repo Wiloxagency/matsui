@@ -7,23 +7,60 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@nextui-org/modal";
+import { UserInterface } from "../../interfaces/interfaces";
+import { useUpdateUserMutation } from "../../State/api";
+import { useEffect, useState } from "react";
 
 interface EditUserModalProps {
   isOpen: boolean;
   onOpenChange: (value: boolean) => void;
+  selectedUser: UserInterface | undefined;
+  setSelectedUser: React.Dispatch<
+    React.SetStateAction<UserInterface | undefined>
+  >;
 }
 export default function EditUserModal({
   isOpen,
   onOpenChange,
+  selectedUser,
+  setSelectedUser,
 }: EditUserModalProps) {
+  const [updateUser] = useUpdateUserMutation();
+  const [userUsername, setUserUsername] = useState<string>("");
+  const [userCompany, setUserCompany] = useState<string>("");
+
+  async function handleSaveUser() {
+    if (selectedUser) {
+      const updatedUser = {
+        ...selectedUser,
+        username: userUsername,
+        company: userCompany,
+      };
+      setSelectedUser(updatedUser);
+      await updateUser(updatedUser)
+        .unwrap()
+        .then(async (response) => {
+          console.log("response: ", response);
+          onOpenChange(false);
+        });
+    }
+  }
+
+  useEffect(() => {
+    if (selectedUser) {
+      setUserUsername(selectedUser.username);
+      setUserCompany(selectedUser.company);
+    }
+  }, [selectedUser]);
+
   return (
     <Modal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       backdrop="blur"
-    //   isDismissable={false}
-    //   isKeyboardDismissDisabled={true}
-    //   hideCloseButton={true}
+      //   isDismissable={false}
+      //   isKeyboardDismissDisabled={true}
+      //   hideCloseButton={true}
       scrollBehavior="outside"
       placement="top-center"
     >
@@ -32,18 +69,54 @@ export default function EditUserModal({
           <>
             <ModalHeader className="flex flex-col gap-1">Edit user</ModalHeader>
             <ModalBody>
-              <Input label="Username" type="text" variant="bordered" />
-              <Input label="Company" type="text" variant="bordered" />
-              <Input label="Email" type="text" disabled />
-              <Input label="Registration date" type="text" disabled />
-              <Input label="Last access" type="text" disabled />
-              <Input label="Created formulas" type="number" disabled />
+              <Input
+                label="Username"
+                type="text"
+                variant="bordered"
+                value={userUsername}
+                onChange={(event) => {
+                  setUserUsername(event.target.value);
+                }}
+              />
+              <Input
+                label="Company"
+                type="text"
+                variant="bordered"
+                value={userCompany}
+                onChange={(event) => {
+                  setUserCompany(event.target.value);
+                }}
+              />
+              <Input
+                label="Email"
+                type="text"
+                disabled
+                value={selectedUser?.email}
+              />
+              <Input
+                label="Registration date"
+                type="text"
+                disabled
+                value={String(selectedUser?.registrationDate)}
+              />
+              <Input
+                label="Last access"
+                type="text"
+                disabled
+                value={String(selectedUser?.lastAccess)}
+              />
+              <Input
+                label="Created formulas"
+                type="number"
+                disabled
+                value={String(selectedUser?.createdFormulas)}
+              />
             </ModalBody>
             <ModalFooter>
               <Button color="danger" variant="light" onPress={onClose}>
                 Close
               </Button>
-              <Button color="primary" onPress={onClose}>
+              <Button color="primary" onPress={handleSaveUser}>
                 Save changes
               </Button>
             </ModalFooter>

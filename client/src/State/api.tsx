@@ -17,18 +17,18 @@ const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL,
   // credentials: "include",
   // prepareHeaders: (headers) => {
-    // const auth = authStore.getState().auth;
-    // const token = auth?.accessToken;
-    // console.log("token: ", token)
+  // const auth = authStore.getState().auth;
+  // const token = auth?.accessToken;
+  // console.log("token: ", token)
 
-    // const accessToken = localStorage.getItem("accessToken");
-    // console.log("accessToken: ", accessToken);
+  // const accessToken = localStorage.getItem("accessToken");
+  // console.log("accessToken: ", accessToken);
 
-    // if (accessToken) {
-    //   headers.set("authorization", `Bearer ${accessToken}`);
-    // }
+  // if (accessToken) {
+  //   headers.set("authorization", `Bearer ${accessToken}`);
+  // }
 
-    // return headers;
+  // return headers;
   // },
 });
 
@@ -41,26 +41,26 @@ const baseQueryWithReauth: BaseQueryFn<
 
   // if (result.error && result.error.originalStatus === 403) {
   // if (result.error) {
-    // If access token is expired, attempt to refresh it
-    // const refreshResult = await baseQuery(
-    //   {
-    //     url: "/refreshToken",
-    //     method: "POST",
-    //   },
-    //   api,
-    //   extraOptions
-    // );
+  // If access token is expired, attempt to refresh it
+  // const refreshResult = await baseQuery(
+  //   {
+  //     url: "/refreshToken",
+  //     method: "POST",
+  //   },
+  //   api,
+  //   extraOptions
+  // );
 
-    // if (refreshResult.data) {
-      // console.log(refreshResult.data);
-      // Retry the original query with the new access token
-      // result = await baseQuery(args, api, extraOptions);
-      const result = await baseQuery(args, api, extraOptions);
-    // } else {
-      // If refresh failed, log out the user
-      // Optionally, clear user state or redirect to login
-      // console.error("Failed to refresh token");
-    // }
+  // if (refreshResult.data) {
+  // console.log(refreshResult.data);
+  // Retry the original query with the new access token
+  // result = await baseQuery(args, api, extraOptions);
+  const result = await baseQuery(args, api, extraOptions);
+  // } else {
+  // If refresh failed, log out the user
+  // Optionally, clear user state or redirect to login
+  // console.error("Failed to refresh token");
+  // }
   // }
 
   return result;
@@ -161,6 +161,13 @@ export const api = createApi({
         };
       },
     }),
+    updateUser: builder.mutation<void, UserInterface>({
+      query: (payload) => ({
+        url: "users/",
+        method: "PUT",
+        body: payload,
+      }),
+    }),
   }),
 });
 
@@ -177,4 +184,5 @@ export const {
   useAddSeriesMutation,
   useImportFormulasMutation,
   useVerifyEmailQuery,
+  useUpdateUserMutation,
 } = api;

@@ -105,9 +105,18 @@ export default function UsersTable({
                     onClick={() => handleCheckboxCheck(indexUser)}
                   ></Checkbox>
                 </Td>
-                <Td>{user.username !== "" ? user.username : "unset"}</Td>
+                <Td>
+                  <span className={user.username === "" ? "unsetValue" : ""}>
+                    {user.username !== "" ? user.username : "unset"}
+                  </span>
+                </Td>
+
                 <Td>{user.email}</Td>
-                <Td>{user.company !== "" ? user.company : "unset"}</Td>
+                <Td>
+                  <span className={user.company === "" ? "unsetValue" : ""}>
+                    {user.company !== "" ? user.company : "unset"}
+                  </span>
+                </Td>
                 <Td>{user.status}</Td>
                 <Td>{returnFormattedDate(user.registrationDate)}</Td>
                 <Td>{user.createdFormulas}</Td>

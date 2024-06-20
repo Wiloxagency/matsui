@@ -11,7 +11,7 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 router.put("/", async (req: Request, res: Response) => {
-  res.json("Update user");
+  res.json("Update user endpoint");
 });
 
 router.get("/:id", async (req: Request, res: Response) => {});

@@ -1,5 +1,12 @@
 .usersTable {
-    TH, Td {
+
+    TH,
+    Td {
         text-align: center;
+    }
+
+    .unsetValue {
+        opacity   : .49;
+        font-style: italic;
     }
 }
