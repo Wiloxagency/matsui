@@ -255,6 +255,7 @@ router.post("/CreateFormula", async (req: Request, res: Response) => {
     const newFormulaSwatch: FormulaSwatchInterface = {
       formulaCode: req.body[0].FormulaCode,
       formulaColor: finalHexColor,
+      isUserCreatedFormula: true,
     };
 
     await formulaSwatchColors.insertOne(newFormulaSwatch);

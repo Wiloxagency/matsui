@@ -21,6 +21,7 @@ export interface ColorInterface {}
 export interface FormulaSwatchInterface {
   formulaCode: string;
   formulaColor: string;
+  isUserCreatedFormula?: boolean
 }
 
 export interface FormulaComponentInterface {

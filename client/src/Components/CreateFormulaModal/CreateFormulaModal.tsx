@@ -476,6 +476,7 @@ export default function CreateFormulaModal({
                           {formulaUnit === "Grams" ? (
                             <Input
                               type="number"
+                              step={0.01}
                               min={0}
                               label="Grams"
                               placeholder="000"
@@ -500,6 +501,7 @@ export default function CreateFormulaModal({
                               type="number"
                               min={0}
                               max={100}
+                              step={0.01}
                               label="Percentage"
                               placeholder="0.000"
                               labelPlacement="inside"
