@@ -7,6 +7,7 @@ import { Flip, ToastContainer, toast } from "react-toastify";
 import { api } from "../../State/api";
 import { UserInterface } from "../../interfaces/interfaces";
 import "./SendEmailCard.scss";
+import { useMediaQuery } from "react-responsive";
 
 interface SendEmailCardProps {
   setIsSendEmailActive: Dispatch<SetStateAction<boolean>>;
@@ -22,6 +23,9 @@ export default function SendEmailCard({
   const [isSendingEmailSpinnerVisible, setIsSendingEmailSpinnerVisible] =
     useState<boolean>(false);
   const [triggerSendEmail] = api.endpoints.sendEmail.useLazyQuery();
+
+  const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
+
   const triggerSentEmailNotification = () => toast("📨 Email sent!");
 
   const handleSendEmail = () => {
@@ -57,7 +61,11 @@ export default function SendEmailCard({
   return (
     <>
       <ToastContainer transition={Flip} />
-      <div className="card sendEmailCard">
+      <div
+        className={
+          isMobile ? "card sendEmailCard mobileLayout" : "card sendEmailCard"
+        }
+      >
         <span className="sendEmailCardColumn">
           <div>RECIPIENTS</div>
           <ul className="emailRecipientsContainer">

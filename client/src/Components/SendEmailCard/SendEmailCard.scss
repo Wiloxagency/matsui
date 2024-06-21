@@ -9,7 +9,7 @@
         gap           : 1rem;
 
         // button {
-            // width: fit-content ;
+        // width: fit-content ;
         //     position: absolute;
         //     bottom  : .7em;
         //     right   : .5rem;
@@ -62,5 +62,13 @@
     .emailRecipientsContainer {
         max-height: 13vh;
         overflow  : scroll;
+    }
+}
+
+.sendEmailCard.mobileLayout {
+    flex-direction: column;
+
+    .bottomSectionContainer {
+        gap: 0;
     }
 }
