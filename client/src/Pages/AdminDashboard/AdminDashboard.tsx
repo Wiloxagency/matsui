@@ -187,7 +187,7 @@ export default function AdminDashboard() {
           </div>
         </div>
         <div
-          className="bottomSectionContainer"
+          className={isSendEmailActive ? "" : "bottomSectionContainer"}
           style={
             isSendEmailActive
               ? { flexDirection: "column" }
