@@ -3,8 +3,10 @@ import { Input, Textarea } from "@nextui-org/input";
 import { Dispatch, SetStateAction, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
-import "./SendEmailCard.scss";
+import { Flip, ToastContainer, toast } from "react-toastify";
+import { api } from "../../State/api";
 import { UserInterface } from "../../interfaces/interfaces";
+import "./SendEmailCard.scss";
 
 interface SendEmailCardProps {
   setIsSendEmailActive: Dispatch<SetStateAction<boolean>>;
@@ -17,75 +19,105 @@ export default function SendEmailCard({
 }: SendEmailCardProps) {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+  const [isSendingEmailSpinnerVisible, setIsSendingEmailSpinnerVisible] =
+    useState<boolean>(false);
+  const [triggerSendEmail] = api.endpoints.sendEmail.useLazyQuery();
+  const triggerSentEmailNotification = () => toast("📨 Email sent!");
 
   const handleSendEmail = () => {
-    console.log(subject, message, selectedUsers);
+    // console.log(subject, message, selectedUsers);
 
     const recipientEmails = selectedUsers?.map((selectedUser) => {
       return selectedUser.email;
     });
-    console.log("recipientEmails: ", recipientEmails);
+    if (recipientEmails !== undefined) {
+      // console.log("recipientEmails: ", recipientEmails);
+      setIsSendingEmailSpinnerVisible(true);
+
+      const sendEmailPayload = {
+        recipients: recipientEmails,
+        subject: subject,
+        message: message,
+      };
+
+      triggerSendEmail(sendEmailPayload)
+        .unwrap()
+        .then((payload: any) => {
+          if (payload.message === "Message sent") {
+            triggerSentEmailNotification();
+            setSubject("");
+            setMessage("");
+            setIsSendingEmailSpinnerVisible(false);
+          }
+        })
+        .catch((error) => console.error("rejected", error));
+    }
   };
 
   return (
-    <div className="card sendEmailCard">
-      <span className="sendEmailCardColumn">
-        <div>RECIPIENTS</div>
-        <ul className="emailRecipientsContainer">
-          {selectedUsers &&
-            selectedUsers.map((selectedUser) => {
-              return (
-                <li key={selectedUser._id}>
-                  <span>{selectedUser.email}</span>
-                </li>
-              );
-            })}
-          {selectedUsers && selectedUsers.length === 0 && (
-            <div>No recipients selected</div>
-          )}
-        </ul>
-      </span>
-      <span className="sendEmailCardColumn">
-        <div>SUBJECT</div>
-        <div>MESSAGE</div>
-      </span>
-      <span className="sendEmailCardColumn">
-        <Input
-          type="text"
-          variant="bordered"
-          value={subject}
-          onValueChange={setSubject}
-        />
-        <Textarea
-          variant="bordered"
-          minRows={4}
-          maxRows={4}
-          disableAnimation
-          value={message}
-          onValueChange={setMessage}
-        />
-        <div style={{ display: "flex", justifyContent: "end", gap: "1rem" }}>
-          <Button
-            variant="ghost"
-            color="danger"
-            size="sm"
-            startContent={<FaX />}
-            onClick={() => {
-              setIsSendEmailActive(false);
-            }}
-          >
-            Discard
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            startContent={<FaPaperPlane />}
-            onClick={handleSendEmail}
-          >
-            Send
-          </Button>
-        </div>
-      </span>
-    </div>
+    <>
+      <ToastContainer transition={Flip} />
+      <div className="card sendEmailCard">
+        <span className="sendEmailCardColumn">
+          <div>RECIPIENTS</div>
+          <ul className="emailRecipientsContainer">
+            {selectedUsers &&
+              selectedUsers.map((selectedUser) => {
+                return (
+                  <li key={selectedUser._id}>
+                    <span>{selectedUser.email}</span>
+                  </li>
+                );
+              })}
+            {selectedUsers && selectedUsers.length === 0 && (
+              <div>No recipients selected</div>
+            )}
+          </ul>
+        </span>
+        <span className="sendEmailCardColumn">
+          <div>SUBJECT</div>
+          <div>MESSAGE</div>
+        </span>
+        <span className="sendEmailCardColumn">
+          <Input
+            type="text"
+            variant="bordered"
+            value={subject}
+            onValueChange={setSubject}
+          />
+          <Textarea
+            variant="bordered"
+            minRows={4}
+            maxRows={4}
+            disableAnimation
+            value={message}
+            onValueChange={setMessage}
+          />
+          <div style={{ display: "flex", justifyContent: "end", gap: "1rem" }}>
+            <Button
+              variant="ghost"
+              color="danger"
+              size="sm"
+              startContent={<FaX />}
+              onClick={() => {
+                setIsSendEmailActive(false);
+              }}
+            >
+              Discard
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              color="primary"
+              startContent={<FaPaperPlane />}
+              isLoading={isSendingEmailSpinnerVisible}
+              onClick={handleSendEmail}
+            >
+              Send
+            </Button>
+          </div>
+        </span>
+      </div>
+    </>
   );
 }

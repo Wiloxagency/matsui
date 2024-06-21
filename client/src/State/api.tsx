@@ -168,6 +168,22 @@ export const api = createApi({
         body: payload,
       }),
     }),
+    sendEmail: builder.query<
+      void,
+      {
+        recipients: string[];
+        subject: string;
+        message: string;
+      }
+    >({
+      query: (payload) => {
+        return {
+          method: "POST",
+          url: "users/SendEmail",
+          body: payload,
+        };
+      },
+    }),
   }),
 });
 
@@ -185,4 +201,5 @@ export const {
   useImportFormulasMutation,
   useVerifyEmailQuery,
   useUpdateUserMutation,
+  useSendEmailQuery,
 } = api;
