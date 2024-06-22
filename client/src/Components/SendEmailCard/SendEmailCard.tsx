@@ -66,7 +66,7 @@ export default function SendEmailCard({
           isMobile ? "card sendEmailCard mobileLayout" : "card sendEmailCard"
         }
       >
-        <span className="sendEmailCardColumn">
+        <span className="sendEmailCardColumn" style={{ flex: 1 }}>
           <div>RECIPIENTS</div>
           <ul className="emailRecipientsContainer">
             {selectedUsers &&
@@ -82,18 +82,20 @@ export default function SendEmailCard({
             )}
           </ul>
         </span>
-        <span className="sendEmailCardColumn">
-          <div>SUBJECT</div>
-          <div>MESSAGE</div>
-        </span>
-        <span className="sendEmailCardColumn">
+        <span className="sendEmailCardColumn" style={{ flex: 2 }}>
           <Input
+            label="SUBJECT"
+            labelPlacement={isMobile ? "inside" : "outside-left"}
             type="text"
             variant="bordered"
             value={subject}
             onValueChange={setSubject}
+            fullWidth={true}
           />
+
           <Textarea
+            labelPlacement={isMobile ? "inside" : "outside-left"}
+            label="MESSAGE"
             variant="bordered"
             minRows={4}
             maxRows={4}
@@ -118,6 +120,7 @@ export default function SendEmailCard({
               size="sm"
               color="primary"
               startContent={<FaPaperPlane />}
+              isDisabled={subject.length < 5 || message.length < 15}
               isLoading={isSendingEmailSpinnerVisible}
               onClick={handleSendEmail}
             >
