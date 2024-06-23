@@ -79,7 +79,9 @@ export default function CreateFormulaModal({
 
   const [newFormulaWeight, setNewFormulaWeight] = useState<number>(0);
 
-  const [formulaUnit, setFormulaUnit] = useState<string>("Grams");
+  const [formulaUnit, setFormulaUnit] = useState<"Grams" | "Percentage">(
+    "Grams"
+  );
 
   const [addFormula] = useAddFormulaMutation();
 
@@ -121,8 +123,9 @@ export default function CreateFormulaModal({
     value: number,
     receivedIndexComponent: number
   ) {
-    const componentsShallowCopy: FormulaComponentInterface[] =
-      newFormulaComponents;
+    const componentsShallowCopy: FormulaComponentInterface[] = [
+      ...newFormulaComponents,
+    ];
     const componentShallowCopy = {
       ...componentsShallowCopy[receivedIndexComponent],
     };
@@ -140,10 +143,15 @@ export default function CreateFormulaModal({
 
   function handleFormulaWeightChange(value: number) {
     setNewFormulaWeight(value);
-    // console.log(value);
   }
 
-  function handleAddFormulaComponent() {
+  const handleFormulaUnitChange = (value: string) => {
+    if (value === "Grams" || value === "Percentage") {
+      setFormulaUnit(value);
+    }
+  };
+
+  async function handleAddFormulaComponent() {
     setValidationMessage("");
 
     if (
@@ -154,7 +162,8 @@ export default function CreateFormulaModal({
       setValidationMessage("Assign all pigments before adding a new component");
       return;
     }
-    console.log("BEFORE newFormulaComponents: ", newFormulaComponents);
+
+    const newComponentPercentage: number = await returnNewComponentQuantity();
 
     setNewFormulaComponents((newFormulaComponents) => [
       ...newFormulaComponents,
@@ -164,9 +173,17 @@ export default function CreateFormulaModal({
         FormulaDescription: "",
         ComponentCode: "",
         ComponentDescription: "",
-        Percentage: 0,
+        Percentage: newComponentPercentage,
       },
     ]);
+  }
+
+  async function returnNewComponentQuantity(): Promise<number> {
+    const allComponentsQuantitiesSum = newFormulaComponents
+      .map((component) => component.Percentage)
+      .reduce((a, b) => a + b);
+    const remainingQuantity = newFormulaWeight - allComponentsQuantitiesSum;
+    return remainingQuantity;
   }
 
   function handleDeleteFormulaComponent(
@@ -184,6 +201,7 @@ export default function CreateFormulaModal({
     setNewFormulaCode("");
     setNewFormulaDescription("");
     setNewFormulaColor("#2dacb8");
+    setNewFormulaWeight(0);
     setNewFormulaComponents([
       {
         FormulaSerie: "",
@@ -240,10 +258,8 @@ export default function CreateFormulaModal({
         ComponentDescription: component.ComponentDescription,
         Percentage: component.Percentage,
         isFormulaActive: isNewFormulaActive,
-        // swatchColor: newFormulaColor,
       };
     });
-    // console.log("filledNewFormulaComponents: ", filledNewFormulaComponents);
 
     await addFormula(filledNewFormulaComponents);
     refetchFormulaSwatchColors();
@@ -375,8 +391,9 @@ export default function CreateFormulaModal({
                   <Input
                     type="number"
                     min={0}
-                    placeholder="000"
+                    // placeholder="000"
                     labelPlacement="inside"
+                    value={String(newFormulaWeight)}
                     onValueChange={(value) => {
                       handleFormulaWeightChange(Number(value));
                     }}
@@ -392,8 +409,9 @@ export default function CreateFormulaModal({
                   <RadioGroup
                     label="Select the measurement unit for the components"
                     value={formulaUnit}
-                    onValueChange={setFormulaUnit}
+                    onValueChange={handleFormulaUnitChange}
                     orientation="horizontal"
+                    isDisabled={newFormulaWeight === 0}
                   >
                     <Radio
                       classNames={{
@@ -456,6 +474,7 @@ export default function CreateFormulaModal({
                                 indexComponent
                               )
                             }
+                            isDisabled={newFormulaWeight === 0}
                           >
                             {fetchedPigments !== undefined ? (
                               fetchedPigments.map((pigment) => (
@@ -476,12 +495,12 @@ export default function CreateFormulaModal({
                           {formulaUnit === "Grams" ? (
                             <Input
                               type="number"
-                              step={0.01}
+                              step={0.001}
                               min={0}
                               label="Grams"
-                              placeholder="000"
                               labelPlacement="inside"
-                              // value={formulaComponent.Percentage.toString()}
+                              value={String(formulaComponent.Percentage)}
+                              isDisabled={newFormulaWeight === 0}
                               onValueChange={(value) => {
                                 handleComponentPercentageChange(
                                   Number(value),
@@ -501,11 +520,12 @@ export default function CreateFormulaModal({
                               type="number"
                               min={0}
                               max={100}
-                              step={0.01}
+                              step={0.001}
                               label="Percentage"
                               placeholder="0.000"
                               labelPlacement="inside"
-                              // value={formulaComponent.Percentage.toString()}
+                              value={String(formulaComponent.Percentage)}
+                              isDisabled={newFormulaWeight === 0}
                               onValueChange={(value) => {
                                 handleComponentPercentageChange(
                                   Number(value),
@@ -531,6 +551,7 @@ export default function CreateFormulaModal({
                   variant="light"
                   color="primary"
                   onPress={handleAddFormulaComponent}
+                  isDisabled={newFormulaWeight === 0}
                 >
                   + Add component
                 </Button>
