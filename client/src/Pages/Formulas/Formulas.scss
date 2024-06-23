@@ -27,27 +27,11 @@
             flex-direction: column;
 
             .buttonsAndTotalRow {
-                display  : flex;
-                flex-wrap: wrap;
-
-                .totalLabel {
-                    margin-left: auto;
-                }
-
-                .buttonsContainer {
-                    gap       : 1rem;
-                    display   : flex;
-                    flex-wrap : wrap;
-                    margin-top: 1rem;
-
-                    button {
-                        margin-right: 2rem;
-                    }
-
-                    span {
-                        margin-left: auto;
-                    }
-                }
+                display        : flex;
+                flex-wrap      : wrap;
+                gap            : 1rem;
+                justify-content: end;
+                align-items    : center;
             }
         }
 
