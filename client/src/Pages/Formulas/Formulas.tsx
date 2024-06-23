@@ -101,9 +101,7 @@ export default function Formulas() {
         // setTotalFormulaCost(totalFormulaCost + componentPrice);
 
         // updateTotalFormulaCost(componentPrice);
-        formulaPrice = parseFloat(
-          (formulaPrice + componentPrice).toFixed(3)
-        );
+        formulaPrice = parseFloat((formulaPrice + componentPrice).toFixed(3));
       }
     }
 
@@ -325,9 +323,13 @@ export default function Formulas() {
                     setTotalFormulaCost={setTotalFormulaCost}
                   />
                   <Divider className="my-4" />
-                  <div className="buttonsAndTotalRow">
-                    <span style={{ width: "14rem" }}>
+                  <div
+                    className="buttonsAndTotalRow"
+                    style={{ marginBottom: "1rem" }}
+                  >
+                    <span style={{ width: "11rem", marginLeft: "auto" }}>
                       <Input
+                        maxLength={4}
                         label="QUANTITY"
                         labelPlacement="outside-left"
                         size="sm"
@@ -356,23 +358,22 @@ export default function Formulas() {
                       />
                     </span>
                     <span className="totalLabel">
-                      {/* TOTAL: {totalFormulaCost} $ */}
                       TOTAL: {returnTotalFormulaCost()} $
                     </span>
-                    <div className="buttonsContainer">
-                      <ReusableButton
-                        className="underlineButton"
-                        buttonText="DUPLICATE FORMULA"
-                        Icon={FaClone}
-                        handleClick={() => {}}
-                      />{" "}
-                      <ReusableButton
-                        className="underlineButton"
-                        buttonText="PRINT FORMULA"
-                        Icon={FaPrint}
-                        handleClick={() => {}}
-                      />
-                    </div>
+                  </div>
+                  <div className="buttonsAndTotalRow">
+                    <ReusableButton
+                      className="underlineButton"
+                      buttonText="DUPLICATE FORMULA"
+                      Icon={FaClone}
+                      handleClick={() => {}}
+                    />{" "}
+                    <ReusableButton
+                      className="underlineButton"
+                      buttonText="PRINT FORMULA"
+                      Icon={FaPrint}
+                      handleClick={() => {}}
+                    />
                   </div>
                 </>
               ) : (
