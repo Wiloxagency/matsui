@@ -95,26 +95,12 @@ export const api = createApi({
         },
       }),
     }),
-    // getGivenComponents: builder.query<
-    //   Array<FormulaComponentInterface>,
-    //   string[]
-    // >({
-    //   query: (body) => ({
-    //     url: "components/",
-    //     method: "POST",
-    //     body: body,
-    //   }),
-    // }),
     getInkSystems: builder.query<Array<InkSystemInterface>, void>({
       query: () => "inkSystems/",
     }),
     getSeries: builder.query<Array<{ seriesName: string }>, void>({
       query: () => "components/GetSeries",
     }),
-    // getCodesOfFormulasInSeries: builder.query<Array<string>, string>({
-    //   query: (seriesName) =>
-    //     "components/GetCodesOfFormulasInSeries/" + seriesName,
-    // }),
     getPigments: builder.query<Array<PigmentInterface>, void>({
       query: () => "components/GetPigments",
     }),

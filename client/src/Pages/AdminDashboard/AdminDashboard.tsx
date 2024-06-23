@@ -13,6 +13,7 @@ import UsersTable from "../../Components/UsersTable/UsersTable";
 import { useGetUsersQuery } from "../../State/api";
 import { UserInterface } from "../../interfaces/interfaces";
 import "./AdminDashboard.scss";
+import * as XLSX from "xlsx";
 
 export default function AdminDashboard() {
   const {
@@ -72,7 +73,19 @@ export default function AdminDashboard() {
   //   onOpenChangeEditUserModal();
   // }
 
-  function handleExportUsers() {}
+  function handleExportUsers() {
+    if (fetchedUsers) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const noIdUsers = fetchedUsers.map(({ _id, ...keepAttrs }) => {
+        return keepAttrs;
+      });
+      // console.log("noIdUsers: ", noIdUsers);
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(noIdUsers);
+      XLSX.utils.book_append_sheet(workbook, worksheet, "All users");
+      XLSX.writeFileXLSX(workbook, "matsui_all_users.xlsx");
+    }
+  }
 
   function handleCheckboxCheck(receivedUserIndex: number) {
     if (indexesSelectedUsers.indexOf(receivedUserIndex) !== -1) {
