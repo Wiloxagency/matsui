@@ -1,11 +1,9 @@
 import { Dispatch, SetStateAction } from "react";
 import "./Swatches.scss";
-// import returnTemporaryFormulas from "./TempFormulas";
 import {
   FormulaInterface,
   GetFormulasResultInterface,
 } from "../../interfaces/interfaces";
-import { returnHexColor } from "../../Utilities/returnHexColor";
 
 interface SwatchesProps {
   formulas: GetFormulasResultInterface[] | undefined;

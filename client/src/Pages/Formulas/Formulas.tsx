@@ -56,9 +56,6 @@ export default function Formulas() {
     formulaSearchQuery: formulaSearchQuery,
   });
 
-  if (fetchedFormulas) console.log(fetchedFormulas[0]);
-  if (fetchedFormulas) console.log(fetchedFormulas[1]);
-
   const {
     data: fetchedInkSystems,
     isLoading: isGetInkSystemsLoading,

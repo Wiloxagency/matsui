@@ -18,17 +18,17 @@ import {
 } from "../../interfaces/interfaces";
 import "./CreateFormulaModal.scss";
 // import { FaEnvelope, FaLock } from "react-icons/fa";
-import { ChromePicker, ColorResult } from "react-color";
+import { Radio, RadioGroup } from "@nextui-org/radio";
+import { cn } from "@nextui-org/system";
+import { Tooltip } from "@nextui-org/tooltip";
+import { ChromePicker } from "react-color";
 import { FaTrash } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import { useMediaQuery } from "react-responsive";
-import { Tooltip } from "@nextui-org/tooltip";
-import { useAddFormulaMutation } from "../../State/api";
 import { Flip, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAddFormulaMutation } from "../../State/api";
 import { returnHexColor } from "../../Utilities/returnHexColor";
-import { Radio, RadioGroup } from "@nextui-org/radio";
-import { cn } from "@nextui-org/system";
 
 interface CreateFormulaModalProps {
   isOpenCreateFormulaModal: boolean;
@@ -87,10 +87,6 @@ export default function CreateFormulaModal({
 
   const triggerAddedFormulaNotification = () => toast("🎨 Formula added!");
 
-  const handleColorPickerChange = (color: ColorResult) => {
-    setNewFormulaColor(color.hex);
-  };
-
   const handleSelectNewFormulaSeries = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -117,9 +113,10 @@ export default function CreateFormulaModal({
     componentShallowCopy.hex = matchingPigment!.hex;
     componentsShallowCopy[receivedIndexComponent] = componentShallowCopy;
     setNewFormulaComponents([...componentsShallowCopy]);
+    setNewFormulaColor(returnHexColor(newFormulaComponents, fetchedPigments!));
   }
 
-  function handleComponentPercentageChange(
+  async function handleComponentPercentageChange(
     value: number,
     receivedIndexComponent: number
   ) {
@@ -133,12 +130,7 @@ export default function CreateFormulaModal({
     componentsShallowCopy[receivedIndexComponent] = componentShallowCopy;
     setNewFormulaComponents(componentsShallowCopy);
 
-    const returnHexColorPayload = newFormulaComponents.map((component) => {
-      return { hex: component.hex!, percentage: component.Percentage };
-    });
-
-    const newFormulaHexColor = returnHexColor(returnHexColorPayload);
-    setNewFormulaColor(newFormulaHexColor);
+    setNewFormulaColor(returnHexColor(newFormulaComponents, fetchedPigments!));
   }
 
   function handleFormulaWeightChange(value: number) {
@@ -200,7 +192,7 @@ export default function CreateFormulaModal({
     setSelectedNewFormulaSeries("");
     setNewFormulaCode("");
     setNewFormulaDescription("");
-    setNewFormulaColor("#2dacb8");
+    setNewFormulaColor("#fff");
     setNewFormulaWeight(0);
     setNewFormulaComponents([
       {
@@ -350,7 +342,7 @@ export default function CreateFormulaModal({
                     <ChromePicker
                       color={newFormulaColor}
                       disableAlpha={true}
-                      onChange={handleColorPickerChange}
+                      // onChange={handleColorPickerChange}
                     />
                     {isMobile && (
                       <span className="closeColorPickerButton">
