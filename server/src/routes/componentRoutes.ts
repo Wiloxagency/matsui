@@ -48,18 +48,18 @@ router.post(
       { $match: { FormulaSerie: req.body.formulaSeries } },
       searchQuery === ""
         ? {
-            $match: {
-              FormulaCode: {
-                $in: initialRequestFormulaCodes,
-              },
-            },
-          }
-        : {
-            $match: {
-              // FormulaCode: { "$regex": searchQuery, "$options": "i" },
-              FormulaDescription: { $regex: searchQuery, $options: "i" },
+          $match: {
+            FormulaCode: {
+              $in: initialRequestFormulaCodes,
             },
           },
+        }
+        : {
+          $match: {
+            // FormulaCode: { "$regex": searchQuery, "$options": "i" },
+            FormulaDescription: { $regex: searchQuery, $options: "i" },
+          },
+        },
       {
         $lookup: {
           from: "pigments",
@@ -220,6 +220,87 @@ router.get("/GetSeries", async (req: Request, res: Response) => {
 //     .toArray();
 //   res.json(componentList);
 // });
+
+router.get("/GetClosestColors/:formulaCode", async (req: Request, res: Response) => {
+  const db = await createMongoDBConnection();
+  const FormulaSwatchColor = db.collection("formulaSwatchColors");
+
+  try {
+    const { formulaCode } = req.params;
+    const targetColorDoc = await FormulaSwatchColor.findOne({ formulaCode });
+
+    if (!targetColorDoc) {
+      return res.status(404).json({ message: 'Formula code not found' });
+    }
+
+    const targetColor = targetColorDoc.formulaColor.replace('#', '');
+
+    if (!isValidHexColor(targetColor)) {
+      return res.status(400).json({ message: 'Invalid target color format' });
+    }
+
+    const targetRGB = hexToRgb(targetColor);
+    const allColors = await FormulaSwatchColor.find({ formulaCode: { $ne: formulaCode } }).toArray();
+    
+    type ColorDistance = {
+      _id: any;
+      formulaCode: string;
+      formulaColor: string;
+      distance: number;
+    };
+
+    const distances: ColorDistance[] = allColors.map(doc => {
+      try {
+        let color = doc.formulaColor.replace('#', '');
+
+        if (!isValidHexColor(color)) {
+          return null;
+        }
+
+        const colorRGB = hexToRgb(color);
+        const distance = calculateColorDistance(targetRGB, colorRGB);
+        return { 
+          _id: doc._id, 
+          formulaCode: doc.formulaCode, 
+          formulaColor: doc.formulaColor, 
+          distance 
+        } as ColorDistance;
+      } catch (error) {
+        return null;
+      }
+    }).filter((doc): doc is ColorDistance => doc !== null);
+
+
+    distances.sort((a, b) => a.distance - b.distance);
+
+    const closestColors = distances.slice(0, 10);
+    res.json(closestColors);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+
+});
+
+function hexToRgb(hex: string): { r: number, g: number, b: number } {
+  const bigint = parseInt(hex, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return { r, g, b };
+}
+
+function isValidHexColor(hex: string): boolean {
+  return /^[0-9A-Fa-f]{6}$/.test(hex);
+}
+
+function calculateColorDistance(color1: { r: number, g: number, b: number }, color2: { r: number, g: number, b: number }): number {
+  return Math.sqrt(
+    Math.pow(color1.r - color2.r, 2) +
+    Math.pow(color1.g - color2.g, 2) +
+    Math.pow(color1.b - color2.b, 2)
+  );
+}
+
 
 router.get("/GetPigments", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
