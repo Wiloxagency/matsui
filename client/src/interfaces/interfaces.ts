@@ -41,7 +41,7 @@ export interface FormulaComponentInterface {
   Percentage: number;
   isFormulaActive?: boolean;
   swatchColor?: string;
-  hex?: string
+  hex?: string;
 }
 
 export interface InkSystemInterface {
@@ -64,8 +64,8 @@ export interface PigmentInterface {
   hex: string;
   cmyk: number[];
   rgb: number[];
-  pricePerKg: number
-  isBase?: boolean
+  pricePerKg: number;
+  isBase?: boolean;
 }
 
 export interface GetFormulasResultInterface {
@@ -77,4 +77,9 @@ export interface GetFormulasResultInterface {
     percentage: number;
     hex: string;
   }[];
+  formulaSwatchColor: {
+    formulaCode: string;
+    formulaColor: string;
+    isUserCreatedFormula: string;
+  };
 }

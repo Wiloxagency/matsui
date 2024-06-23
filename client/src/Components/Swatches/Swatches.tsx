@@ -49,7 +49,8 @@ export default function Swatches({
                     : "swatch"
                 }
                 style={{
-                  backgroundColor: returnHexColor(formula.components),
+                  backgroundColor:
+                    "#" + formula.formulaSwatchColor.formulaColor,
                 }}
                 onClick={() => handleSelectFormula(formula)}
               >
