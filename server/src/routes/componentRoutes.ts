@@ -338,29 +338,6 @@ router.post("/GetClosestColors", async (req: Request, res: Response) => {
   }
 });
 
-function hexToRgb(hex: string): { r: number; g: number; b: number } {
-  const bigint = parseInt(hex, 16);
-  const r = (bigint >> 16) & 255;
-  const g = (bigint >> 8) & 255;
-  const b = bigint & 255;
-  return { r, g, b };
-}
-
-function isValidHexColor(hex: string): boolean {
-  return /^[0-9A-Fa-f]{6}$/.test(hex);
-}
-
-function calculateColorDistance(
-  color1: { r: number; g: number; b: number },
-  color2: { r: number; g: number; b: number }
-): number {
-  return Math.sqrt(
-    Math.pow(color1.r - color2.r, 2) +
-      Math.pow(color1.g - color2.g, 2) +
-      Math.pow(color1.b - color2.b, 2)
-  );
-}
-
 router.get("/GetPigments", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const pigments = db.collection("pigments");
@@ -532,5 +509,28 @@ router.get("/GetMissingPigments", async (req: Request, res: Response) => {
 
   res.json(getMissingPigments);
 });
+
+function hexToRgb(hex: string): { r: number; g: number; b: number } {
+  const bigint = parseInt(hex, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return { r, g, b };
+}
+
+function isValidHexColor(hex: string): boolean {
+  return /^[0-9A-Fa-f]{6}$/.test(hex);
+}
+
+function calculateColorDistance(
+  color1: { r: number; g: number; b: number },
+  color2: { r: number; g: number; b: number }
+): number {
+  return Math.sqrt(
+    Math.pow(color1.r - color2.r, 2) +
+      Math.pow(color1.g - color2.g, 2) +
+      Math.pow(color1.b - color2.b, 2)
+  );
+}
 
 export default router;

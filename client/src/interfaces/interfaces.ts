@@ -33,6 +33,7 @@ export interface FormulaInterface {
 }
 
 export interface FormulaComponentInterface {
+  _id?: any;
   FormulaSerie: string;
   FormulaCode: string;
   FormulaDescription: string;

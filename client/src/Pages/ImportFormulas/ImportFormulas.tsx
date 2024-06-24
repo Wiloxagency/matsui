@@ -1,13 +1,13 @@
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import { useDisclosure } from "@nextui-org/modal";
-import { Switch } from "@nextui-org/switch";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaDownload, FaTrash } from "react-icons/fa";
 import { useMediaQuery } from "react-responsive";
 import DeleteSeriesModal from "../../Components/DeleteSeriesModal/DeleteSeriesModal";
 import CustomDropzone from "../../Components/Dropzone/Dropzone";
+import ImportedSeriesModal from "../../Components/ImportedSeriesModal/ImportedSeriesModal";
 import {
   api,
   useAddSeriesMutation,
@@ -16,7 +16,6 @@ import {
   useImportFormulasMutation,
 } from "../../State/api";
 import "./ImportFormulas.scss";
-import ImportedSeriesModal from "../../Components/ImportedSeriesModal/ImportedSeriesModal";
 
 // interface ImportFormulaHeaderColumnIndexesInterface {
 //   indexFormulaCode: number;
@@ -38,7 +37,7 @@ import ImportedSeriesModal from "../../Components/ImportedSeriesModal/ImportedSe
 
 export default function ImportFormulas() {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
-  const [isSwitchSelected, setIsSwitchSelected] = useState(true);
+  // const [isSwitchSelected, setIsSwitchSelected] = useState(true);
   const [JSONFormulas, setJSONFormulas] = useState<unknown[]>([]);
   const [extractedHeaders, setExtractedHeaders] = useState<string[]>([]);
   const [missingPigments, setMissingPigments] = useState<string[]>([]);
@@ -302,7 +301,7 @@ export default function ImportFormulas() {
               value={newSeriesName}
               onValueChange={setNewSeriesName}
             ></Input>
-            <div className="row title">
+            {/* <div className="row title">
               DOES THE FIRST ROW CONTAIN THE HEADERS?
             </div>
             <Switch
@@ -311,7 +310,7 @@ export default function ImportFormulas() {
               onValueChange={setIsSwitchSelected}
             >
               {isSwitchSelected ? "YES" : "NO"}
-            </Switch>
+            </Switch> */}
             <div className={newSeriesName === "" ? "disabled" : undefined}>
               <CustomDropzone
                 setJSONFormulas={setJSONFormulas}

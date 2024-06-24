@@ -191,16 +191,17 @@ export const api = createApi({
         },
       }),
     }),
+    getAllComponents: builder.query<Array<FormulaComponentInterface>, void>({
+      query: () => "components/",
+    }),
   }),
 });
 
 export const {
   useGetUsersQuery,
   useGetFormulasQuery,
-  // useGetGivenComponentsQuery,
   useGetSeriesQuery,
   useGetInkSystemsQuery,
-  // useGetCodesOfFormulasInSeriesQuery,
   useGetPigmentsQuery,
   useAddFormulaMutation,
   useDeleteSeriesMutation,
@@ -210,4 +211,5 @@ export const {
   useUpdateUserMutation,
   useSendEmailQuery,
   useGetSimilarFormulasQuery,
+  useGetAllComponentsQuery,
 } = api;

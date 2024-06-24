@@ -27,6 +27,7 @@ import {
 } from "../../State/api";
 import { FormulaInterface } from "../../interfaces/interfaces";
 import "./Formulas.scss";
+import * as XLSX from "xlsx";
 
 export default function Formulas() {
   const [selectedSeries, setSelectedSeries] = useState<string>("301");
@@ -34,19 +35,9 @@ export default function Formulas() {
   const [totalFormulaCost, setTotalFormulaCost] = useState<number>(0);
   const [formulaQuantityAsString, setFormulaQuantityAsString] =
     useState<string>("1000");
-  // const [formulaQuantity, setFormulaQuantity] = useState<number>(1000);
   const [formulaUnit, setFormulaUnit] = useState<"g" | "kg" | "lb" | string>(
     "g"
   );
-
-  // const { data: fetchedFormulas, isSuccess: isGetFormulasSuccessful } =
-  //   useGetFormulasQuery();
-
-  // const {
-  //   data: fetchedFormulaSwatchColors,
-  //   isSuccess: isGetFormulaSwatchColorsSuccessful,
-  //   refetch: refetchFormulaSwatchColors,
-  // } = useGetFormulaSwatchColorsQuery();
 
   const {
     data: fetchedFormulas,
@@ -74,6 +65,15 @@ export default function Formulas() {
   const [selectedFormula, setSelectedFormula] = useState<
     FormulaInterface | undefined
   >();
+
+  const [triggerGetSimilarFormulas, { data: fetchedSimilarFormulas }] =
+    api.endpoints.getSimilarFormulas.useLazyQuery();
+
+  const [
+    triggerGetAllComponents,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    { data: _fetchedComponents, isFetching: isGetAllComponentsFetching },
+  ] = api.endpoints.getAllComponents.useLazyQuery();
 
   // const isSmallScreen = useMediaQuery({ query: "(max-width: 1200px)" });
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
@@ -109,9 +109,6 @@ export default function Formulas() {
     return formulaPrice;
   }
 
-  const [triggerGetSimilarFormulas, { data: fetchedSimilarFormulas }] =
-    api.endpoints.getSimilarFormulas.useLazyQuery();
-
   const handleFormulaUnitSelectionChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -125,8 +122,24 @@ export default function Formulas() {
   };
 
   function handleExportFormulas() {
-    console.log(fetchedFormulas);
-    console.log(fetchedPigments);
+    triggerGetAllComponents()
+      .unwrap()
+      .then((allComponents) => {
+        // console.log(allComponents);
+
+        const revertToOriginalComponentInterface = allComponents.map(
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          ({ _id, hex, isFormulaActive, swatchColor, ...keepAttrs }) => {
+            return keepAttrs;
+          }
+        );
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(
+          revertToOriginalComponentInterface
+        );
+        XLSX.utils.book_append_sheet(workbook, worksheet, "All components");
+        XLSX.writeFileXLSX(workbook, "matsui_all_components.xlsx");
+      });
   }
 
   function handleFormulaSearch(
@@ -170,6 +183,7 @@ export default function Formulas() {
               startContent={<FaFileExport />}
               variant="bordered"
               onClick={handleExportFormulas}
+              isLoading={isGetAllComponentsFetching}
             >
               EXPORT FORMULAS
             </Button>
