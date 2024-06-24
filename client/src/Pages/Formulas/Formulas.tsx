@@ -127,16 +127,31 @@ export default function Formulas() {
       .then((allComponents) => {
         // console.log(allComponents);
 
-        const revertToOriginalComponentInterface = allComponents.map(
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          ({ _id, hex, isFormulaActive, swatchColor, ...keepAttrs }) => {
-            return keepAttrs;
-          }
+        // const revertToOriginalComponentInterface = allComponents.map(
+        //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        //   ({ _id, hex, isFormulaActive, swatchColor, ...keepAttrs }) => {
+        //     return keepAttrs;
+        //   }
+        // );
+
+        const reorderedComponents = allComponents.map(
+          ({
+            FormulaCode,
+            FormulaDescription,
+            ComponentCode,
+            ComponentDescription,
+            Percentage,
+          }) => ({
+            FormulaCode,
+            FormulaDescription,
+            ComponentCode,
+            ComponentDescription,
+            Percentage,
+          })
         );
+
         const workbook = XLSX.utils.book_new();
-        const worksheet = XLSX.utils.json_to_sheet(
-          revertToOriginalComponentInterface
-        );
+        const worksheet = XLSX.utils.json_to_sheet(reorderedComponents);
         XLSX.utils.book_append_sheet(workbook, worksheet, "All components");
         XLSX.writeFileXLSX(workbook, "matsui_all_components.xlsx");
       });
