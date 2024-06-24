@@ -19,6 +19,7 @@ import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/Fo
 import ReusableButton from "../../Components/ReusableButton/ReusableButton";
 import Swatches from "../../Components/Swatches/Swatches";
 import {
+  api,
   useGetFormulasQuery,
   useGetInkSystemsQuery,
   useGetPigmentsQuery,
@@ -108,7 +109,8 @@ export default function Formulas() {
     return formulaPrice;
   }
 
-  // const [triggerGetFormulaComponents, { data: getFormulaComponentsData }] = api.endpoints.getFormulaComponents.useLazyQuery();
+  const [triggerGetSimilarFormulas, { data: fetchedSimilarFormulas }] =
+    api.endpoints.getSimilarFormulas.useLazyQuery();
 
   const handleFormulaUnitSelectionChange = (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -281,6 +283,7 @@ export default function Formulas() {
                   selectedFormula={selectedFormula}
                   setSelectedFormula={setSelectedFormula}
                   selectedSeries={selectedSeries}
+                  triggerGetSimilarFormulas={triggerGetSimilarFormulas}
                 />
               ) : (
                 <Spinner className="m-auto" />
@@ -392,14 +395,26 @@ export default function Formulas() {
                 isMobile ? "sectionHeader mobileLayout" : "sectionHeader"
               }
             >
-              SIMILAR FORMULAS
+              SIMILAR FORMULAS IN SERIES {selectedSeries}
             </div>
             <div className="card">
-              <span className="m-auto text-center">
-                Click on a formula to see similar formulas
-                <br />
-                (under construction)
-              </span>
+              {!fetchedSimilarFormulas && (
+                <span className="m-auto text-center">
+                  Click on a formula to see similar formulas
+                </span>
+              )}
+
+              {fetchedSimilarFormulas && (
+                <div style={{ maxHeight: "14rem", overflow: " auto" }}>
+                  <Swatches
+                    formulas={fetchedSimilarFormulas}
+                    selectedFormula={selectedFormula}
+                    setSelectedFormula={setSelectedFormula}
+                    selectedSeries={selectedSeries}
+                    triggerGetSimilarFormulas={triggerGetSimilarFormulas}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>

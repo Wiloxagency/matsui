@@ -10,6 +10,10 @@ interface SwatchesProps {
   selectedFormula: FormulaInterface | undefined;
   setSelectedFormula: Dispatch<SetStateAction<FormulaInterface | undefined>>;
   selectedSeries: string;
+  triggerGetSimilarFormulas: (value: {
+    formulaCode: string;
+    formulaSeries: string;
+  }) => void;
 }
 
 export default function Swatches({
@@ -17,6 +21,7 @@ export default function Swatches({
   setSelectedFormula,
   selectedFormula,
   selectedSeries,
+  triggerGetSimilarFormulas,
 }: SwatchesProps) {
   function handleSelectFormula(clickedFormula: GetFormulasResultInterface) {
     // console.log(clickedFormula);
@@ -31,6 +36,12 @@ export default function Swatches({
       components: clickedFormula.components,
     };
     setSelectedFormula(fullFormula);
+    if (triggerGetSimilarFormulas) {
+      triggerGetSimilarFormulas({
+        formulaCode: clickedFormula._id,
+        formulaSeries: selectedSeries,
+      });
+    }
   }
 
   if (formulas !== undefined)

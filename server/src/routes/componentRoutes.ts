@@ -206,99 +206,137 @@ router.get("/GetSeries", async (req: Request, res: Response) => {
   res.json(allSeries);
 });
 
-// router.get(
-//   "/GetCodesOfFormulasInSeries/:seriesName",
-//   async (req: Request, res: Response) => {
-//     const db = await createMongoDBConnection();
-//     const components = db.collection("components");
-//     const filteredComponents = await components
-//       .find({ FormulaSerie: req.params.seriesName })
-//       .toArray();
+router.post("/GetClosestColors", async (req: Request, res: Response) => {
+  const db = await createMongoDBConnection();
+  const FormulaSwatchColor = db.collection("formulaSwatchColors");
+  try {
+    const formulaCode = req.body.formulaCode;
+    const targetColorDoc = await FormulaSwatchColor.findOne({
+      formulaCode: req.body.formulaCode,
+    });
 
-//     const formulaCodes = Array.from(
-//       new Set(
-//         filteredComponents?.map(({ FormulaCode }) => {
-//           return FormulaCode;
-//         })
-//       )
-//     );
-//     res.json(formulaCodes);
-//   }
-// );
+    if (!targetColorDoc) {
+      return res.status(404).json({ message: "Formula code not found" });
+    }
 
-// router.post("/", async (req: Request, res: Response) => {
-//   const db = await createMongoDBConnection();
-//   const components = db.collection("components");
-//   const componentList = await components
-//     .find({ componentCode: { $in: req.body } })
-//     .toArray();
-//   res.json(componentList);
-// });
+    const targetColor = targetColorDoc.formulaColor.replace("#", "");
 
-router.get(
-  "/GetClosestColors/:formulaCode",
-  async (req: Request, res: Response) => {
-    const db = await createMongoDBConnection();
-    const FormulaSwatchColor = db.collection("formulaSwatchColors");
+    if (!isValidHexColor(targetColor)) {
+      return res.status(400).json({ message: "Invalid target color format" });
+    }
 
-    try {
-      const { formulaCode } = req.params;
-      const targetColorDoc = await FormulaSwatchColor.findOne({ formulaCode });
+    const targetRGB = hexToRgb(targetColor);
+    const allColors = await FormulaSwatchColor.find({
+      formulaCode: { $ne: formulaCode },
+    }).toArray();
 
-      if (!targetColorDoc) {
-        return res.status(404).json({ message: "Formula code not found" });
-      }
+    type ColorDistance = {
+      _id: any;
+      formulaCode: string;
+      formulaColor: string;
+      distance: number;
+    };
 
-      const targetColor = targetColorDoc.formulaColor.replace("#", "");
+    const distances: ColorDistance[] = allColors
+      .map((doc) => {
+        try {
+          let color = doc.formulaColor.replace("#", "");
 
-      if (!isValidHexColor(targetColor)) {
-        return res.status(400).json({ message: "Invalid target color format" });
-      }
-
-      const targetRGB = hexToRgb(targetColor);
-      const allColors = await FormulaSwatchColor.find({
-        formulaCode: { $ne: formulaCode },
-      }).toArray();
-
-      type ColorDistance = {
-        _id: any;
-        formulaCode: string;
-        formulaColor: string;
-        distance: number;
-      };
-
-      const distances: ColorDistance[] = allColors
-        .map((doc) => {
-          try {
-            let color = doc.formulaColor.replace("#", "");
-
-            if (!isValidHexColor(color)) {
-              return null;
-            }
-
-            const colorRGB = hexToRgb(color);
-            const distance = calculateColorDistance(targetRGB, colorRGB);
-            return {
-              _id: doc._id,
-              formulaCode: doc.formulaCode,
-              formulaColor: doc.formulaColor,
-              distance,
-            } as ColorDistance;
-          } catch (error) {
+          if (!isValidHexColor(color)) {
             return null;
           }
-        })
-        .filter((doc): doc is ColorDistance => doc !== null);
 
-      distances.sort((a, b) => a.distance - b.distance);
+          const colorRGB = hexToRgb(color);
+          const distance = calculateColorDistance(targetRGB, colorRGB);
+          return {
+            _id: doc._id,
+            formulaCode: doc.formulaCode,
+            formulaColor: doc.formulaColor,
+            distance,
+          } as ColorDistance;
+        } catch (error) {
+          return null;
+        }
+      })
+      .filter((doc): doc is ColorDistance => doc !== null);
 
-      const closestColors = distances.slice(0, 10);
-      res.json(closestColors);
-    } catch (error) {
-      res.status(500).json({ message: "Server error", error });
-    }
+    distances.sort((a, b) => a.distance - b.distance);
+
+    const closestColors = distances.slice(0, 10);
+
+    const closestFormulaCodes = closestColors.map((similarColor) => {
+      return similarColor.formulaCode;
+    });
+    // console.log("closestFormulaCodes: ", closestFormulaCodes);
+
+    const pipeline = [
+      { $match: { FormulaSerie: req.body.formulaSeries } },
+      {
+        $match: {
+          FormulaCode: {
+            $in: closestFormulaCodes,
+          },
+        },
+      },
+
+      {
+        $lookup: {
+          from: "pigments",
+          localField: "ComponentCode",
+          foreignField: "code",
+          as: "component",
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: [{ $arrayElemAt: ["$component", 0] }, "$$ROOT"],
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "formulaSwatchColors",
+          localField: "FormulaCode",
+          foreignField: "formulaCode",
+          as: "formulaSwatchColor",
+        },
+      },
+      {
+        $unwind: "$formulaSwatchColor",
+      },
+      { $project: { fromItems: 0 } },
+      {
+        $group: {
+          _id: "$FormulaCode",
+          formulaDescription: {
+            $first: "$FormulaDescription",
+          },
+          formulaSwatchColor: {
+            $first: "$formulaSwatchColor",
+          },
+          components: {
+            $push: {
+              componentCode: "$ComponentCode",
+              componentDescription: "$ComponentDescription",
+              hex: "$hex",
+              percentage: "$Percentage",
+            },
+          },
+        },
+      },
+    ];
+
+    const components = db.collection("components");
+    const formulas = await components
+      .aggregate(pipeline)
+      // .sort({ _id: -1 })
+      .toArray();
+    res.json(formulas);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
   }
-);
+});
 
 function hexToRgb(hex: string): { r: number; g: number; b: number } {
   const bigint = parseInt(hex, 16);

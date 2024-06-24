@@ -170,6 +170,27 @@ export const api = createApi({
         };
       },
     }),
+    getSimilarFormulas: builder.query<
+      GetFormulasResultInterface[],
+      {
+        formulaCode: string;
+        formulaSeries: string;
+      }
+    >({
+      query: (arg) => ({
+        method: "POST",
+        url: "components/GetClosestColors",
+        body: {
+          formulaCode: arg.formulaCode,
+          formulaSeries: arg.formulaSeries,
+        },
+        headers: {
+          Authorization: "",
+          // Authorization: `Bearer ${accessToken}`, // Example: Access token from context
+          "Content-Type": "application/json",
+        },
+      }),
+    }),
   }),
 });
 
@@ -188,4 +209,5 @@ export const {
   useVerifyEmailQuery,
   useUpdateUserMutation,
   useSendEmailQuery,
+  useGetSimilarFormulasQuery,
 } = api;
