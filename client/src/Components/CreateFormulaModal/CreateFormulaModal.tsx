@@ -178,8 +178,9 @@ export default function CreateFormulaModal({
 
   async function returnNewComponentQuantity(): Promise<number> {
     const allComponentsQuantitiesSum = newFormulaComponents
-      .map((component) => component.Percentage)
+      .map((component) => Number(component.Percentage))
       .reduce((a, b) => a + b);
+    console.log("allComponentsQuantitiesSum: ", allComponentsQuantitiesSum);
     const remainingQuantity =
       newFormulaWeight - Number(allComponentsQuantitiesSum);
     return remainingQuantity;
