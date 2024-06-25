@@ -360,7 +360,8 @@ router.post("/CreateFormula", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const formulaSwatchColors = db.collection("formulaSwatchColors");
   const components = db.collection("components");
-  const receivedComponents: FormulaComponentInterface[] = req.body;
+  const receivedComponents: FormulaComponentInterface[] =
+    req.body.formulaComponents;
 
   try {
     const componentsHexValues = await returnHexColorPrepping(
@@ -373,6 +374,8 @@ router.post("/CreateFormula", async (req: Request, res: Response) => {
       formulaCode: req.body[0].FormulaCode,
       formulaColor: finalHexColor,
       isUserCreatedFormula: true,
+      company: req.body.company,
+      createdBy: req.body.createdBy,
     };
 
     await formulaSwatchColors.insertOne(newFormulaSwatch);

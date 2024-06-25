@@ -78,9 +78,13 @@ export interface GetFormulasResultInterface {
     percentage: number;
     hex: string;
   }[];
-  formulaSwatchColor: {
-    formulaCode: string;
-    formulaColor: string;
-    isUserCreatedFormula: string;
-  };
+  formulaSwatchColor: FormulaSwatchInterface;
+}
+
+export interface FormulaSwatchInterface {
+  formulaCode: string;
+  formulaColor: string;
+  isUserCreatedFormula?: boolean;
+  company?: string;
+  createdBy?: string;
 }

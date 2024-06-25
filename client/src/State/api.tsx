@@ -104,7 +104,7 @@ export const api = createApi({
     getPigments: builder.query<Array<PigmentInterface>, void>({
       query: () => "components/GetPigments",
     }),
-    addFormula: builder.mutation<void, FormulaComponentInterface[]>({
+    addFormula: builder.mutation<void, {formulaComponents: FormulaComponentInterface[], company: string, createdBy: string}>({
       query: (payload) => ({
         url: "components/CreateFormula",
         method: "POST",

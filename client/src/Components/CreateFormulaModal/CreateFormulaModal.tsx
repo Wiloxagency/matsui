@@ -253,7 +253,11 @@ export default function CreateFormulaModal({
       };
     });
 
-    await addFormula(filledNewFormulaComponents);
+    await addFormula({
+      formulaComponents: filledNewFormulaComponents,
+      company: localStorage.getItem("userCompany")!,
+      createdBy: localStorage.getItem("userEmail")!,
+    });
     refetchFormulaSwatchColors();
     handleReset();
     onOpenChangeCreateFormulaModal(false);

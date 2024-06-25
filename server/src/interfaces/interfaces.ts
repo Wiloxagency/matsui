@@ -11,7 +11,7 @@ export interface UserInterface {
   createdFormulas: number;
   lastAccess: Date;
 
-  TEMP?: string
+  TEMP?: string;
 }
 
 export interface FormulaInterface {}
@@ -21,7 +21,9 @@ export interface ColorInterface {}
 export interface FormulaSwatchInterface {
   formulaCode: string;
   formulaColor: string;
-  isUserCreatedFormula?: boolean
+  isUserCreatedFormula?: boolean;
+  company?: string;
+  createdBy?: string;
 }
 
 export interface FormulaComponentInterface {

@@ -76,6 +76,7 @@ router.post("/login", async (req: Request, res: Response) => {
     res.json({
       message: "Success",
       accessToken,
+      userCompany: fetchedUser.company,
     });
   } catch (error) {
     console.error(error);
