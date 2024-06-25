@@ -79,6 +79,7 @@ export const api = createApi({
       {
         formulaSeries: string;
         formulaSearchQuery: string;
+        company?: string
       }
     >({
       query: (arg) => ({
@@ -87,6 +88,7 @@ export const api = createApi({
         body: {
           formulaSeries: arg.formulaSeries,
           formulaSearchQuery: arg.formulaSearchQuery,
+          company: arg.company
         },
         headers: {
           Authorization: "",

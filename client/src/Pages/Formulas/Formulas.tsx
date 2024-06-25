@@ -50,10 +50,11 @@ export default function Formulas() {
   const {
     data: fetchedFormulas,
     isSuccess: isGetFormulasSuccessful,
-    refetch: refetchFormulasColors,
+    refetch: refetchFormulas,
   } = useGetFormulasQuery({
     formulaSeries: selectedSeries,
     formulaSearchQuery: formulaSearchQuery,
+    company: selectedCompany
   });
 
   const {
@@ -126,7 +127,7 @@ export default function Formulas() {
   const handleSelectSeries = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedSeries(e.target.value);
 
-    // refetchFormulasColors();
+    // refetchFormulas();
   };
 
   function handleExportFormulas() {
@@ -171,12 +172,12 @@ export default function Formulas() {
     if (formulaSearchQuery === "") return;
     if (event === undefined) {
       console.log("Search clicked");
-      // refetchFormulasColors();
+      // refetchFormulas();
       return;
     }
     if (event && event.key === "Enter") {
       console.log("Pressed enter");
-      // refetchFormulasColors();
+      // refetchFormulas();
     }
   }
 
@@ -194,7 +195,8 @@ export default function Formulas() {
 
   useEffect(() => {
     if (selectedCompany) {
-      console.log("selectedCompany: ", selectedCompany);
+      refetchFormulas()
+      // console.log("selectedCompany: ", selectedCompany);
     }
   }, [selectedCompany]);
 
@@ -209,7 +211,7 @@ export default function Formulas() {
         onOpenChangeCreateFormulaModal={onOpenChangeCreateFormulaModal}
         fetchedSeries={fetchedSeries}
         fetchedPigments={fetchedPigments}
-        refetchFormulaSwatchColors={refetchFormulasColors}
+        refetchFormulaSwatchColors={refetchFormulas}
       />
       <div
         className={
@@ -325,7 +327,7 @@ export default function Formulas() {
                 )}
                 {selectedCompany && (
                   <Select
-                    isDisabled={selectedCompany===""}
+                    isDisabled={selectedCompany === ""}
                     isOpen={isResetCompanySelectOpen}
                     aria-label="COMPANY"
                     variant="bordered"
