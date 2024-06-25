@@ -152,8 +152,8 @@ export function Login() {
           <p
             className={
               loginFormMessage !== ""
-                ? "loginFormMessage active"
-                : "loginFormMessage"
+                ? "hiddenBlock active-2"
+                : "hiddenBlock"
             }
           >
             {loginFormMessage}

@@ -39,7 +39,8 @@ export interface FormulaComponentInterface {
   FormulaDescription: string;
   ComponentCode: string;
   ComponentDescription: string;
-  Percentage: number;
+  // Percentage: number;
+  Percentage: string;
   isFormulaActive?: boolean;
   swatchColor?: string;
   hex?: string;

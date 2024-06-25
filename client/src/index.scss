@@ -64,3 +64,16 @@ a {
   // height    : 0;
   overflow-y   : scroll;
 }
+
+.hiddenBlock {
+  height    : 0;
+  overflow  : hidden;
+  transition: .3s;
+}
+
+.hiddenBlock.active-2 {
+  height: 2rem;
+}
+.hiddenBlock.active-4 {
+  height: 4rem;
+}

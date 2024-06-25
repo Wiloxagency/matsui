@@ -69,7 +69,7 @@ export default function CreateFormulaModal({
       FormulaDescription: "",
       ComponentCode: "ALPHA BASE",
       ComponentDescription: "",
-      Percentage: 0,
+      Percentage: "",
     },
   ]);
 
@@ -77,10 +77,10 @@ export default function CreateFormulaModal({
 
   const [validationMessage, setValidationMessage] = useState<string>("");
 
-  const [newFormulaWeight, setNewFormulaWeight] = useState<number>(0);
+  const [newFormulaWeight, setNewFormulaWeight] = useState<number>(100);
 
   const [formulaUnit, setFormulaUnit] = useState<"Grams" | "Percentage">(
-    "Grams"
+    "Percentage"
   );
 
   const [addFormula] = useAddFormulaMutation();
@@ -117,7 +117,7 @@ export default function CreateFormulaModal({
   }
 
   async function handleComponentPercentageChange(
-    value: number,
+    value: string, // Accept value as a string
     receivedIndexComponent: number
   ) {
     const componentsShallowCopy: FormulaComponentInterface[] = [
@@ -130,6 +130,8 @@ export default function CreateFormulaModal({
     componentsShallowCopy[receivedIndexComponent] = componentShallowCopy;
     setNewFormulaComponents(componentsShallowCopy);
 
+    // Convert to number for calculations
+    // const numericValue = Number(value);
     setNewFormulaColor(returnHexColor(newFormulaComponents, fetchedPigments!));
   }
 
@@ -138,7 +140,11 @@ export default function CreateFormulaModal({
   }
 
   const handleFormulaUnitChange = (value: string) => {
-    if (value === "Grams" || value === "Percentage") {
+    if (value === "Grams") {
+      setFormulaUnit(value);
+    }
+    if (value === "Percentage") {
+      setNewFormulaWeight(100);
       setFormulaUnit(value);
     }
   };
@@ -165,7 +171,7 @@ export default function CreateFormulaModal({
         FormulaDescription: "",
         ComponentCode: "",
         ComponentDescription: "",
-        Percentage: newComponentPercentage,
+        Percentage: String(newComponentPercentage),
       },
     ]);
   }
@@ -174,7 +180,8 @@ export default function CreateFormulaModal({
     const allComponentsQuantitiesSum = newFormulaComponents
       .map((component) => component.Percentage)
       .reduce((a, b) => a + b);
-    const remainingQuantity = newFormulaWeight - allComponentsQuantitiesSum;
+    const remainingQuantity =
+      newFormulaWeight - Number(allComponentsQuantitiesSum);
     return remainingQuantity;
   }
 
@@ -193,15 +200,15 @@ export default function CreateFormulaModal({
     setNewFormulaCode("");
     setNewFormulaDescription("");
     setNewFormulaColor("#fff");
-    setNewFormulaWeight(0);
+    setNewFormulaWeight(100);
     setNewFormulaComponents([
       {
         FormulaSerie: "",
         FormulaCode: "",
         FormulaDescription: "",
-        ComponentCode: "",
+        ComponentCode: "ALPHA BASE",
         ComponentDescription: "",
-        Percentage: 0,
+        Percentage: "0",
       },
     ]);
   }
@@ -232,7 +239,9 @@ export default function CreateFormulaModal({
       .map((component) => component.Percentage)
       .reduce((a, b) => a + b);
 
-    const roundedTotalPercentages = parseFloat(totalPercentages.toPrecision(5));
+    const roundedTotalPercentages = parseFloat(
+      Number(totalPercentages).toPrecision(5)
+    );
 
     if (roundedTotalPercentages !== newFormulaWeight) {
       setValidationMessage(
@@ -264,9 +273,7 @@ export default function CreateFormulaModal({
     triggerAddedFormulaNotification();
   }
 
-  useEffect(() => {
-    // console.log(newFormulaComponents);
-  }, [newFormulaComponents]);
+  useEffect(() => {}, [newFormulaComponents]);
 
   return (
     <>
@@ -379,35 +386,13 @@ export default function CreateFormulaModal({
                 </div>
                 <Divider className="my-1" />
 
-                <div className="text-foreground-500">
-                  Set the formula weight
-                </div>
-
-                <span style={{ width: "50%" }}>
-                  <Input
-                    type="number"
-                    min={0}
-                    // placeholder="000"
-                    labelPlacement="inside"
-                    value={String(newFormulaWeight)}
-                    onValueChange={(value) => {
-                      handleFormulaWeightChange(Number(value));
-                    }}
-                    endContent={
-                      <div className="pointer-events-none flex items-center">
-                        <span className="text-default-400 text-small">g</span>
-                      </div>
-                    }
-                  />
-                </span>
-
                 <div className="flex flex-col gap-3">
                   <RadioGroup
                     label="Select the measurement unit for the components"
                     value={formulaUnit}
                     onValueChange={handleFormulaUnitChange}
                     orientation="horizontal"
-                    isDisabled={newFormulaWeight === 0}
+                    // isDisabled={newFormulaWeight === 0}
                   >
                     <Radio
                       classNames={{
@@ -435,6 +420,35 @@ export default function CreateFormulaModal({
                     </Radio>
                   </RadioGroup>
                 </div>
+
+                <span
+                  className={
+                    formulaUnit === "Grams"
+                      ? "hiddenBlock active-4"
+                      : "hiddenBlock"
+                  }
+                  style={{ width: "50%" }}
+                >
+                  <Input
+                    className="ml-auto"
+                    label="Set the formula weight"
+                    type="number"
+                    min={0}
+                    variant="underlined"
+                    size="sm"
+                    // placeholder="000"
+                    labelPlacement="outside"
+                    value={String(newFormulaWeight)}
+                    onValueChange={(value) => {
+                      handleFormulaWeightChange(Number(value));
+                    }}
+                    endContent={
+                      <div className="pointer-events-none flex items-center">
+                        <span className="text-default-400 text-small">g</span>
+                      </div>
+                    }
+                  />
+                </span>
 
                 {newFormulaComponents.map(
                   (formulaComponent, indexComponent) => {
@@ -499,7 +513,7 @@ export default function CreateFormulaModal({
                               isDisabled={newFormulaWeight === 0}
                               onValueChange={(value) => {
                                 handleComponentPercentageChange(
-                                  Number(value),
+                                  value,
                                   indexComponent
                                 );
                               }}
@@ -520,13 +534,13 @@ export default function CreateFormulaModal({
                               label="Percentage"
                               placeholder="0.000"
                               labelPlacement="inside"
-                              value={String(formulaComponent.Percentage)}
+                              value={formulaComponent.Percentage} // No need to convert to string
                               isDisabled={newFormulaWeight === 0}
                               onValueChange={(value) => {
                                 handleComponentPercentageChange(
-                                  Number(value),
+                                  value,
                                   indexComponent
-                                );
+                                ); // Pass the value directly
                               }}
                               endContent={
                                 <div className="pointer-events-none flex items-center">
