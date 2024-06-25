@@ -12,6 +12,9 @@ import { useUpdateUserMutation } from "../../State/api";
 import { useEffect, useState } from "react";
 import { Flip, ToastContainer, toast } from "react-toastify";
 import { returnFormattedDate } from "../../Utilities/returnFormattedDate";
+import { Select, SelectItem } from "@nextui-org/select";
+import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
+import { FaPlus } from "react-icons/fa";
 
 interface EditUserModalProps {
   isOpen: boolean;
@@ -21,6 +24,7 @@ interface EditUserModalProps {
     React.SetStateAction<UserInterface | undefined>
   >;
   refetchUsers: () => void;
+  fetchedUsers: UserInterface[];
 }
 export default function EditUserModal({
   isOpen,
@@ -28,10 +32,14 @@ export default function EditUserModal({
   selectedUser,
   setSelectedUser,
   refetchUsers,
+  fetchedUsers,
 }: EditUserModalProps) {
   const [updateUser] = useUpdateUserMutation();
   const [userUsername, setUserUsername] = useState<string>("");
-  const [userCompany, setUserCompany] = useState<string>("");
+  const [newCompany, setNewCompany] = useState<string>("");
+  const [selectedCompany, setSelectedCompany] = useState<string>("");
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [companies, setCompanies] = useState<{ name: string }[]>([]);
 
   const triggerUpdatedUserNotification = () => toast("😁 User updated!");
 
@@ -40,7 +48,7 @@ export default function EditUserModal({
       const updatedUser = {
         ...selectedUser,
         username: userUsername,
-        company: userCompany,
+        company: selectedCompany,
       };
       setSelectedUser(updatedUser);
       await updateUser(updatedUser)
@@ -55,12 +63,34 @@ export default function EditUserModal({
     }
   }
 
+  function handleAddCompany() {
+    console.log(newCompany);
+    setSelectedCompany(newCompany);
+    const updatedCompanies = [...companies, { name: newCompany }];
+    setCompanies(updatedCompanies);
+    setNewCompany("");
+    setIsPopoverOpen(false);
+  }
+
   useEffect(() => {
     if (selectedUser) {
       setUserUsername(selectedUser.username);
-      setUserCompany(selectedUser.company);
+      setSelectedCompany(selectedUser.company);
     }
   }, [selectedUser]);
+
+  useEffect(() => {
+    if (fetchedUsers) {
+      const extractedCompanies = Array.from(
+        new Set(
+          fetchedUsers
+            .map(({ company }: any) => company)
+            .filter((company: string) => company.trim() !== "")
+        )
+      ).map((company) => ({ name: company }));
+      setCompanies(extractedCompanies);
+    }
+  }, [fetchedUsers]);
 
   return (
     <>
@@ -91,15 +121,57 @@ export default function EditUserModal({
                     setUserUsername(event.target.value);
                   }}
                 />
-                <Input
-                  label="Company"
-                  type="text"
-                  variant="bordered"
-                  value={userCompany}
-                  onChange={(event) => {
-                    setUserCompany(event.target.value);
-                  }}
-                />
+                <div className="flex items-center gap-2">
+                  <Select
+                    label="Company"
+                    variant="bordered"
+                    placeholder="Select a company"
+                    selectedKeys={new Set([selectedCompany])}
+                    onSelectionChange={(keys) =>
+                      setSelectedCompany(String(Array.from(keys)[0]))
+                    }
+                  >
+                    {companies.map((company) => (
+                      <SelectItem key={company.name}>{company.name}</SelectItem>
+                    ))}
+                  </Select>
+                  <Popover
+                    placement="bottom-end"
+                    isOpen={isPopoverOpen}
+                    onOpenChange={(open) => setIsPopoverOpen(open)}
+                  >
+                    <PopoverTrigger>
+                      <Button variant="light" size="sm" color="primary">
+                        Add company
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <div className="px-1 py-2">
+                        {/* <div className="text-small font-bold text-center mb-1">
+                        Add new company
+                      </div> */}
+                        <div className="flex items-center text-tiny text-center">
+                          <Input
+                            className="mr-4"
+                            label="New company name"
+                            type="text"
+                            value={newCompany}
+                            onChange={(event) => {
+                              setNewCompany(event.target.value);
+                            }}
+                          />
+                          <Button
+                            isIconOnly={true}
+                            color="success"
+                            onPress={handleAddCompany}
+                          >
+                            <FaPlus color="white" fontSize={16} />
+                          </Button>
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
                 <Input
                   label="Email"
                   type="text"

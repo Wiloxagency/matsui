@@ -61,7 +61,7 @@ export default function AdminDashboard() {
       (user) => user._id === receivedUserId
     )[0];
     setSelectedUser(getSelectedUser);
-    console.log("selectedUser: ", selectedUser);
+    // console.log("selectedUser: ", selectedUser);
   }
 
   function handleResetUserPassword() {
@@ -148,6 +148,7 @@ export default function AdminDashboard() {
         selectedUser={selectedUser}
         setSelectedUser={setSelectedUser}
         refetchUsers={refetchUsers}
+        fetchedUsers={fetchedUsers!}
       ></EditUserModal>
       <div
         className={
