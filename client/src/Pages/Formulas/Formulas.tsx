@@ -4,9 +4,10 @@ import { Input } from "@nextui-org/input";
 import { useDisclosure } from "@nextui-org/modal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Spinner } from "@nextui-org/spinner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FaClone,
+  FaEraser,
   FaFileExport,
   FaPen,
   FaPrint,
@@ -24,10 +25,13 @@ import {
   useGetInkSystemsQuery,
   useGetPigmentsQuery,
   useGetSeriesQuery,
+  useGetUsersQuery,
 } from "../../State/api";
 import { FormulaInterface } from "../../interfaces/interfaces";
 import "./Formulas.scss";
 import * as XLSX from "xlsx";
+import { returnUniqueCompanies } from "../../Utilities/returnUniqueCompanies";
+import { Tooltip } from "@nextui-org/tooltip";
 
 export default function Formulas() {
   const [selectedSeries, setSelectedSeries] = useState<string>("301");
@@ -38,6 +42,10 @@ export default function Formulas() {
   const [formulaUnit, setFormulaUnit] = useState<"g" | "kg" | "lb" | string>(
     "g"
   );
+
+  const { data: fetchedUsers } = useGetUsersQuery();
+  const [companies, setCompanies] = useState<{ name: string }[]>([]);
+  const [selectedCompany, setSelectedCompany] = useState<string>();
 
   const {
     data: fetchedFormulas,
@@ -172,6 +180,19 @@ export default function Formulas() {
     }
   }
 
+  useEffect(() => {
+    if (fetchedUsers) {
+      const extractedCompanies = returnUniqueCompanies(fetchedUsers);
+      setCompanies(extractedCompanies);
+    }
+  }, [fetchedUsers]);
+
+  useEffect(() => {
+    if (selectedCompany) {
+      console.log("selectedCompany: ", selectedCompany);
+    }
+  }, [selectedCompany]);
+
   // TODO: IMPLEMENT THIS TO PREVENT FORMULAS REFETCHING EVERY TIME
   // A LETTER IS TYPED 👇🏻
   // function handleSearchBarValueChange() {}
@@ -278,6 +299,38 @@ export default function Formulas() {
                 {isGetSeriesLoading && <Spinner className="m-auto" />}
               </span>
             </div>
+            <div className="dropdownAndLabelRow">
+              <label>COMPANY</label>
+              <span className="selectContainer">
+                <Select
+                  aria-label="COMPANY"
+                  variant="bordered"
+                  radius="full"
+                  placeholder="Select a company"
+                  selectedKeys={new Set([selectedCompany!])}
+                  endContent={
+                    // <Tooltip content={<p>Reset company field</p>}>
+                    //   {selectedCompany && (
+                    //     <FaEraser />
+                    //   )}
+                    // </Tooltip>
+                    selectedCompany && (
+                      <Tooltip content={<p>Reset company field</p>}>
+                        <span onClick={() => setSelectedCompany("")}>🗑️</span>
+                      </Tooltip>
+                    )
+                  }
+                  onSelectionChange={(keys) =>
+                    setSelectedCompany(String(Array.from(keys)[0]))
+                  }
+                >
+                  {companies.map((company) => (
+                    <SelectItem key={company.name}>{company.name}</SelectItem>
+                  ))}
+                </Select>
+              </span>
+            </div>
+
             <div className="searchBarRow">
               <Input
                 type="text"
@@ -292,7 +345,7 @@ export default function Formulas() {
                 }
               />
             </div>
-            <div className="checkboxRow">
+            {/* <div className="checkboxRow">
               <span>
                 <input type="checkbox"></input>
                 <label style={{ margin: "0 1rem 0 .5rem" }}>ALL FORMULAS</label>
@@ -303,7 +356,7 @@ export default function Formulas() {
                   COMPANY FORMULAS
                 </label>
               </span>
-            </div>
+            </div> */}
             <div className="swatchesComponentContainer">
               {isGetFormulasSuccessful ? (
                 <Swatches

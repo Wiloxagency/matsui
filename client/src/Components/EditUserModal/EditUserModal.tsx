@@ -15,6 +15,7 @@ import { returnFormattedDate } from "../../Utilities/returnFormattedDate";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
 import { FaPlus } from "react-icons/fa";
+import { returnUniqueCompanies } from "../../Utilities/returnUniqueCompanies";
 
 interface EditUserModalProps {
   isOpen: boolean;
@@ -86,13 +87,7 @@ export default function EditUserModal({
 
   useEffect(() => {
     if (fetchedUsers) {
-      const extractedCompanies = Array.from(
-        new Set(
-          fetchedUsers
-            .map(({ company }: any) => company)
-            .filter((company: string) => company.trim() !== "")
-        )
-      ).map((company) => ({ name: company }));
+      const extractedCompanies = returnUniqueCompanies(fetchedUsers);
       setCompanies(extractedCompanies);
     }
   }, [fetchedUsers]);
