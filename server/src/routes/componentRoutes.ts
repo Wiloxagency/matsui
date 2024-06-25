@@ -28,8 +28,6 @@ router.post(
     let initialRequestFormulaCodes: string[] = [];
     const searchQuery: string = req.body.formulaSearchQuery;
 
-    // console.log("searchQuery: ", searchQuery);
-
     if (searchQuery === "") {
       const formulaSwatchColors = db.collection("formulaSwatchColors");
       const latest20FormulaSwatchColors = await formulaSwatchColors

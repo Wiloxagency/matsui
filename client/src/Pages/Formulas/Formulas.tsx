@@ -41,7 +41,8 @@ export default function Formulas() {
   const [formulaUnit, setFormulaUnit] = useState<"g" | "kg" | "lb" | string>(
     "g"
   );
-
+  const [isResetCompanySelectOpen, setIsResetCompanySelectOpen] =
+    useState<boolean>();
   const { data: fetchedUsers } = useGetUsersQuery();
   const [companies, setCompanies] = useState<{ name: string }[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<string>();
@@ -49,10 +50,11 @@ export default function Formulas() {
   const {
     data: fetchedFormulas,
     isSuccess: isGetFormulasSuccessful,
-    refetch: refetchFormulasColors,
+    refetch: refetchFormulas,
   } = useGetFormulasQuery({
     formulaSeries: selectedSeries,
     formulaSearchQuery: formulaSearchQuery,
+    company: selectedCompany
   });
 
   const {
@@ -125,7 +127,7 @@ export default function Formulas() {
   const handleSelectSeries = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedSeries(e.target.value);
 
-    // refetchFormulasColors();
+    // refetchFormulas();
   };
 
   function handleExportFormulas() {
@@ -170,13 +172,18 @@ export default function Formulas() {
     if (formulaSearchQuery === "") return;
     if (event === undefined) {
       console.log("Search clicked");
-      // refetchFormulasColors();
+      // refetchFormulas();
       return;
     }
     if (event && event.key === "Enter") {
       console.log("Pressed enter");
-      // refetchFormulasColors();
+      // refetchFormulas();
     }
+  }
+
+  function handleResetCompanyField() {
+    setIsResetCompanySelectOpen(false);
+    setSelectedCompany("");
   }
 
   useEffect(() => {
@@ -188,7 +195,8 @@ export default function Formulas() {
 
   useEffect(() => {
     if (selectedCompany) {
-      console.log("selectedCompany: ", selectedCompany);
+      refetchFormulas()
+      // console.log("selectedCompany: ", selectedCompany);
     }
   }, [selectedCompany]);
 
@@ -203,7 +211,7 @@ export default function Formulas() {
         onOpenChangeCreateFormulaModal={onOpenChangeCreateFormulaModal}
         fetchedSeries={fetchedSeries}
         fetchedPigments={fetchedPigments}
-        refetchFormulaSwatchColors={refetchFormulasColors}
+        refetchFormulaSwatchColors={refetchFormulas}
       />
       <div
         className={
@@ -300,33 +308,48 @@ export default function Formulas() {
             </div>
             <div className="dropdownAndLabelRow">
               <label>COMPANY</label>
+
               <span className="selectContainer">
-                <Select
-                  aria-label="COMPANY"
-                  variant="bordered"
-                  radius="full"
-                  placeholder="Select a company"
-                  selectedKeys={new Set([selectedCompany!])}
-                  endContent={
-                    // <Tooltip content={<p>Reset company field</p>}>
-                    //   {selectedCompany && (
-                    //     <FaEraser />
-                    //   )}
-                    // </Tooltip>
-                    selectedCompany && (
-                      <Tooltip content={<p>Reset company field</p>}>
-                        <span onClick={() => setSelectedCompany("")}>🗑️</span>
-                      </Tooltip>
-                    )
-                  }
-                  onSelectionChange={(keys) =>
-                    setSelectedCompany(String(Array.from(keys)[0]))
-                  }
-                >
-                  {companies.map((company) => (
-                    <SelectItem key={company.name}>{company.name}</SelectItem>
-                  ))}
-                </Select>
+                {!selectedCompany && (
+                  <Select
+                    aria-label="COMPANY"
+                    variant="bordered"
+                    radius="full"
+                    placeholder="Select a company"
+                    onSelectionChange={(keys) =>
+                      setSelectedCompany(String(Array.from(keys)[0]))
+                    }
+                  >
+                    {companies.map((company) => (
+                      <SelectItem key={company.name}>{company.name}</SelectItem>
+                    ))}
+                  </Select>
+                )}
+                {selectedCompany && (
+                  <Select
+                    isDisabled={selectedCompany === ""}
+                    isOpen={isResetCompanySelectOpen}
+                    aria-label="COMPANY"
+                    variant="bordered"
+                    radius="full"
+                    placeholder="Select a company"
+                    selectedKeys={new Set([selectedCompany!])}
+                    endContent={
+                      selectedCompany && (
+                        <Tooltip content={<p>Reset company field</p>}>
+                          <span onClick={handleResetCompanyField}>🗑️</span>
+                        </Tooltip>
+                      )
+                    }
+                    onSelectionChange={(keys) =>
+                      setSelectedCompany(String(Array.from(keys)[0]))
+                    }
+                  >
+                    {companies.map((company) => (
+                      <SelectItem key={company.name}>{company.name}</SelectItem>
+                    ))}
+                  </Select>
+                )}
               </span>
             </div>
 
