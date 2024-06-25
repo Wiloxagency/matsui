@@ -21,6 +21,7 @@ router.put("/", async (req: Request, res: Response) => {
       $set: {
         username: req.body.username,
         company: req.body.company,
+        status: req.body.status,
       },
     }
   );

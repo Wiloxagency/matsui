@@ -40,6 +40,9 @@ export default function EditUserModal({
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [companies, setCompanies] = useState<{ name: string }[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<
+    "Active" | "Inactive" | "Unverified"
+  >("Inactive");
 
   const triggerUpdatedUserNotification = () => toast("😁 User updated!");
 
@@ -49,6 +52,7 @@ export default function EditUserModal({
         ...selectedUser,
         username: userUsername,
         company: selectedCompany,
+        status: selectedStatus,
       };
       setSelectedUser(updatedUser);
       await updateUser(updatedUser)
@@ -64,7 +68,7 @@ export default function EditUserModal({
   }
 
   function handleAddCompany() {
-    console.log(newCompany);
+    // console.log(newCompany);
     setSelectedCompany(newCompany);
     const updatedCompanies = [...companies, { name: newCompany }];
     setCompanies(updatedCompanies);
@@ -76,6 +80,7 @@ export default function EditUserModal({
     if (selectedUser) {
       setUserUsername(selectedUser.username);
       setSelectedCompany(selectedUser.company);
+      setSelectedStatus(selectedUser.status);
     }
   }, [selectedUser]);
 
@@ -94,121 +99,147 @@ export default function EditUserModal({
 
   return (
     <>
-      <ToastContainer transition={Flip} />
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        backdrop="blur"
-        //   isDismissable={false}
-        //   isKeyboardDismissDisabled={true}
-        //   hideCloseButton={true}
-        scrollBehavior="outside"
-        placement="top-center"
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Edit user
-              </ModalHeader>
-              <ModalBody>
-                <Input
-                  label="Username"
-                  type="text"
-                  variant="bordered"
-                  value={userUsername}
-                  onChange={(event) => {
-                    setUserUsername(event.target.value);
-                  }}
-                />
-                <div className="flex items-center gap-2">
-                  <Select
-                    label="Company"
-                    variant="bordered"
-                    placeholder="Select a company"
-                    selectedKeys={new Set([selectedCompany])}
-                    onSelectionChange={(keys) =>
-                      setSelectedCompany(String(Array.from(keys)[0]))
-                    }
-                  >
-                    {companies.map((company) => (
-                      <SelectItem key={company.name}>{company.name}</SelectItem>
-                    ))}
-                  </Select>
-                  <Popover
-                    placement="bottom-end"
-                    isOpen={isPopoverOpen}
-                    onOpenChange={(open) => setIsPopoverOpen(open)}
-                  >
-                    <PopoverTrigger>
-                      <Button variant="light" size="sm" color="primary">
-                        Add company
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <div className="px-1 py-2">
-                        {/* <div className="text-small font-bold text-center mb-1">
-                        Add new company
-                      </div> */}
-                        <div className="flex items-center text-tiny text-center">
-                          <Input
-                            className="mr-4"
-                            label="New company name"
-                            type="text"
-                            value={newCompany}
-                            onChange={(event) => {
-                              setNewCompany(event.target.value);
-                            }}
-                          />
-                          <Button
-                            isIconOnly={true}
-                            color="success"
-                            onPress={handleAddCompany}
-                          >
-                            <FaPlus color="white" fontSize={16} />
+      {selectedUser && (
+        <>
+          <ToastContainer transition={Flip} />
+
+          <Modal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            backdrop="blur"
+            scrollBehavior="outside"
+            placement="top-center"
+          >
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className="flex flex-col gap-1">
+                    Edit user
+                  </ModalHeader>
+                  <ModalBody>
+                    <Input
+                      label="Username"
+                      type="text"
+                      variant="bordered"
+                      value={userUsername}
+                      onChange={(event) => {
+                        setUserUsername(event.target.value);
+                      }}
+                    />
+                    <Select
+                      label="Status"
+                      variant="bordered"
+                      placeholder="Select a company"
+                      selectedKeys={new Set([selectedStatus])}
+                      isDisabled={selectedUser.status === "Unverified"}
+                      disabledKeys={["Unverified"]}
+                      onSelectionChange={(keys) => {
+                        setSelectedStatus(
+                          Array.from(keys)[0] as
+                            | "Active"
+                            | "Inactive"
+                            | "Unverified"
+                        );
+                      }}
+                    >
+                      <SelectItem key="Active">Active</SelectItem>
+                      <SelectItem key="Inactive">Inactive</SelectItem>
+                      <SelectItem key="Unverified" isReadOnly={true}>
+                        Unverified
+                      </SelectItem>
+                    </Select>
+                    <div className="flex items-center gap-2">
+                      <Select
+                        label="Company"
+                        variant="bordered"
+                        placeholder="Select a company"
+                        selectedKeys={new Set([selectedCompany])}
+                        onSelectionChange={(keys) =>
+                          setSelectedCompany(String(Array.from(keys)[0]))
+                        }
+                      >
+                        {companies.map((company) => (
+                          <SelectItem key={company.name}>
+                            {company.name}
+                          </SelectItem>
+                        ))}
+                      </Select>
+                      <Popover
+                        placement="bottom-end"
+                        isOpen={isPopoverOpen}
+                        onOpenChange={(open) => setIsPopoverOpen(open)}
+                      >
+                        <PopoverTrigger>
+                          <Button variant="light" size="sm" color="primary">
+                            Add company
                           </Button>
-                        </div>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <Input
-                  label="Email"
-                  type="text"
-                  disabled
-                  value={selectedUser?.email}
-                />
-                <Input
-                  label="Registration date"
-                  type="text"
-                  disabled
-                  value={returnFormattedDate(selectedUser!.registrationDate)}
-                />
-                <Input
-                  label="Last access"
-                  type="text"
-                  disabled
-                  value={returnFormattedDate(selectedUser!.lastAccess)}
-                />
-                <Input
-                  label="Created formulas"
-                  type="number"
-                  disabled
-                  value={String(selectedUser?.createdFormulas)}
-                />
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={handleSaveUser}>
-                  Save changes
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+                        </PopoverTrigger>
+                        <PopoverContent>
+                          <div className="px-1 py-2">
+                            <div className="flex items-center text-tiny text-center">
+                              <Input
+                                className="mr-4"
+                                label="New company name"
+                                type="text"
+                                value={newCompany}
+                                onChange={(event) => {
+                                  setNewCompany(event.target.value);
+                                }}
+                              />
+                              <Button
+                                isIconOnly={true}
+                                color="success"
+                                onPress={handleAddCompany}
+                              >
+                                <FaPlus color="white" fontSize={16} />
+                              </Button>
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+
+                    <Input
+                      label="Email"
+                      type="text"
+                      disabled
+                      value={selectedUser?.email}
+                    />
+                    <Input
+                      label="Registration date"
+                      type="text"
+                      disabled
+                      value={returnFormattedDate(
+                        selectedUser!.registrationDate
+                      )}
+                    />
+                    <Input
+                      label="Last access"
+                      type="text"
+                      disabled
+                      value={returnFormattedDate(selectedUser!.lastAccess)}
+                    />
+                    <Input
+                      label="Created formulas"
+                      type="number"
+                      disabled
+                      value={String(selectedUser?.createdFormulas)}
+                    />
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="danger" variant="light" onPress={onClose}>
+                      Close
+                    </Button>
+                    <Button color="primary" onPress={handleSaveUser}>
+                      Save changes
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+        </>
+      )}
     </>
   );
 }
