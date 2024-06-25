@@ -7,7 +7,6 @@ import { Spinner } from "@nextui-org/spinner";
 import { useEffect, useState } from "react";
 import {
   FaClone,
-  FaEraser,
   FaFileExport,
   FaPen,
   FaPrint,
