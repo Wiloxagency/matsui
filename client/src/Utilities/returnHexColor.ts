@@ -80,6 +80,8 @@ export function returnHexColor(
 
   // console.info("hexValue:", hexValue);
 
+  if (hexValue === "NaNNaNNaN") return "#fff";
+
   return "#" + hexValue;
 }
 
