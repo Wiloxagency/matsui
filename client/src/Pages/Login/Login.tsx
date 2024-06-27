@@ -10,6 +10,8 @@ import logo from "../../assets/matsui_logo.png";
 import "./Login.scss";
 const API_URL = import.meta.env.VITE_API_URL;
 
+const forbiddenProviders = ["gmail", "hotmail", "outlook", "yahoo"];
+
 export function Login() {
   const { setAuth } = useAuth();
 
@@ -20,17 +22,28 @@ export function Login() {
   const [loginFormMessage, setLoginFormMessage] = useState("");
   const [isSignInButtonLoading, setIsSignInButtonLoading] = useState(false);
   const [isRegisterButtonLoading, setIsRegisterButtonLoading] = useState(false);
+  const [isProviderAllowed, setIsProviderAllowed] = useState<boolean>(true);
 
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
   // console.log("isMobile: ", isMobile);
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (emailRef.current !== null) {
-      emailRef.current.focus();
+  function handleSetEmail(receivedEmail: string) {
+    setEmail(receivedEmail);
+    const provider = getEmailProvider(receivedEmail);
+    setIsProviderAllowed(!forbiddenProviders.includes(provider));
+  }
+
+  function getEmailProvider(email: string): string {
+    const parts = email.split("@");
+    // If there is no "@" or nothing after "@", return an empty string
+    if (parts.length !== 2 || parts[1].length === 0) {
+      return "";
     }
-  }, []);
+    const domainParts = parts[1].split(".");
+    return domainParts[0];
+  }
 
   const handleRegister = async () => {
     setIsRegisterButtonLoading(true);
@@ -80,7 +93,7 @@ export function Login() {
           localStorage.setItem("userEmail", email);
           localStorage.setItem("userCompany", response.data.company);
           const accessToken = response.data.accessToken;
-          accessToken
+          accessToken;
           // TODO: MAKE THIS WORK 👇🏻
           setAuth({
             email: response.data.email,
@@ -100,6 +113,12 @@ export function Login() {
       });
   };
 
+  useEffect(() => {
+    if (emailRef.current !== null) {
+      emailRef.current.focus();
+    }
+  }, []);
+
   return (
     <>
       <div className="backgroundColor"></div>
@@ -114,13 +133,22 @@ export function Login() {
       <div className="loginFormCard">
         <form onSubmit={handleLogin}>
           <img src={logo} />
+          <p
+            className={
+              isProviderAllowed
+                ? "mb-4 hiddenBlock"
+                : "mb-4 hiddenBlock active-2"
+            }
+          >
+            Only business emails are allowed
+          </p>
           <div className="inputContainer">
             <input
               type="email"
               name="email"
               placeholder="Email"
               value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              onChange={(event) => handleSetEmail(event.target.value)}
               ref={emailRef}
               required
             ></input>
@@ -151,9 +179,7 @@ export function Login() {
 
           <p
             className={
-              loginFormMessage !== ""
-                ? "hiddenBlock active-2"
-                : "hiddenBlock"
+              loginFormMessage !== "" ? "hiddenBlock active-2" : "hiddenBlock"
             }
           >
             {loginFormMessage}
