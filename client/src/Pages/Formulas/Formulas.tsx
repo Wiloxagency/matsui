@@ -50,11 +50,12 @@ export default function Formulas() {
   const {
     data: fetchedFormulas,
     isSuccess: isGetFormulasSuccessful,
+    // isLoading: isGetFormulasLoading,
     refetch: refetchFormulas,
   } = useGetFormulasQuery({
     formulaSeries: selectedSeries,
     formulaSearchQuery: formulaSearchQuery,
-    company: selectedCompany
+    company: selectedCompany,
   });
 
   const {
@@ -183,7 +184,7 @@ export default function Formulas() {
 
   function handleResetCompanyField() {
     setIsResetCompanySelectOpen(false);
-    setSelectedCompany("");
+    setSelectedCompany(undefined);
   }
 
   useEffect(() => {
@@ -195,7 +196,7 @@ export default function Formulas() {
 
   useEffect(() => {
     if (selectedCompany) {
-      refetchFormulas()
+      refetchFormulas();
       // console.log("selectedCompany: ", selectedCompany);
     }
   }, [selectedCompany]);

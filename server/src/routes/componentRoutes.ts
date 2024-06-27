@@ -28,6 +28,8 @@ router.post(
     let initialRequestFormulaCodes: string[] = [];
     const searchQuery: string = req.body.formulaSearchQuery;
 
+    // console.log(req.body)
+
     if (searchQuery === "") {
       const formulaSwatchColors = db.collection("formulaSwatchColors");
       const latest20FormulaSwatchColors = await formulaSwatchColors
@@ -40,7 +42,7 @@ router.post(
       );
     }
 
-    // console.log(initialRequestFormulaCodes);
+    const path = "formulaSwatchColor.company";
 
     const pipeline = [
       { $match: { FormulaSerie: req.body.formulaSeries } },
@@ -85,6 +87,13 @@ router.post(
         $unwind: "$formulaSwatchColor",
       },
       { $project: { fromItems: 0 } },
+
+      {
+        $match: {
+          [path]: req.body.company,
+        },
+      },
+
       {
         $group: {
           _id: "$FormulaCode",
@@ -369,7 +378,7 @@ router.post("/CreateFormula", async (req: Request, res: Response) => {
     const finalHexColor = returnHexColor(componentsHexValues);
 
     const newFormulaSwatch: FormulaSwatchInterface = {
-      formulaCode: req.body[0].FormulaCode,
+      formulaCode: req.body.formulaComponents[0].FormulaCode,
       formulaColor: finalHexColor,
       isUserCreatedFormula: true,
       company: req.body.company,
@@ -377,7 +386,7 @@ router.post("/CreateFormula", async (req: Request, res: Response) => {
     };
 
     await formulaSwatchColors.insertOne(newFormulaSwatch);
-    await components.insertMany(req.body);
+    await components.insertMany(req.body.formulaComponents);
 
     res.json("Received");
   } catch (error) {

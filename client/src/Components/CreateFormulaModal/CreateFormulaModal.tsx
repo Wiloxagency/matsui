@@ -239,7 +239,7 @@ export default function CreateFormulaModal({
     }
 
     const totalPercentages = newFormulaComponents
-      .map((component) => component.Percentage)
+      .map((component) => Number(component.Percentage))
       .reduce((a, b) => a + b);
 
     const roundedTotalPercentages = parseFloat(

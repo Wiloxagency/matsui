@@ -91,7 +91,7 @@ export function Login() {
           // console.log(response);
           localStorage.setItem("accessToken", response.data.accessToken);
           localStorage.setItem("userEmail", email);
-          localStorage.setItem("userCompany", response.data.company);
+          localStorage.setItem("userCompany", response.data.userCompany);
           const accessToken = response.data.accessToken;
           accessToken;
           // TODO: MAKE THIS WORK 👇🏻
