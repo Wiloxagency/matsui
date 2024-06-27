@@ -11,6 +11,8 @@ import { useMediaQuery } from "react-responsive";
 export default function InkCalculator() {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
+  const [artworkHeight, setArtworkHeight] = useState<number>(0);
+
   const [calculatorUnit, setCalculatorUnit] = useState<string>("inch");
   const columns = [
     {
@@ -153,6 +155,8 @@ export default function InkCalculator() {
               min={0}
               placeholder="000"
               labelPlacement="outside"
+              value={String(artworkHeight)}
+              onValueChange={(value) => setArtworkHeight(Number(value))}
               endContent={
                 <div className="pointer-events-none flex items-center">
                   <span className="text-default-400 text-small">
@@ -185,6 +189,20 @@ export default function InkCalculator() {
                 <div className="pointer-events-none flex items-center">
                   <span className="text-default-400 text-small whitespace-nowrap">
                     per gallon
+                  </span>
+                </div>
+              }
+            />
+            <Input
+              type="number"
+              label="Coverage"
+              min={0}
+              placeholder="000"
+              labelPlacement="outside"
+              endContent={
+                <div className="pointer-events-none flex items-center">
+                  <span className="text-default-400 text-small whitespace-nowrap">
+                    %
                   </span>
                 </div>
               }

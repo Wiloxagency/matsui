@@ -7,7 +7,7 @@ import {
   DropdownTrigger,
 } from "@nextui-org/dropdown";
 import { Dispatch, SetStateAction } from "react";
-import { FaEllipsisV } from "react-icons/fa";
+import { FaEllipsisV, FaTrash } from "react-icons/fa";
 import { useMediaQuery } from "react-responsive";
 import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
 import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
@@ -74,6 +74,10 @@ export default function UsersTable({
 }: UsersTableProps) {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
+  function handleDeleteUser(){
+    console.log("Clicked delete user")
+  }
+
   return (
     <>
       <Table className="usersTable">
@@ -131,11 +135,20 @@ export default function UsersTable({
                         </DropdownItem>
                         <DropdownItem
                           className="text-danger"
-                          variant="solid"
+                          variant="faded"
                           color="danger"
                           onClick={() => handleResetUserPassword()}
-                        >
+                          >
                           Reset user password
+                        </DropdownItem>
+                        <DropdownItem
+                          startContent={<FaTrash></FaTrash>}
+                          className="text-danger"
+                          variant="solid"
+                          color="danger"
+                          onClick={() => handleDeleteUser()}
+                        >
+                          DELETE USER
                         </DropdownItem>
                       </DropdownMenu>
                     </Dropdown>
