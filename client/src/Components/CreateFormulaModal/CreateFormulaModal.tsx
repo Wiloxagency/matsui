@@ -113,7 +113,8 @@ export default function CreateFormulaModal({
     componentShallowCopy.hex = matchingPigment!.hex;
     componentsShallowCopy[receivedIndexComponent] = componentShallowCopy;
     setNewFormulaComponents([...componentsShallowCopy]);
-    setNewFormulaColor(returnHexColor(newFormulaComponents, fetchedPigments!));
+    setNewFormulaColor(returnHexColor(componentsShallowCopy, fetchedPigments!));
+    console.log(returnHexColor(componentsShallowCopy, fetchedPigments!));
   }
 
   async function handleComponentPercentageChange(
@@ -128,11 +129,12 @@ export default function CreateFormulaModal({
     };
     componentShallowCopy.Percentage = value;
     componentsShallowCopy[receivedIndexComponent] = componentShallowCopy;
-    setNewFormulaComponents(componentsShallowCopy);
+    setNewFormulaComponents([...componentsShallowCopy]);
 
     // Convert to number for calculations
     // const numericValue = Number(value);
-    setNewFormulaColor(returnHexColor(newFormulaComponents, fetchedPigments!));
+    setNewFormulaColor(returnHexColor(componentsShallowCopy, fetchedPigments!));
+    console.log(returnHexColor(componentsShallowCopy, fetchedPigments!));
   }
 
   function handleFormulaWeightChange(value: number) {
@@ -180,7 +182,7 @@ export default function CreateFormulaModal({
     const allComponentsQuantitiesSum = newFormulaComponents
       .map((component) => Number(component.Percentage))
       .reduce((a, b) => a + b);
-    console.log("allComponentsQuantitiesSum: ", allComponentsQuantitiesSum);
+    //console.log("allComponentsQuantitiesSum: ", allComponentsQuantitiesSum);
     const remainingQuantity =
       newFormulaWeight - Number(allComponentsQuantitiesSum);
     return remainingQuantity;
@@ -318,8 +320,6 @@ export default function CreateFormulaModal({
                 </Select>
 
                 <Input
-                  //   autoFocus
-                  //   endContent={<FaEnvelope />}
                   label="Formula code"
                   placeholder="Ex: 100 C"
                   variant="bordered"
