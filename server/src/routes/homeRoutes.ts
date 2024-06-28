@@ -14,13 +14,13 @@ import {
   returnEncryptedString,
 } from "../shared/stringEncryption";
 
-import {
-  authenticateToken,
-  generateAccessToken,
-  generateRefreshToken,
-  refreshSecret,
-} from "../shared/jwtMiddleware";
-import jwt, { JwtPayload } from "jsonwebtoken";
+// import {
+//   authenticateToken,
+//   generateAccessToken,
+//   generateRefreshToken,
+//   refreshSecret,
+// } from "../shared/jwtMiddleware";
+// import jwt, { JwtPayload } from "jsonwebtoken";
 
 const fs = require("fs");
 const readFile = promisify(fs.readFile);
@@ -63,19 +63,19 @@ router.post("/login", async (req: Request, res: Response) => {
       return res.json({ message: "User unverified" });
     }
 
-    const accessToken = generateAccessToken(String(fetchedUser._id));
-    const refreshToken = generateRefreshToken(String(fetchedUser._id));
+    // const accessToken = generateAccessToken(String(fetchedUser._id));
+    // const refreshToken = generateRefreshToken(String(fetchedUser._id));
 
     // res.cookie("accessToken", accessToken, { httpOnly: true, secure: true, maxAge: 900000 }); // 15 minutes
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 604800000,
-    }); // 7 days
+    // res.cookie("refreshToken", refreshToken, {
+    //   httpOnly: true,
+    //   secure: true,
+    //   maxAge: 604800000,
+    // }); // 7 days
 
     res.json({
       message: "Success",
-      accessToken,
+      // accessToken,
       userCompany: fetchedUser.company,
     });
   } catch (error) {
@@ -84,29 +84,29 @@ router.post("/login", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/refreshToken", (req: Request, res: Response) => {
-  const refreshToken = req.cookies.refreshToken;
+// router.post("/refreshToken", (req: Request, res: Response) => {
+//   const refreshToken = req.cookies.refreshToken;
 
-  if (!refreshToken) {
-    return res.sendStatus(401);
-  }
+//   if (!refreshToken) {
+//     return res.sendStatus(401);
+//   }
 
-  jwt.verify(refreshToken, refreshSecret, (err: any, decoded: any) => {
-    if (err || !decoded) {
-      return res.sendStatus(403);
-    }
+//   jwt.verify(refreshToken, refreshSecret, (err: any, decoded: any) => {
+//     if (err || !decoded) {
+//       return res.sendStatus(403);
+//     }
 
-    const userId = (decoded as JwtPayload).userId;
-    const accessToken = generateAccessToken(userId);
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 900000,
-    }); // 15 minutes
+//     const userId = (decoded as JwtPayload).userId;
+//     const accessToken = generateAccessToken(userId);
+//     res.cookie("accessToken", accessToken, {
+//       httpOnly: true,
+//       secure: true,
+//       maxAge: 900000,
+//     }); // 15 minutes
 
-    res.json({ accessToken });
-  });
-});
+//     res.json({ accessToken });
+//   });
+// });
 
 router.post("/logout", (req: Request, res: Response) => {
   res.clearCookie("refreshToken", { httpOnly: true, secure: true });

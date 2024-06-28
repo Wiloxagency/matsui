@@ -8,7 +8,7 @@ import {
   returnHexColor,
   returnHexColorPrepping,
 } from "../shared/returnHexColor";
-import { authenticateToken } from "../shared/jwtMiddleware";
+// import { authenticateToken } from "../shared/jwtMiddleware";
 
 const router = Router();
 
@@ -21,7 +21,7 @@ router.get("/", async (req: Request, res: Response) => {
 
 router.post(
   "/GetFormulas",
-  authenticateToken,
+  // authenticateToken,
   async (req: Request, res: Response) => {
     const db = await createMongoDBConnection();
     const components = db.collection("components");

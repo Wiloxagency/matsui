@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { FaEye, FaEyeSlash, FaLock, FaUser } from "react-icons/fa";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../Context/AuthProvider";
+// import { useAuth } from "../../Context/AuthProvider";
 import video from "../../assets/doesthiswork.mp4";
 import logo from "../../assets/matsui_logo.png";
 import "./Login.scss";
@@ -13,7 +13,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 const forbiddenProviders = ["gmail", "hotmail", "outlook", "yahoo"];
 
 export function Login() {
-  const { setAuth } = useAuth();
+  // const { setAuth } = useAuth();
 
   const emailRef = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState("");
@@ -95,10 +95,10 @@ export function Login() {
           const accessToken = response.data.accessToken;
           accessToken;
           // TODO: MAKE THIS WORK 👇🏻
-          setAuth({
-            email: response.data.email,
-            accessToken: response.data.accessToken,
-          });
+          // setAuth({
+          //   email: response.data.email,
+          //   accessToken: response.data.accessToken,
+          // });
           // console.log("accessToken: ", accessToken);
           navigate("/formulas");
         }
