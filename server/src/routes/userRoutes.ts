@@ -29,8 +29,10 @@ router.put("/", async (req: Request, res: Response) => {
 });
 
 router.delete("/", async (req: Request, res: Response) => {
-  console.log(req.body);
-  res.json("deleteUser");
+  const db = await createMongoDBConnection();
+  const users = db.collection("users");
+  const deleteUser = await users.deleteOne({ email: req.body.userEmail });
+  res.json(deleteUser);
 });
 
 router.get("/:id", async (req: Request, res: Response) => {});
