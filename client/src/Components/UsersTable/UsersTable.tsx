@@ -14,6 +14,7 @@ import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveT
 import { UserInterface } from "../../interfaces/interfaces";
 import "./UsersTable.scss";
 import { returnFormattedDate } from "../../Utilities/returnFormattedDate";
+import { useDeleteUserMutation } from "../../State/api";
 
 const columns = [
   {
@@ -58,6 +59,7 @@ interface UsersTableProps {
   handleEditUser: (userId: string) => void;
   handleResetUserPassword: () => void;
   handleCheckboxCheck: (value: number) => void;
+  refetchUsers: () => void;
   // setIndexRowToEdit: Dispatch<SetStateAction<number | null>>;
 }
 
@@ -71,11 +73,23 @@ export default function UsersTable({
   handleEditUser,
   handleResetUserPassword,
   handleCheckboxCheck,
+  refetchUsers,
 }: UsersTableProps) {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
-  function handleDeleteUser(){
-    console.log("Clicked delete user")
+  const [deleteUser] = useDeleteUserMutation();
+
+  async function handleDeleteUser(): Promise<void> {
+    const deleteSeriesResponse = await deleteUser({
+      userEmail: "ADD EMAIL HERE",
+    })
+      .unwrap()
+      .then((payload: any) => {
+        console.log("fulfilled", payload);
+        refetchUsers();
+      })
+      .catch((error) => console.error("rejected", error));
+    deleteSeriesResponse;
   }
 
   return (
@@ -138,7 +152,7 @@ export default function UsersTable({
                           variant="faded"
                           color="danger"
                           onClick={() => handleResetUserPassword()}
-                          >
+                        >
                           Reset user password
                         </DropdownItem>
                         <DropdownItem

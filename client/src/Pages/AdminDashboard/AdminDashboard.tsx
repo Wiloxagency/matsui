@@ -194,6 +194,7 @@ export default function AdminDashboard() {
                 handleEditUser={handleEditUser}
                 handleResetUserPassword={handleResetUserPassword}
                 handleCheckboxCheck={handleCheckboxCheck}
+                refetchUsers={refetchUsers}
               />
             ) : (
               <Spinner className="m-auto"></Spinner>

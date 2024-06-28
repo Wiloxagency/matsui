@@ -28,6 +28,11 @@ router.put("/", async (req: Request, res: Response) => {
   res.json(updateUser);
 });
 
+router.delete("/", async (req: Request, res: Response) => {
+  console.log(req.body);
+  res.json("deleteUser");
+});
+
 router.get("/:id", async (req: Request, res: Response) => {});
 
 router.post("/SendEmail", async (req: Request, res: Response) => {
