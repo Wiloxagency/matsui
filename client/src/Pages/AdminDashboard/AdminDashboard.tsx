@@ -7,13 +7,14 @@ import SendEmailCard from "../../Components/SendEmailCard/SendEmailCard";
 // import Swatches from "../../Components/Swatches/Swatches";
 import { Spinner } from "@nextui-org/spinner";
 import { useMediaQuery } from "react-responsive";
-import EditUserModal from "../../Components/EditUserModal/EditUserModal";
-import ResetUserPasswordModal from "../../Components/ResetUserPasswordModal/ResetUserPasswordModal";
+import EditUserModal from "../../Components/Modals/EditUserModal/EditUserModal";
+import ResetUserPasswordModal from "../../Components/Modals/ResetUserPasswordModal/ResetUserPasswordModal";
 import UsersTable from "../../Components/UsersTable/UsersTable";
-import { useGetUsersQuery } from "../../State/api";
+import { useDeleteUserMutation, useGetUsersQuery } from "../../State/api";
 import { UserInterface } from "../../interfaces/interfaces";
 import "./AdminDashboard.scss";
 import * as XLSX from "xlsx";
+import DeleteUserModal from "../../Components/Modals/DeleteUserModal/DeleteUserModal";
 
 export default function AdminDashboard() {
   const {
@@ -24,6 +25,10 @@ export default function AdminDashboard() {
   const {
     isOpen: isOpenResetUserPasswordModal,
     onOpenChange: onOpenChangeResetUserPasswordModal,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenDeleteUserModal,
+    onOpenChange: onOpenChangeDeleteUserModal,
   } = useDisclosure();
   // MODAL VARIABLES ☝🏻
   const { data: fetchedUsers, refetch: refetchUsers } = useGetUsersQuery();
@@ -46,6 +51,8 @@ export default function AdminDashboard() {
     undefined
   );
 
+  const [deleteUser] = useDeleteUserMutation();
+
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
   function handleSendEmail() {
@@ -66,6 +73,10 @@ export default function AdminDashboard() {
 
   function handleResetUserPassword() {
     onOpenChangeResetUserPasswordModal();
+  }
+
+  function handleDeleteUser() {
+    onOpenChangeDeleteUserModal();
   }
 
   // function handleCloseModal() {
@@ -113,6 +124,20 @@ export default function AdminDashboard() {
     }
   }
 
+  async function handleDeleteUserConfirmation(): Promise<void> {
+    const deleteSeriesResponse = await deleteUser({
+      userEmail: localStorage.getItem("userEmail")!,
+    })
+      .unwrap()
+      .then((payload: any) => {
+        console.log("fulfilled", payload);
+        refetchUsers();
+        onOpenChangeDeleteUserModal();
+      })
+      .catch((error) => console.error("rejected", error));
+    deleteSeriesResponse;
+  }
+
   useEffect(() => {
     if (indexesSelectedUsers !== undefined) updateEmailRecipients();
   }, [indexesSelectedUsers]);
@@ -142,6 +167,11 @@ export default function AdminDashboard() {
         isOpen={isOpenResetUserPasswordModal}
         onOpenChange={onOpenChangeResetUserPasswordModal}
       ></ResetUserPasswordModal>
+      <DeleteUserModal
+        isOpen={isOpenDeleteUserModal}
+        onOpenChange={onOpenChangeDeleteUserModal}
+        handleDeleteUserConfirmation={handleDeleteUserConfirmation}
+      ></DeleteUserModal>
       <EditUserModal
         isOpen={isOpenEditUserModal}
         onOpenChange={onOpenChangeEditUserModal}
@@ -195,6 +225,7 @@ export default function AdminDashboard() {
                 handleResetUserPassword={handleResetUserPassword}
                 handleCheckboxCheck={handleCheckboxCheck}
                 refetchUsers={refetchUsers}
+                handleDeleteUser={handleDeleteUser}
               />
             ) : (
               <Spinner className="m-auto"></Spinner>

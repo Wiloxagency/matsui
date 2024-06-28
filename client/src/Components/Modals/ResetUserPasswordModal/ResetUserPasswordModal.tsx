@@ -41,7 +41,7 @@ export default function ResetUserPasswordModal({
               <p>Do you wish to proceed?</p>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button color="default" variant="light" onPress={onClose}>
                 Close
               </Button>
               <Button color="primary" onPress={onClose}>

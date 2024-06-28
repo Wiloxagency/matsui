@@ -7,15 +7,15 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@nextui-org/modal";
-import { UserInterface } from "../../interfaces/interfaces";
-import { useUpdateUserMutation } from "../../State/api";
+import { UserInterface } from "../../../interfaces/interfaces";
+import { useUpdateUserMutation } from "../../../State/api";
 import { useEffect, useState } from "react";
 import { Flip, ToastContainer, toast } from "react-toastify";
-import { returnFormattedDate } from "../../Utilities/returnFormattedDate";
+import { returnFormattedDate } from "../../../Utilities/returnFormattedDate";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
 import { FaPlus } from "react-icons/fa";
-import { returnUniqueCompanies } from "../../Utilities/returnUniqueCompanies";
+import { returnUniqueCompanies } from "../../../Utilities/returnUniqueCompanies";
 
 interface EditUserModalProps {
   isOpen: boolean;

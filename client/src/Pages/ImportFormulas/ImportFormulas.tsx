@@ -5,9 +5,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaDownload, FaTrash } from "react-icons/fa";
 import { useMediaQuery } from "react-responsive";
-import DeleteSeriesModal from "../../Components/DeleteSeriesModal/DeleteSeriesModal";
+import DeleteSeriesModal from "../../Components/Modals/DeleteSeriesModal/DeleteSeriesModal";
 import CustomDropzone from "../../Components/Dropzone/Dropzone";
-import ImportedSeriesModal from "../../Components/ImportedSeriesModal/ImportedSeriesModal";
+import ImportedSeriesModal from "../../Components/Modals/ImportedSeriesModal/ImportedSeriesModal";
 import {
   api,
   useAddSeriesMutation,

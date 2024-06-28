@@ -13,7 +13,7 @@ import {
   FaSearch,
 } from "react-icons/fa";
 import { useMediaQuery } from "react-responsive";
-import CreateFormulaModal from "../../Components/CreateFormulaModal/CreateFormulaModal";
+import CreateFormulaModal from "../../Components/Modals/CreateFormulaModal/CreateFormulaModal";
 import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
 import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
 import ReusableButton from "../../Components/ReusableButton/ReusableButton";

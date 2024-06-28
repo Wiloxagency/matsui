@@ -11,10 +11,9 @@ import { FaEllipsisV, FaTrash } from "react-icons/fa";
 import { useMediaQuery } from "react-responsive";
 import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
 import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
+import { returnFormattedDate } from "../../Utilities/returnFormattedDate";
 import { UserInterface } from "../../interfaces/interfaces";
 import "./UsersTable.scss";
-import { returnFormattedDate } from "../../Utilities/returnFormattedDate";
-import { useDeleteUserMutation } from "../../State/api";
 
 const columns = [
   {
@@ -60,37 +59,17 @@ interface UsersTableProps {
   handleResetUserPassword: () => void;
   handleCheckboxCheck: (value: number) => void;
   refetchUsers: () => void;
-  // setIndexRowToEdit: Dispatch<SetStateAction<number | null>>;
+  handleDeleteUser: () => void;
 }
 
 export default function UsersTable({
   users,
-  // selectedRowsIds,
-  // setSelectedRowsIds,
-  // indexRowToEdit,
-
-  // setIndexRowToEdit,
   handleEditUser,
   handleResetUserPassword,
   handleCheckboxCheck,
-  refetchUsers,
+  handleDeleteUser,
 }: UsersTableProps) {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
-
-  const [deleteUser] = useDeleteUserMutation();
-
-  async function handleDeleteUser(): Promise<void> {
-    const deleteSeriesResponse = await deleteUser({
-      userEmail: "ADD EMAIL HERE",
-    })
-      .unwrap()
-      .then((payload: any) => {
-        console.log("fulfilled", payload);
-        refetchUsers();
-      })
-      .catch((error) => console.error("rejected", error));
-    deleteSeriesResponse;
-  }
 
   return (
     <>

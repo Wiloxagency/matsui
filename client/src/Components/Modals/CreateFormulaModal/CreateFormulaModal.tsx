@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import {
   FormulaComponentInterface,
   PigmentInterface,
-} from "../../interfaces/interfaces";
+} from "../../../interfaces/interfaces";
 import "./CreateFormulaModal.scss";
 // import { FaEnvelope, FaLock } from "react-icons/fa";
 import { Radio, RadioGroup } from "@nextui-org/radio";
@@ -27,8 +27,8 @@ import { FaX } from "react-icons/fa6";
 import { useMediaQuery } from "react-responsive";
 import { Flip, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useAddFormulaMutation } from "../../State/api";
-import { returnHexColor } from "../../Utilities/returnHexColor";
+import { useAddFormulaMutation } from "../../../State/api";
+import { returnHexColor } from "../../../Utilities/returnHexColor";
 
 interface CreateFormulaModalProps {
   isOpenCreateFormulaModal: boolean;
