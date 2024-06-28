@@ -8,10 +8,15 @@ import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
 // import "../node_modules/react-super-responsive-table/dist/SuperResponsive";
 import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import { useMediaQuery } from "react-responsive";
+import { calculateResults } from "./costCalculation";
+
 export default function InkCalculator() {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
   const [artworkHeight, setArtworkHeight] = useState<number>(0);
+  const [artworkWidth, setArtworkWidth] = useState<number>(0);
+  const [inkCost, setInkCost] = useState<number>(0);
+  const [coverage, setCoverage] = useState<number>(0);
 
   const [calculatorUnit, setCalculatorUnit] = useState<string>("inch");
   const columns = [
@@ -45,62 +50,75 @@ export default function InkCalculator() {
   const [resultValues, setResultValues] = useState<
     {
       meshCount: number;
-      depositThickness: string;
-      squareInchesPerGallon: number;
-      squareCmPerGallon: number;
+      depositThickness: number;
+      unitPerGallon: number;
+      // squareInchesPerGallon: number;
+      // squareCmPerGallon: number;
       printsPerGallon: number;
       costPerShirt: number;
     }[]
   >([
     {
       meshCount: 355,
-      depositThickness: "1 mil",
-      squareInchesPerGallon: 230.4,
-      squareCmPerGallon: 148644864,
+      depositThickness: 1,
+      unitPerGallon: 230.4,
       printsPerGallon: 0,
       costPerShirt: 0,
     },
     {
       meshCount: 200,
-      depositThickness: "2 mil",
-      squareInchesPerGallon: 115.2,
-      squareCmPerGallon: 74322432,
+      depositThickness: 2,
+      unitPerGallon: 115.2,
       printsPerGallon: 0,
       costPerShirt: 0,
     },
     {
       meshCount: 130,
-      depositThickness: "3 mil",
-      squareInchesPerGallon: 76.752,
-      squareCmPerGallon: 49517320,
+      depositThickness: 3,
+      unitPerGallon: 76.752,
       printsPerGallon: 0,
       costPerShirt: 0,
     },
     {
       meshCount: 110,
-      depositThickness: "3.5 mil",
-      squareInchesPerGallon: 61.176,
-      squareCmPerGallon: 43339268,
+      depositThickness: 3.5,
+      unitPerGallon: 61.176,
       printsPerGallon: 0,
       costPerShirt: 0,
     },
     {
       meshCount: 96,
-      depositThickness: "4 mil",
-      squareInchesPerGallon: 57.6,
-      squareCmPerGallon: 37161216,
+      depositThickness: 4,
+      unitPerGallon: 57.6,
       printsPerGallon: 0,
       costPerShirt: 0,
     },
     {
       meshCount: 60,
-      depositThickness: "5 mil",
-      squareInchesPerGallon: 46.08,
-      squareCmPerGallon: 29728973,
+      depositThickness: 5,
+      unitPerGallon: 46.08,
       printsPerGallon: 0,
       costPerShirt: 0,
     },
   ]);
+
+  useEffect(() => {
+    let calculatedResults;
+    if (calculatorUnit === "inch" || calculatorUnit === "cm") {
+      calculatedResults = calculateResults(
+        {
+          unit: calculatorUnit,
+          height: artworkHeight,
+          width: artworkWidth,
+          inkCost: inkCost,
+          coverage: coverage,
+        },
+        resultValues
+      );
+      console.log(calculatedResults);
+      setResultValues(calculatedResults);
+    }
+  }, [calculatorUnit, artworkHeight, artworkWidth, inkCost, coverage]);
 
   useEffect(() => {
     setResultValues(resultValues);
@@ -153,7 +171,6 @@ export default function InkCalculator() {
               type="number"
               label="Arwork height"
               min={0}
-              placeholder="000"
               labelPlacement="outside"
               value={String(artworkHeight)}
               onValueChange={(value) => setArtworkHeight(Number(value))}
@@ -169,8 +186,9 @@ export default function InkCalculator() {
               type="number"
               label="Arwork width"
               min={0}
-              placeholder="000"
               labelPlacement="outside"
+              value={String(artworkWidth)}
+              onValueChange={(value) => setArtworkWidth(Number(value))}
               endContent={
                 <div className="pointer-events-none flex items-center">
                   <span className="text-default-400 text-small">
@@ -185,6 +203,8 @@ export default function InkCalculator() {
               min={0}
               placeholder="000"
               labelPlacement="outside"
+              value={String(inkCost)}
+              onValueChange={(value) => setInkCost(Number(value))}
               endContent={
                 <div className="pointer-events-none flex items-center">
                   <span className="text-default-400 text-small whitespace-nowrap">
@@ -197,8 +217,11 @@ export default function InkCalculator() {
               type="number"
               label="Coverage"
               min={0}
+              max={100}
               placeholder="000"
               labelPlacement="outside"
+              value={String(coverage)}
+              onValueChange={(value) => setCoverage(Number(value))}
               endContent={
                 <div className="pointer-events-none flex items-center">
                   <span className="text-default-400 text-small whitespace-nowrap">
@@ -237,9 +260,8 @@ export default function InkCalculator() {
                     <Td>{row.meshCount}</Td>
                     <Td>{row.depositThickness}</Td>
                     <Td>
-                      {calculatorUnit === "inch"
-                        ? row.squareInchesPerGallon + " in"
-                        : row.squareCmPerGallon + " cm"}
+                      {row.unitPerGallon}{" "}
+                      {calculatorUnit === "inch" ? " in" : " cm"}
                     </Td>
                     <Td>{row.printsPerGallon}</Td>
                     <Td>{row.costPerShirt}</Td>

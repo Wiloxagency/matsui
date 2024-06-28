@@ -28,6 +28,7 @@ export function calculateResults(
   const areaCm2 = heightCm * widthCm * (coverage / 100);
 
   return results.map((result) => {
+    // return results.map((result) => {
     const depositThicknessCm = result.depositThickness * 0.00254;
     const inkVolumePerPrintCm3 = areaCm2 * depositThicknessCm;
     const unitPerGallonCm2 =
@@ -47,58 +48,58 @@ export function calculateResults(
 // Así que debes agregar esa variable en el frontend, como no se implementarlo en React te muestro por acá un ejemplo que probé en un editor
 // on-line typescript, todo lo que ves de acá en adelante lo quitas de esta parte porque debe ir en tu .tsx.
 
-const measurements: Measurements = {
-  unit: "inch",
-  height: 30,
-  width: 40,
-  inkCost: 100,
-  coverage: 100,
-};
+// const measurements: Measurements = {
+//   unit: "inch",
+//   height: 30,
+//   width: 40,
+//   inkCost: 100,
+//   coverage: 100,
+// };
 
-const results: EstimatedResults[] = [
-  {
-    meshCount: 355,
-    depositThickness: 1,
-    unitPerGallon: 230.4,
-    printsPerGallon: 0,
-    costPerShirt: 0,
-  },
-  {
-    meshCount: 200,
-    depositThickness: 2,
-    unitPerGallon: 115.2,
-    printsPerGallon: 0,
-    costPerShirt: 0,
-  },
-  {
-    meshCount: 130,
-    depositThickness: 3,
-    unitPerGallon: 76.752,
-    printsPerGallon: 0,
-    costPerShirt: 0,
-  },
-  {
-    meshCount: 110,
-    depositThickness: 3.5,
-    unitPerGallon: 61.176,
-    printsPerGallon: 0,
-    costPerShirt: 0,
-  },
-  {
-    meshCount: 96,
-    depositThickness: 4,
-    unitPerGallon: 57.6,
-    printsPerGallon: 0,
-    costPerShirt: 0,
-  },
-  {
-    meshCount: 60,
-    depositThickness: 5,
-    unitPerGallon: 46.08,
-    printsPerGallon: 0,
-    costPerShirt: 0,
-  },
-];
+// const results: EstimatedResults[] = [
+//   {
+//     meshCount: 355,
+//     depositThickness: 1,
+//     unitPerGallon: 230.4,
+//     printsPerGallon: 0,
+//     costPerShirt: 0,
+//   },
+//   {
+//     meshCount: 200,
+//     depositThickness: 2,
+//     unitPerGallon: 115.2,
+//     printsPerGallon: 0,
+//     costPerShirt: 0,
+//   },
+//   {
+//     meshCount: 130,
+//     depositThickness: 3,
+//     unitPerGallon: 76.752,
+//     printsPerGallon: 0,
+//     costPerShirt: 0,
+//   },
+//   {
+//     meshCount: 110,
+//     depositThickness: 3.5,
+//     unitPerGallon: 61.176,
+//     printsPerGallon: 0,
+//     costPerShirt: 0,
+//   },
+//   {
+//     meshCount: 96,
+//     depositThickness: 4,
+//     unitPerGallon: 57.6,
+//     printsPerGallon: 0,
+//     costPerShirt: 0,
+//   },
+//   {
+//     meshCount: 60,
+//     depositThickness: 5,
+//     unitPerGallon: 46.08,
+//     printsPerGallon: 0,
+//     costPerShirt: 0,
+//   },
+// ];
 
-const updatedResults = calculateResults(measurements, results);
-console.log(updatedResults);
+// const updatedResults = calculateResults(measurements);
+// console.log(updatedResults);
