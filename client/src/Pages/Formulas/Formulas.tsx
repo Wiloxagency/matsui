@@ -4,6 +4,7 @@ import { Input } from "@nextui-org/input";
 import { useDisclosure } from "@nextui-org/modal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Spinner } from "@nextui-org/spinner";
+import { Tooltip } from "@nextui-org/tooltip";
 import { useEffect, useState } from "react";
 import {
   FaClone,
@@ -13,24 +14,24 @@ import {
   FaSearch,
 } from "react-icons/fa";
 import { useMediaQuery } from "react-responsive";
-import CreateFormulaModal from "../../Components/Modals/CreateFormulaModal/CreateFormulaModal";
+import * as XLSX from "xlsx";
 import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
 import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
-import ReusableButton from "../../Components/ReusableButton/ReusableButton";
+import CreateFormulaModal from "../../Components/Modals/CreateFormulaModal/CreateFormulaModal";
 import Swatches from "../../Components/Swatches/Swatches";
 import {
   api,
+  useAddFormulaMutation,
   useGetFormulasQuery,
   useGetInkSystemsQuery,
   useGetPigmentsQuery,
   useGetSeriesQuery,
   useGetUsersQuery,
 } from "../../State/api";
+import { returnUniqueCompanies } from "../../Utilities/returnUniqueCompanies";
 import { FormulaInterface } from "../../interfaces/interfaces";
 import "./Formulas.scss";
-import * as XLSX from "xlsx";
-import { returnUniqueCompanies } from "../../Utilities/returnUniqueCompanies";
-import { Tooltip } from "@nextui-org/tooltip";
+import { Flip, ToastContainer, toast } from "react-toastify";
 
 export default function Formulas() {
   const [selectedSeries, setSelectedSeries] = useState<string>("301");
@@ -46,6 +47,8 @@ export default function Formulas() {
   const { data: fetchedUsers } = useGetUsersQuery();
   const [companies, setCompanies] = useState<{ name: string }[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<string>();
+
+  const [addFormula] = useAddFormulaMutation();
 
   const {
     data: fetchedFormulas,
@@ -94,6 +97,9 @@ export default function Formulas() {
     onOpenChange: onOpenChangeCreateFormulaModal,
   } = useDisclosure();
 
+  const triggerDuplicatedFormulaNotification = () =>
+    toast("😁 Formula duplicated!");
+
   function returnTotalFormulaCost() {
     // console.log(selectedFormula)
     let formulaPrice: number = 0;
@@ -108,9 +114,7 @@ export default function Formulas() {
           Number(formulaQuantityAsString) * component.percentage;
         const componentPrice =
           (componentWeight * selectedPigment[0].pricePerKg) / 10000;
-
         // setTotalFormulaCost(totalFormulaCost + componentPrice);
-
         // updateTotalFormulaCost(componentPrice);
         formulaPrice = parseFloat((formulaPrice + componentPrice).toFixed(3));
       }
@@ -187,6 +191,35 @@ export default function Formulas() {
     setSelectedCompany(undefined);
   }
 
+  async function handleDuplicateFormula() {
+    if (selectedFormula) {
+      const filledNewFormulaComponents = selectedFormula.components.map(
+        (component) => {
+          return {
+            FormulaSerie: selectedFormula.formulaSeries,
+            FormulaCode: "COPY: " + selectedFormula.formulaCode,
+            FormulaDescription: selectedFormula.formulaDescription,
+            ComponentCode: component.componentCode,
+            ComponentDescription: component.componentDescription,
+            Percentage: String(component.percentage),
+            isFormulaActive: selectedFormula.isActive,
+          };
+        }
+      );
+
+      await addFormula({
+        formulaComponents: filledNewFormulaComponents,
+        company: localStorage.getItem("userCompany")!,
+        createdBy: localStorage.getItem("userEmail")!,
+      })
+        .unwrap()
+        .then(() => {
+          triggerDuplicatedFormulaNotification();
+          refetchFormulas();
+        });
+    }
+  }
+
   useEffect(() => {
     if (fetchedUsers) {
       const extractedCompanies = returnUniqueCompanies(fetchedUsers);
@@ -207,12 +240,14 @@ export default function Formulas() {
 
   return (
     <>
+      <ToastContainer transition={Flip} />
+
       <CreateFormulaModal
         isOpenCreateFormulaModal={isOpenCreateFormulaModal}
         onOpenChangeCreateFormulaModal={onOpenChangeCreateFormulaModal}
         fetchedSeries={fetchedSeries}
         fetchedPigments={fetchedPigments}
-        refetchFormulaSwatchColors={refetchFormulas}
+        refetchFormulas={refetchFormulas}
       />
       <div
         className={
@@ -368,18 +403,6 @@ export default function Formulas() {
                 }
               />
             </div>
-            {/* <div className="checkboxRow">
-              <span>
-                <input type="checkbox"></input>
-                <label style={{ margin: "0 1rem 0 .5rem" }}>ALL FORMULAS</label>
-              </span>
-              <span>
-                <input type="checkbox"></input>
-                <label style={{ margin: "0 1rem 0 .5rem" }}>
-                  COMPANY FORMULAS
-                </label>
-              </span>
-            </div> */}
             <div className="swatchesComponentContainer">
               {isGetFormulasSuccessful ? (
                 <Swatches
@@ -470,18 +493,20 @@ export default function Formulas() {
                     </span>
                   </div>
                   <div className="buttonsAndTotalRow">
-                    <ReusableButton
-                      className="underlineButton"
-                      buttonText="DUPLICATE FORMULA"
-                      Icon={FaClone}
-                      handleClick={() => {}}
-                    />{" "}
-                    <ReusableButton
-                      className="underlineButton"
-                      buttonText="PRINT FORMULA"
-                      Icon={FaPrint}
-                      handleClick={() => {}}
-                    />
+                    <Button
+                      variant="bordered"
+                      startContent={<FaClone />}
+                      onPress={handleDuplicateFormula}
+                    >
+                      DUPLICATE FORMULA
+                    </Button>
+                    <Button
+                      variant="bordered"
+                      startContent={<FaPrint />}
+                      onPress={() => {}}
+                    >
+                      PRINT FORMULA
+                    </Button>
                   </div>
                 </>
               ) : (

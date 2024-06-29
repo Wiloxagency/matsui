@@ -35,7 +35,7 @@ interface CreateFormulaModalProps {
   onOpenChangeCreateFormulaModal: (value: boolean) => void;
   fetchedSeries: { seriesName: string }[] | undefined;
   fetchedPigments: PigmentInterface[] | undefined;
-  refetchFormulaSwatchColors: () => void;
+  refetchFormulas: () => void;
 }
 
 export default function CreateFormulaModal({
@@ -43,7 +43,7 @@ export default function CreateFormulaModal({
   onOpenChangeCreateFormulaModal,
   fetchedSeries,
   fetchedPigments,
-  refetchFormulaSwatchColors,
+  refetchFormulas,
 }: CreateFormulaModalProps) {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
@@ -270,7 +270,7 @@ export default function CreateFormulaModal({
       company: localStorage.getItem("userCompany")!,
       createdBy: localStorage.getItem("userEmail")!,
     });
-    refetchFormulaSwatchColors();
+    refetchFormulas();
     handleReset();
     onOpenChangeCreateFormulaModal(false);
     triggerAddedFormulaNotification();

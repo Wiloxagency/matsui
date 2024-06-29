@@ -388,7 +388,7 @@ router.post("/CreateFormula", async (req: Request, res: Response) => {
     await formulaSwatchColors.insertOne(newFormulaSwatch);
     await components.insertMany(req.body.formulaComponents);
 
-    res.json("Received");
+    res.json("Success");
   } catch (error) {
     console.error("Error fetching pigments:", error);
     res.status(500).json({ error: "Internal Server Error" });
