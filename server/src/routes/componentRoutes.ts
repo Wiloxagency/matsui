@@ -28,7 +28,7 @@ router.post(
     let initialRequestFormulaCodes: string[] = [];
     const searchQuery: string = req.body.formulaSearchQuery;
 
-    // console.log(req.body)
+    console.log(req.body)
 
     if (searchQuery === "") {
       const formulaSwatchColors = db.collection("formulaSwatchColors");
@@ -42,7 +42,8 @@ router.post(
       );
     }
 
-    const path = "formulaSwatchColor.company";
+    const companyPath = "formulaSwatchColor.company";
+    const creatorPath = "formulaSwatchColor.createdBy";
 
     const pipeline = [
       { $match: { FormulaSerie: req.body.formulaSeries } },
@@ -90,7 +91,13 @@ router.post(
 
       {
         $match: {
-          [path]: req.body.company,
+          [companyPath]: req.body.company,
+        },
+      },
+
+      {
+        $match: {
+          [creatorPath]: req.body.userEmail,
         },
       },
 

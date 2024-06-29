@@ -10,7 +10,7 @@ import { useMediaQuery } from "react-responsive";
 import EditUserModal from "../../Components/Modals/EditUserModal/EditUserModal";
 import ResetUserPasswordModal from "../../Components/Modals/ResetUserPasswordModal/ResetUserPasswordModal";
 import UsersTable from "../../Components/UsersTable/UsersTable";
-import { useDeleteUserMutation, useGetUsersQuery } from "../../State/api";
+import { api, useDeleteUserMutation, useGetUsersQuery } from "../../State/api";
 import { UserInterface } from "../../interfaces/interfaces";
 import "./AdminDashboard.scss";
 import * as XLSX from "xlsx";
@@ -54,6 +54,8 @@ export default function AdminDashboard() {
   const [deleteUser] = useDeleteUserMutation();
 
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
+
+  const [triggerGetFormulas] = api.endpoints.getFormulas.useLazyQuery();
 
   function handleSendEmail() {
     setIsSendEmailActive((previousValue) => !previousValue);
@@ -103,14 +105,19 @@ export default function AdminDashboard() {
       const filteredArray = indexesSelectedUsers.filter(
         (indexSelectedUser) => indexSelectedUser !== receivedUserIndex
       );
-
+      if (filteredArray.length === 1) {
+        const lastUserSelected = fetchedUsers![filteredArray[0]];
+        triggerGetFormulas({userEmail: lastUserSelected.email})
+      }
       setIndexesSelectedUsers(filteredArray);
     } else {
       const pushReceivedIndex: number[] = [
         ...indexesSelectedUsers,
         receivedUserIndex,
       ];
-
+      if (indexesSelectedUsers.length === 0) {
+        console.log(fetchedUsers![receivedUserIndex]);
+      }
       setIndexesSelectedUsers(pushReceivedIndex);
     }
   }

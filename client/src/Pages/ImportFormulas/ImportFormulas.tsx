@@ -391,7 +391,12 @@ export default function ImportFormulas() {
             </p>
             <div className="mb-4">
               {missingPigments.map((missingPigment, indexPigment) => {
-                return <span>{missingPigment}{indexPigment === missingPigments.length -1 ? "" : ", "}</span>;
+                return (
+                  <span>
+                    {missingPigment}
+                    {indexPigment === missingPigments.length - 1 ? "" : ", "}
+                  </span>
+                );
               })}
             </div>
             <Button

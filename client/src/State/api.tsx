@@ -77,9 +77,10 @@ export const api = createApi({
     getFormulas: builder.query<
       GetFormulasResultInterface[],
       {
-        formulaSeries: string;
-        formulaSearchQuery: string;
+        formulaSeries?: string;
+        formulaSearchQuery?: string;
         company?: string;
+        userEmail?: string;
       }
     >({
       query: (arg) => ({
@@ -89,6 +90,7 @@ export const api = createApi({
           formulaSeries: arg.formulaSeries,
           formulaSearchQuery: arg.formulaSearchQuery,
           company: arg.company,
+          userEmail: arg.userEmail,
         },
         headers: {
           Authorization: "",
