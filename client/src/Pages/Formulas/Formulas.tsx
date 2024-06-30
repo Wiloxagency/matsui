@@ -416,6 +416,11 @@ export default function Formulas() {
               ) : (
                 <Spinner className="m-auto" />
               )}
+              {isGetFormulasSuccessful && fetchedFormulas.length === 0 && (
+                <span className="m-auto">
+                  No formulas match the selected filters
+                </span>
+              )}
             </div>
           </div>
         </div>
