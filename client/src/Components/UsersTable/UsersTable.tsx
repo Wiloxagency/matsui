@@ -55,11 +55,11 @@ interface UsersTableProps {
   selectedRowsIds: Set<string>;
   setSelectedRowsIds: Dispatch<SetStateAction<Set<string>>>;
   indexRowToEdit: number | null;
-  handleEditUser: (userId: string) => void;
-  handleResetUserPassword: () => void;
-  handleCheckboxCheck: (value: number) => void;
   refetchUsers: () => void;
-  handleDeleteUser: () => void;
+  handleCheckboxCheck: (value: number) => void;
+  handleEditUser: (userId: string) => void;
+  handleResetUserPassword: (userId: string) => void;
+  handleDeleteUser: (userId: string) => void;
 }
 
 export default function UsersTable({
@@ -130,7 +130,7 @@ export default function UsersTable({
                           className="text-danger"
                           variant="faded"
                           color="danger"
-                          onClick={() => handleResetUserPassword()}
+                          onClick={() => handleResetUserPassword(user._id)}
                         >
                           Reset user password
                         </DropdownItem>
@@ -139,7 +139,7 @@ export default function UsersTable({
                           className="text-danger"
                           variant="solid"
                           color="danger"
-                          onClick={() => handleDeleteUser()}
+                          onClick={() => handleDeleteUser(user._id)}
                         >
                           DELETE USER
                         </DropdownItem>

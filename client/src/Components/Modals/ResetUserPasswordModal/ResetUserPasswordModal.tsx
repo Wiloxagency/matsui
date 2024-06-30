@@ -10,11 +10,13 @@ import {
 interface ResetUserPasswordModalProps {
   isOpen: boolean;
   onOpenChange: (value: boolean) => void;
+  userEmail: string
 }
 
 export default function ResetUserPasswordModal({
   isOpen,
   onOpenChange,
+  userEmail
 }: ResetUserPasswordModalProps) {
   return (
     <Modal
@@ -35,7 +37,7 @@ export default function ResetUserPasswordModal({
             </ModalHeader>
             <ModalBody>
               <p>
-                You're about to send this user an email with instructions to
+                You're about to send {userEmail} an email with instructions to
                 reset their password.
               </p>
               <p>Do you wish to proceed?</p>

@@ -14,6 +14,7 @@ import EditUserModal from "../../Components/Modals/EditUserModal/EditUserModal";
 import ResetUserPasswordModal from "../../Components/Modals/ResetUserPasswordModal/ResetUserPasswordModal";
 import Swatches from "../../Components/Swatches/Swatches";
 import UsersTable from "../../Components/UsersTable/UsersTable";
+// import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
 
 export default function AdminDashboard() {
   const {
@@ -70,22 +71,33 @@ export default function AdminDashboard() {
     setIsSendEmailActive((previousValue) => !previousValue);
   }
 
-  function handleEditUser(receivedUserId: string) {
-    setIdUserToEdit(receivedUserId);
-    setIndexRowToEdit(-1);
-    onOpenEditUserModal();
-
+  function setSelectedUserById(receivedUserId: string) {
     const getSelectedUser = fetchedUsers!.filter(
       (user) => user._id === receivedUserId
     )[0];
     setSelectedUser(getSelectedUser);
   }
 
-  function handleResetUserPassword() {
+  function handleEditUser(receivedUserId: string) {
+    setIdUserToEdit(receivedUserId);
+    setIndexRowToEdit(-1);
+    onOpenEditUserModal();
+
+    setSelectedUserById(receivedUserId);
+
+    // const getSelectedUser = fetchedUsers!.filter(
+    //   (user) => user._id === receivedUserId
+    // )[0];
+    // setSelectedUser(getSelectedUser);
+  }
+
+  function handleResetUserPassword(receivedUserId: string) {
+    setSelectedUserById(receivedUserId);
     onOpenChangeResetUserPasswordModal();
   }
 
-  function handleDeleteUser() {
+  function handleDeleteUser(receivedUserId: string) {
+    setSelectedUserById(receivedUserId);
     onOpenChangeDeleteUserModal();
   }
 
@@ -184,11 +196,13 @@ export default function AdminDashboard() {
       <ResetUserPasswordModal
         isOpen={isOpenResetUserPasswordModal}
         onOpenChange={onOpenChangeResetUserPasswordModal}
+        userEmail={selectedUser ? selectedUser.email : ""}
       ></ResetUserPasswordModal>
       <DeleteUserModal
         isOpen={isOpenDeleteUserModal}
         onOpenChange={onOpenChangeDeleteUserModal}
         handleDeleteUserConfirmation={handleDeleteUserConfirmation}
+        userEmail={selectedUser ? selectedUser.email : ""}
       ></DeleteUserModal>
       <EditUserModal
         isOpen={isOpenEditUserModal}
@@ -306,7 +320,9 @@ export default function AdminDashboard() {
                   FORMULA DETAILS: DC NEO 285 C
                 </div>
                 <div className="card">
-                  {/* <FormulaDetailsTable /> */}
+                  {/* {selectedFormula && (
+                    <FormulaDetailsTable formula={selectedFormula}  />
+                  )} */}
                   <span className="m-auto text-center">
                     Click on a formula to see its details
                     <br />

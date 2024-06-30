@@ -11,12 +11,14 @@ interface DeleteUserModalProps {
   isOpen: boolean;
   onOpenChange: (value: boolean) => void;
   handleDeleteUserConfirmation: () => void;
+  userEmail: string;
 }
 
 export default function DeleteUserModal({
   isOpen,
   onOpenChange,
   handleDeleteUserConfirmation,
+  userEmail,
 }: DeleteUserModalProps) {
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur">
@@ -27,7 +29,7 @@ export default function DeleteUserModal({
               Delete user
             </ModalHeader>
             <ModalBody>
-              <p>You're about to delete this user.</p>
+              <p>You're about to delete user {userEmail}.</p>
               <p>This action cannot be undone.</p>
               <p>Are you sure you want to proceed?</p>
             </ModalBody>
