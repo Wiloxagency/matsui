@@ -8,6 +8,7 @@ import {
   returnHexColor,
   returnHexColorPrepping,
 } from "../shared/returnHexColor";
+import { Document } from "mongodb";
 // import { authenticateToken } from "../shared/jwtMiddleware";
 
 const router = Router();
@@ -28,14 +29,14 @@ router.post(
     let initialRequestFormulaCodes: string[] = [];
     const searchQuery: string = req.body.formulaSearchQuery;
 
-    console.log(req.body)
+    console.log(req.body);
 
     if (searchQuery === "") {
       const formulaSwatchColors = db.collection("formulaSwatchColors");
       const latest20FormulaSwatchColors = await formulaSwatchColors
         .find()
         .sort({ _id: -1 })
-        .limit(150)
+        .limit(50)
         .toArray();
       initialRequestFormulaCodes = latest20FormulaSwatchColors.map(
         (formula) => formula.formulaCode
@@ -45,22 +46,35 @@ router.post(
     const companyPath = "formulaSwatchColor.company";
     const creatorPath = "formulaSwatchColor.createdBy";
 
-    const pipeline = [
-      { $match: { FormulaSerie: req.body.formulaSeries } },
-      searchQuery === ""
-        ? {
-            $match: {
-              FormulaCode: {
-                $in: initialRequestFormulaCodes,
-              },
-            },
-          }
-        : {
-            $match: {
-              // FormulaCode: { "$regex": searchQuery, "$options": "i" },
-              FormulaDescription: { $regex: searchQuery, $options: "i" },
-            },
+    let pipeline: Document[] = [];
+
+    if (req.body.formulaSeries) {
+      pipeline.push({
+        $match: { FormulaSerie: req.body.formulaSeries },
+      });
+    }
+
+    if (!req.body.formulaSearchQuery && !req.body.userEmail) {
+      pipeline.push({
+        $match: {
+          FormulaCode: {
+            $in: initialRequestFormulaCodes,
           },
+        },
+      });
+    }
+
+    if (req.body.formulaSearchQuery) {
+      pipeline.push({
+        $match: {
+          // FormulaCode: { "$regex": searchQuery, "$options": "i" },
+          FormulaDescription: { $regex: searchQuery, $options: "i" },
+        },
+      });
+      // console.log("Search query added");
+    }
+
+    pipeline.push(
       {
         $lookup: {
           from: "pigments",
@@ -87,45 +101,129 @@ router.post(
       {
         $unwind: "$formulaSwatchColor",
       },
-      { $project: { fromItems: 0 } },
+      { $project: { fromItems: 0 } }
+    );
 
-      {
+    if (req.body.company) {
+      pipeline.push({
         $match: {
           [companyPath]: req.body.company,
         },
-      },
+      });
+    }
 
-      {
+    if (req.body.userEmail) {
+      pipeline.push({
         $match: {
           [creatorPath]: req.body.userEmail,
         },
-      },
+      });
+    }
 
-      {
-        $group: {
-          _id: "$FormulaCode",
-          formulaDescription: {
-            $first: "$FormulaDescription",
-          },
-          formulaSwatchColor: {
-            $first: "$formulaSwatchColor",
-          },
-          components: {
-            $push: {
-              componentCode: "$ComponentCode",
-              componentDescription: "$ComponentDescription",
-              hex: "$hex",
-              percentage: "$Percentage",
-            },
+    pipeline.push({
+      $group: {
+        _id: "$FormulaCode",
+        formulaDescription: {
+          $first: "$FormulaDescription",
+        },
+        formulaSwatchColor: {
+          $first: "$formulaSwatchColor",
+        },
+        components: {
+          $push: {
+            componentCode: "$ComponentCode",
+            componentDescription: "$ComponentDescription",
+            hex: "$hex",
+            percentage: "$Percentage",
           },
         },
       },
-    ];
+    });
+
+    // const pipeline = [
+    //   {
+    //     $match: { FormulaSerie: req.body.formulaSeries },
+    //   },
+    //   !searchQuery
+    //     ? {
+    //         $match: {
+    //           FormulaCode: {
+    //             $in: initialRequestFormulaCodes,
+    //           },
+    //         },
+    //       }
+    //     : {
+    //         $match: {
+    //           // FormulaCode: { "$regex": searchQuery, "$options": "i" },
+    //           FormulaDescription: { $regex: searchQuery, $options: "i" },
+    //         },
+    //       },
+    //   {
+    //     $lookup: {
+    //       from: "pigments",
+    //       localField: "ComponentCode",
+    //       foreignField: "code",
+    //       as: "component",
+    //     },
+    //   },
+    //   {
+    //     $replaceRoot: {
+    //       newRoot: {
+    //         $mergeObjects: [{ $arrayElemAt: ["$component", 0] }, "$$ROOT"],
+    //       },
+    //     },
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "formulaSwatchColors",
+    //       localField: "FormulaCode",
+    //       foreignField: "formulaCode",
+    //       as: "formulaSwatchColor",
+    //     },
+    //   },
+    //   {
+    //     $unwind: "$formulaSwatchColor",
+    //   },
+    //   { $project: { fromItems: 0 } },
+
+    //   {
+    //     $match: {
+    //       [companyPath]: req.body.company,
+    //     },
+    //   },
+
+    //   {
+    //     $match: {
+    //       [creatorPath]: req.body.userEmail,
+    //     },
+    //   },
+
+    //   {
+    //     $group: {
+    //       _id: "$FormulaCode",
+    //       formulaDescription: {
+    //         $first: "$FormulaDescription",
+    //       },
+    //       formulaSwatchColor: {
+    //         $first: "$formulaSwatchColor",
+    //       },
+    //       components: {
+    //         $push: {
+    //           componentCode: "$ComponentCode",
+    //           componentDescription: "$ComponentDescription",
+    //           hex: "$hex",
+    //           percentage: "$Percentage",
+    //         },
+    //       },
+    //     },
+    //   },
+    // ];
 
     const formulas = await components
       .aggregate(pipeline)
       .sort({ _id: -1 })
       .toArray();
+    // console.log(formulas);
     res.json(formulas);
   }
 );

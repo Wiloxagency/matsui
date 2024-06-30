@@ -107,7 +107,12 @@ export default function AdminDashboard() {
       );
       if (filteredArray.length === 1) {
         const lastUserSelected = fetchedUsers![filteredArray[0]];
-        triggerGetFormulas({userEmail: lastUserSelected.email})
+        triggerGetFormulas({ userEmail: lastUserSelected.email })
+          .unwrap()
+          .then((formulas) => {
+            console.log("THIS RAN");
+            console.log(formulas);
+          });
       }
       setIndexesSelectedUsers(filteredArray);
     } else {
