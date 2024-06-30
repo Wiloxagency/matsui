@@ -23,9 +23,9 @@ export default function Swatches({
   selectedSeries,
   triggerGetSimilarFormulas,
 }: SwatchesProps) {
+
   function handleSelectFormula(clickedFormula: GetFormulasResultInterface) {
     // console.log(clickedFormula);
-
     const fullFormula: FormulaInterface = {
       formulaSeries: selectedSeries,
       formulaCode: clickedFormula._id,

@@ -27,18 +27,27 @@ router.post(
     const db = await createMongoDBConnection();
     const components = db.collection("components");
     let initialRequestFormulaCodes: string[] = [];
+    let userFormulasCodes: string[] = [];
     const searchQuery: string = req.body.formulaSearchQuery;
 
-    console.log(req.body);
+    // console.log(req.body);
 
-    if (searchQuery === "") {
+    if (req.body.userEmail) {
       const formulaSwatchColors = db.collection("formulaSwatchColors");
-      const latest20FormulaSwatchColors = await formulaSwatchColors
+      const userFormulas = await formulaSwatchColors
+        .find({ createdBy: req.body.userEmail })
+        .toArray();
+      userFormulasCodes = userFormulas.map((formula) => formula.formulaCode);
+    }
+
+    if (!searchQuery || searchQuery === "") {
+      const formulaSwatchColors = db.collection("formulaSwatchColors");
+      const latestFormulaSwatchColors = await formulaSwatchColors
         .find()
         .sort({ _id: -1 })
         .limit(50)
         .toArray();
-      initialRequestFormulaCodes = latest20FormulaSwatchColors.map(
+      initialRequestFormulaCodes = latestFormulaSwatchColors.map(
         (formula) => formula.formulaCode
       );
     }
@@ -59,6 +68,16 @@ router.post(
         $match: {
           FormulaCode: {
             $in: initialRequestFormulaCodes,
+          },
+        },
+      });
+    }
+
+    if (req.body.userEmail) {
+      pipeline.push({
+        $match: {
+          FormulaCode: {
+            $in: userFormulasCodes,
           },
         },
       });
@@ -218,6 +237,8 @@ router.post(
     //     },
     //   },
     // ];
+
+    // console.log(pipeline);
 
     const formulas = await components
       .aggregate(pipeline)

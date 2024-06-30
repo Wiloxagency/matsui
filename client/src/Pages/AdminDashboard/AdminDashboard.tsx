@@ -11,10 +11,11 @@ import EditUserModal from "../../Components/Modals/EditUserModal/EditUserModal";
 import ResetUserPasswordModal from "../../Components/Modals/ResetUserPasswordModal/ResetUserPasswordModal";
 import UsersTable from "../../Components/UsersTable/UsersTable";
 import { api, useDeleteUserMutation, useGetUsersQuery } from "../../State/api";
-import { UserInterface } from "../../interfaces/interfaces";
+import { FormulaInterface, UserInterface } from "../../interfaces/interfaces";
 import "./AdminDashboard.scss";
 import * as XLSX from "xlsx";
 import DeleteUserModal from "../../Components/Modals/DeleteUserModal/DeleteUserModal";
+import Swatches from "../../Components/Swatches/Swatches";
 
 export default function AdminDashboard() {
   const {
@@ -53,9 +54,16 @@ export default function AdminDashboard() {
 
   const [deleteUser] = useDeleteUserMutation();
 
+  const [selectedFormula, setSelectedFormula] = useState<
+    FormulaInterface | undefined
+  >();
+
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
-  const [triggerGetFormulas] = api.endpoints.getFormulas.useLazyQuery();
+  const [
+    triggerGetUserFormulas,
+    { data: fetchedUserFormulas, isFetching: isGetUserFormulasFetching },
+  ] = api.endpoints.getFormulas.useLazyQuery();
 
   function handleSendEmail() {
     setIsSendEmailActive((previousValue) => !previousValue);
@@ -107,12 +115,12 @@ export default function AdminDashboard() {
       );
       if (filteredArray.length === 1) {
         const lastUserSelected = fetchedUsers![filteredArray[0]];
-        triggerGetFormulas({ userEmail: lastUserSelected.email })
-          .unwrap()
-          .then((formulas) => {
-            console.log("THIS RAN");
-            console.log(formulas);
-          });
+        triggerGetUserFormulas({ userEmail: lastUserSelected.email });
+        // .unwrap()
+        // .then((formulas) => {
+        //   console.log("THIS RAN");
+        //   console.log(formulas);
+        // });
       }
       setIndexesSelectedUsers(filteredArray);
     } else {
@@ -121,7 +129,8 @@ export default function AdminDashboard() {
         receivedUserIndex,
       ];
       if (indexesSelectedUsers.length === 0) {
-        console.log(fetchedUsers![receivedUserIndex]);
+        const selectedUser = fetchedUsers![receivedUserIndex];
+        triggerGetUserFormulas({ userEmail: selectedUser.email });
       }
       setIndexesSelectedUsers(pushReceivedIndex);
     }
@@ -265,14 +274,24 @@ export default function AdminDashboard() {
               <span className="bottomHalf">
                 <div className="sectionHeader">USER FORMULAS</div>
                 <div className="card">
-                  <span className="m-auto text-center">
-                    Click on a user to see their formulas
-                    <br />
-                    (under construction)
-                  </span>
-                  {/* <div className="swatchesComponentContainer"> */}
-                  {/* <Swatches formulas={[]} selectedFormula={selectedFormula} /> */}
-                  {/* </div> */}
+                  {fetchedUserFormulas ? (
+                    <div className="swatchesComponentContainer">
+                      <Swatches
+                        formulas={fetchedUserFormulas}
+                        setSelectedFormula={setSelectedFormula}
+                        selectedFormula={selectedFormula}
+                        selectedSeries=""
+                        triggerGetSimilarFormulas={() => {}}
+                      />
+                    </div>
+                  ) : (
+                    <span className="m-auto text-center">
+                      Click on a user to see their formulas
+                      <br />
+                      (under construction)
+                    </span>
+                  )}
+                  {isGetUserFormulasFetching && <Spinner></Spinner>}
                 </div>
               </span>
               <span className="bottomHalf">
