@@ -13,10 +13,10 @@ import { calculateResults } from "./costCalculation";
 export default function InkCalculator() {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
-  const [artworkHeight, setArtworkHeight] = useState<number>(0);
-  const [artworkWidth, setArtworkWidth] = useState<number>(0);
-  const [inkCost, setInkCost] = useState<number>(0);
-  const [coverage, setCoverage] = useState<number>(0);
+  const [artworkHeight, setArtworkHeight] = useState<number>(10);
+  const [artworkWidth, setArtworkWidth] = useState<number>(8);
+  const [inkCost, setInkCost] = useState<number>(20);
+  const [coverage, setCoverage] = useState<number>(100);
 
   const [calculatorUnit, setCalculatorUnit] = useState<string>("inch");
 
