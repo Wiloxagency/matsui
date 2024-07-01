@@ -503,16 +503,27 @@ router.post("/CreateFormula", async (req: Request, res: Response) => {
 
     const finalHexColor = returnHexColor(componentsHexValues);
 
+    let newFormulaCode = receivedComponents[0].FormulaCode;
+
+    while (await checkIfFormulaCodeExists(newFormulaCode)) {
+      newFormulaCode = incrementName(newFormulaCode);
+    }
+
     const newFormulaSwatch: FormulaSwatchInterface = {
-      formulaCode: req.body.formulaComponents[0].FormulaCode,
+      formulaCode: newFormulaCode,
       formulaColor: finalHexColor,
       isUserCreatedFormula: true,
       company: req.body.company,
       createdBy: req.body.createdBy,
     };
 
+    const updatedComponents = receivedComponents.map((component) => ({
+      ...component,
+      FormulaCode: newFormulaCode,
+    }));
+
     await formulaSwatchColors.insertOne(newFormulaSwatch);
-    await components.insertMany(req.body.formulaComponents);
+    await components.insertMany(updatedComponents);
 
     res.json("Success");
   } catch (error) {
@@ -667,6 +678,36 @@ function calculateColorDistance(
       Math.pow(color1.g - color2.g, 2) +
       Math.pow(color1.b - color2.b, 2)
   );
+}
+
+// console.log(incrementName("testName"));
+// console.log(incrementName("testName (1)"));
+// console.log(incrementName("testName (2)"));
+
+async function checkIfFormulaCodeExists(
+  receivedFormulaCode: string
+): Promise<boolean> {
+  const db = await createMongoDBConnection();
+  const formulaSwatchColors = db.collection("formulaSwatchColors");
+  const foundFormula = await formulaSwatchColors.findOne({
+    formulaCode: receivedFormulaCode,
+  });
+  if (foundFormula) return true;
+  return false;
+}
+
+function incrementName(name: string): string {
+  const namePattern = /^(.*?)(?: \((\d+)\))?$/;
+  let baseName = name;
+  let num = 1;
+  const match = name.match(namePattern);
+  if (match) {
+    baseName = match[1];
+    if (match[2]) {
+      num = parseInt(match[2], 10) + 1;
+    }
+  }
+  return `${baseName} (${num})`;
 }
 
 export default router;

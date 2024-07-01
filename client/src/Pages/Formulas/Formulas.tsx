@@ -240,7 +240,7 @@ export default function Formulas() {
 
   return (
     <>
-      <ToastContainer transition={Flip} />
+      <ToastContainer containerId="formulaPageToastContainer" transition={Flip} />
 
       <CreateFormulaModal
         isOpenCreateFormulaModal={isOpenCreateFormulaModal}
