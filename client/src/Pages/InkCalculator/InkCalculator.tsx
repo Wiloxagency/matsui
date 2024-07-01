@@ -19,45 +19,8 @@ export default function InkCalculator() {
   const [coverage, setCoverage] = useState<number>(0);
 
   const [calculatorUnit, setCalculatorUnit] = useState<string>("inch");
-  const columns = [
-    {
-      key: "mesh",
-      label: "MESH COUNT",
-      mobileLabel: "MESH COUNT",
-    },
-    {
-      key: "thickness",
-      label: "DEPOSIT THICKNESS",
-      mobileLabel: "DEP. THICKNESS",
-    },
-    {
-      key: "inches",
-      label: "UNIT PER GALLON",
-      mobileLabel: "UNIT / GALLON",
-    },
-    {
-      key: "prints",
-      label: "PRINTS PER GALLON",
-      mobileLabel: "PRINTS / GALLON",
-    },
-    {
-      key: "cost",
-      label: "COST PER SHIRT",
-      mobileLabel: "COST / SHIRT",
-    },
-  ];
 
-  const [resultValues, setResultValues] = useState<
-    {
-      meshCount: number;
-      depositThickness: number;
-      unitPerGallon: number;
-      // squareInchesPerGallon: number;
-      // squareCmPerGallon: number;
-      printsPerGallon: number;
-      costPerShirt: number;
-    }[]
-  >([
+  const initialInchValues = [
     {
       meshCount: 355,
       depositThickness: 1,
@@ -100,7 +63,92 @@ export default function InkCalculator() {
       printsPerGallon: 0,
       costPerShirt: 0,
     },
-  ]);
+  ];
+
+  const initialCmValues = [
+    {
+      meshCount: 355,
+      depositThickness: 1,
+      unitPerGallon: 1486448.64,
+      printsPerGallon: 0,
+      costPerShirt: 0,
+    },
+    {
+      meshCount: 200,
+      depositThickness: 2,
+      unitPerGallon: 743224.32,
+      printsPerGallon: 0,
+      costPerShirt: 0,
+    },
+    {
+      meshCount: 130,
+      depositThickness: 3,
+      unitPerGallon: 495173.2,
+      printsPerGallon: 0,
+      costPerShirt: 0,
+    },
+    {
+      meshCount: 110,
+      depositThickness: 3.5,
+      unitPerGallon: 433392.68,
+      printsPerGallon: 0,
+      costPerShirt: 0,
+    },
+    {
+      meshCount: 96,
+      depositThickness: 4,
+      unitPerGallon: 371612.16,
+      printsPerGallon: 0,
+      costPerShirt: 0,
+    },
+    {
+      meshCount: 60,
+      depositThickness: 5,
+      unitPerGallon: 297289.73,
+      printsPerGallon: 0,
+      costPerShirt: 0,
+    },
+  ];
+
+  const columns = [
+    {
+      key: "mesh",
+      label: "MESH COUNT",
+      mobileLabel: "MESH COUNT",
+    },
+    {
+      key: "thickness",
+      label: "DEPOSIT THICKNESS",
+      mobileLabel: "DEP. THICKNESS",
+    },
+    {
+      key: "inches",
+      label: "UNIT PER GALLON",
+      mobileLabel: "UNIT / GALLON",
+    },
+    {
+      key: "prints",
+      label: "PRINTS PER GALLON",
+      mobileLabel: "PRINTS / GALLON",
+    },
+    {
+      key: "cost",
+      label: "COST PER SHIRT",
+      mobileLabel: "COST / SHIRT",
+    },
+  ];
+
+  const [resultValues, setResultValues] = useState<
+    {
+      meshCount: number;
+      depositThickness: number;
+      unitPerGallon: number;
+      // squareInchesPerGallon: number;
+      // squareCmPerGallon: number;
+      printsPerGallon: number;
+      costPerShirt: number;
+    }[]
+  >([]);
 
   useEffect(() => {
     let calculatedResults;
@@ -113,7 +161,7 @@ export default function InkCalculator() {
           inkCost: inkCost,
           coverage: coverage,
         },
-        resultValues
+        calculatorUnit === "inch" ? initialInchValues : initialCmValues
       );
       console.log(calculatedResults);
       setResultValues(calculatedResults);
@@ -121,8 +169,8 @@ export default function InkCalculator() {
   }, [calculatorUnit, artworkHeight, artworkWidth, inkCost, coverage]);
 
   useEffect(() => {
-    setResultValues(resultValues);
-  }, [resultValues]);
+    setResultValues(initialInchValues);
+  }, []);
 
   return (
     <div
