@@ -16,6 +16,7 @@ import {
   useImportFormulasMutation,
 } from "../../State/api";
 import "./ImportFormulas.scss";
+import { FormulaComponentInterface } from "../../interfaces/interfaces";
 
 // interface ImportFormulaHeaderColumnIndexesInterface {
 //   indexFormulaCode: number;
@@ -39,9 +40,13 @@ export default function ImportFormulas() {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
   // const [isSwitchSelected, setIsSwitchSelected] = useState(true);
   const [JSONFormulas, setJSONFormulas] = useState<unknown[]>([]);
+  const [mappedComponents, setMappedComponents] = useState<
+    FormulaComponentInterface[]
+  >([]);
   const [extractedHeaders, setExtractedHeaders] = useState<string[]>([]);
   const [missingPigments, setMissingPigments] = useState<string[]>([]);
-  const [validationMessage, setValidationMessage] = useState<string>("");
+  const [isValidationMessageVisible, setIsValidationMessageVisible] =
+    useState<boolean>(false);
   const [newSeriesName, setNewSeriesName] = useState<string>("");
   const [seriesToDelete, setSeriesToDelete] = useState<string>("");
   const [wasSeriesDeleted, setWasSeriesDeleted] = useState<boolean | undefined>(
@@ -113,7 +118,8 @@ export default function ImportFormulas() {
   // }
 
   async function handleConfirmColumnHeaders() {
-    setValidationMessage("");
+    setIsValidationMessageVisible(false);
+    // setValidationMessage(`The series you are about to upload has pigments are missing:`);
     // const columnValues: number[] = [];
     // for (const header of Object.keys(columnIndexes)) {
     //   columnValues.push(
@@ -132,13 +138,16 @@ export default function ImportFormulas() {
     // }
     // const remappedJSONFormulas = await remapJSONFormulas(columnValues);
 
-    return;
+    const importFormulasPayload = JSONFormulas.map((component: any) => {
+      // (component: FormulaComponentInterface) => {
+      return { ...component, FormulaSerie: newSeriesName };
+    });
+    console.log("importFormulasPayload: ", importFormulasPayload);
 
+    return;
     await addSeries({ seriesName: newSeriesName })
       .unwrap()
-      .then(async (response) => {
-        response;
-
+      .then(async () => {
         const importFormulasPayload = JSONFormulas.map((component: any) => {
           // (component: FormulaComponentInterface) => {
           return { ...component, FormulaSerie: newSeriesName };
@@ -181,14 +190,18 @@ export default function ImportFormulas() {
         (item) => existingPigments.indexOf(item) == -1
       );
 
-      console.log(getMissingPigments);
+      // console.log(getMissingPigments);
       setMissingPigments(getMissingPigments);
 
       if (getMissingPigments.length > 0) {
-        setValidationMessage(
-          `Series can't be uploaded because the following pigments are missing:`
-        );
+        setIsValidationMessageVisible(true);
       }
+
+      const mapComponents = JSONFormulas.map((component: any) => {
+        // (component: FormulaComponentInterface) => {
+        return { ...component, FormulaSerie: newSeriesName };
+      });
+      setMappedComponents(mapComponents);
     }
   }
 
@@ -323,13 +336,40 @@ export default function ImportFormulas() {
           <div className="sectionHeader">
             <span>VALIDATION</span>
           </div>
-          <div className={JSONFormulas.length === 0 ? "card disabled" : "card"}>
-            {missingPigments.length == 0 && (
+          <div className={JSONFormulas.length === 0 ? "card " : "card"}>
+            {/* <div className={JSONFormulas.length === 0 ? "card disabled" : "card"}> */}
+            {!isValidationMessageVisible && (
               <p className="mb-4">
                 Here you'll see a preview of the formulas before uploading them
               </p>
             )}
-
+            {isValidationMessageVisible && (
+              <p className="mb-4">
+               Preview:
+              </p>
+            )}
+            {mappedComponents.length > 0 &&
+              mappedComponents.map((component, indexComponent) => {
+                if (indexComponent < 3)
+                  return (
+                    <>
+                      <div key={indexComponent}>
+                        <div>
+                          <span>Formula code:</span>
+                          <span>{component.FormulaCode}</span>
+                        </div>
+                        <div>
+                          <span>Component code:</span>
+                          <span>{component.ComponentCode}</span>
+                        </div>
+                        <div>
+                          <span>Percentage:</span>
+                          <span>{component.Percentage}</span>
+                        </div>
+                      </div>
+                    </>
+                  );
+              })}
             {/* <div className="row title">
                 <span style={{ flex: "2" }}>SOURCE HEADER</span>
                 <span style={{ flex: "1" }}>SOURCE COLUMN</span>
@@ -382,30 +422,45 @@ export default function ImportFormulas() {
             <p
               style={{ color: "red" }}
               className={
-                validationMessage !== ""
-                  ? "validationErrorMessage active mb-4"
-                  : "validationErrorMessage"
+                isValidationMessageVisible
+                  ? "hiddenBlock active-6"
+                  : "hiddenBlock"
               }
             >
-              {validationMessage}
+              The series you are about to upload contains pigments that don't
+              exist in our database. You can still upload it but be aware that
+              formulas may not be displayed correctly until the issue has been
+              resolved. The missing pigments are:
             </p>
-            <div className="mb-4">
+            <div className="my-4">
               {missingPigments.map((missingPigment, indexPigment) => {
                 return (
-                  <span>
+                  <span key={missingPigment}>
                     {missingPigment}
                     {indexPigment === missingPigments.length - 1 ? "" : ", "}
                   </span>
                 );
               })}
             </div>
+
+            <p
+              style={{ color: "red" }}
+              className={
+                isValidationMessageVisible
+                  ? "hiddenBlock active-4"
+                  : "hiddenBlock"
+              }
+            >
+              Please contact your organization for instructions on how to add
+              these pigments to our database.
+            </p>
             <Button
               color="primary"
               variant="ghost"
-              isDisabled={missingPigments.length > 0}
+              // isDisabled={missingPigments.length > 0}
               onPress={handleConfirmColumnHeaders}
             >
-              Confirm order and upload series
+              Confirm and upload series
             </Button>
           </div>
 

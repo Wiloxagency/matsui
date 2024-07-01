@@ -308,7 +308,7 @@ export default function InkCalculator() {
                     <Td>{row.meshCount}</Td>
                     <Td>{row.depositThickness}</Td>
                     <Td>
-                      {row.unitPerGallon}{" "}
+                      {row.unitPerGallon.toLocaleString(undefined, {maximumFractionDigits:2})}{" "}
                       {calculatorUnit === "inch" ? " in" : " cm"}
                     </Td>
                     <Td>{row.printsPerGallon}</Td>
