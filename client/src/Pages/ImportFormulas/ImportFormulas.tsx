@@ -2,7 +2,7 @@ import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import { useDisclosure } from "@nextui-org/modal";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { FaDownload, FaTrash } from "react-icons/fa";
 import { useMediaQuery } from "react-responsive";
 import DeleteSeriesModal from "../../Components/Modals/DeleteSeriesModal/DeleteSeriesModal";
@@ -17,6 +17,7 @@ import {
 } from "../../State/api";
 import "./ImportFormulas.scss";
 import { FormulaComponentInterface } from "../../interfaces/interfaces";
+import MissingPigmentsModal from "../../Components/Modals/MissingPigmentsModal/MissingPigments";
 
 // interface ImportFormulaHeaderColumnIndexesInterface {
 //   indexFormulaCode: number;
@@ -45,8 +46,6 @@ export default function ImportFormulas() {
   >([]);
   const [extractedHeaders, setExtractedHeaders] = useState<string[]>([]);
   const [missingPigments, setMissingPigments] = useState<string[]>([]);
-  const [isValidationMessageVisible, setIsValidationMessageVisible] =
-    useState<boolean>(false);
   const [newSeriesName, setNewSeriesName] = useState<string>("");
   const [seriesToDelete, setSeriesToDelete] = useState<string>("");
   const [wasSeriesDeleted, setWasSeriesDeleted] = useState<boolean | undefined>(
@@ -68,6 +67,11 @@ export default function ImportFormulas() {
   const {
     isOpen: isOpenImportedSeriesModal,
     onOpenChange: onOpenChangeImportedSeriesModal,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenMissingPigmentsModal,
+    onOpenChange: onOpenChangeMissingPigmentsModal,
   } = useDisclosure();
 
   const [addSeries] = useAddSeriesMutation();
@@ -118,7 +122,6 @@ export default function ImportFormulas() {
   // }
 
   async function handleConfirmColumnHeaders() {
-    setIsValidationMessageVisible(false);
     // setValidationMessage(`The series you are about to upload has pigments are missing:`);
     // const columnValues: number[] = [];
     // for (const header of Object.keys(columnIndexes)) {
@@ -138,13 +141,6 @@ export default function ImportFormulas() {
     // }
     // const remappedJSONFormulas = await remapJSONFormulas(columnValues);
 
-    const importFormulasPayload = JSONFormulas.map((component: any) => {
-      // (component: FormulaComponentInterface) => {
-      return { ...component, FormulaSerie: newSeriesName };
-    });
-    console.log("importFormulasPayload: ", importFormulasPayload);
-
-    return;
     await addSeries({ seriesName: newSeriesName })
       .unwrap()
       .then(async () => {
@@ -194,7 +190,7 @@ export default function ImportFormulas() {
       setMissingPigments(getMissingPigments);
 
       if (getMissingPigments.length > 0) {
-        setIsValidationMessageVisible(true);
+        onOpenChangeMissingPigmentsModal();
       }
 
       const mapComponents = JSONFormulas.map((component: any) => {
@@ -280,6 +276,11 @@ export default function ImportFormulas() {
         numberOfImportedComponents={numberOfImportedComponents}
         newSeriesName={newSeriesName}
       ></ImportedSeriesModal>
+      <MissingPigmentsModal
+        isOpenMissingPigmentsModal={isOpenMissingPigmentsModal}
+        onOpenChangeMissingPigmentsModal={onOpenChangeMissingPigmentsModal}
+        missingPigments={missingPigments}
+      ></MissingPigmentsModal>
       <div
         className={
           isMobile ? "importFormulaLayout mobileLayout" : "importFormulaLayout"
@@ -338,38 +339,49 @@ export default function ImportFormulas() {
           </div>
           <div className={JSONFormulas.length === 0 ? "card " : "card"}>
             {/* <div className={JSONFormulas.length === 0 ? "card disabled" : "card"}> */}
-            {!isValidationMessageVisible && (
+            {mappedComponents.length === 0 ? (
               <p className="mb-4">
                 Here you'll see a preview of the formulas before uploading them
               </p>
+            ) : (
+              <>
+                <div className="row title">COMPONENTS PREVIEW:</div>
+                {mappedComponents.map((component, indexComponent) => {
+                  if (indexComponent < 3)
+                    return (
+                      <Fragment key={indexComponent}>
+                        <div className="componentPreview">
+                          <div>
+                            <span>Formula code: </span>
+                            <span style={{ fontWeight: 600 }}>
+                              {component.FormulaCode}
+                            </span>
+                          </div>
+                          <div>
+                            <span>Component code: </span>
+                            <span style={{ fontWeight: 600 }}>
+                              {component.ComponentCode}
+                            </span>
+                          </div>
+                          <div>
+                            <span>Component description: </span>
+                            <span style={{ fontWeight: 600 }}>
+                              {component.ComponentDescription}
+                            </span>
+                          </div>
+                          <div>
+                            <span>Percentage: </span>
+                            <span style={{ fontWeight: 600 }}>
+                              {component.Percentage}
+                            </span>
+                          </div>
+                        </div>
+                      </Fragment>
+                    );
+                })}
+              </>
             )}
-            {isValidationMessageVisible && (
-              <p className="mb-4">
-               Preview:
-              </p>
-            )}
-            {mappedComponents.length > 0 &&
-              mappedComponents.map((component, indexComponent) => {
-                if (indexComponent < 3)
-                  return (
-                    <>
-                      <div key={indexComponent}>
-                        <div>
-                          <span>Formula code:</span>
-                          <span>{component.FormulaCode}</span>
-                        </div>
-                        <div>
-                          <span>Component code:</span>
-                          <span>{component.ComponentCode}</span>
-                        </div>
-                        <div>
-                          <span>Percentage:</span>
-                          <span>{component.Percentage}</span>
-                        </div>
-                      </div>
-                    </>
-                  );
-              })}
+
             {/* <div className="row title">
                 <span style={{ flex: "2" }}>SOURCE HEADER</span>
                 <span style={{ flex: "1" }}>SOURCE COLUMN</span>
@@ -419,45 +431,11 @@ export default function ImportFormulas() {
                   );
                 }
               )} */}
-            <p
-              style={{ color: "red" }}
-              className={
-                isValidationMessageVisible
-                  ? "hiddenBlock active-6"
-                  : "hiddenBlock"
-              }
-            >
-              The series you are about to upload contains pigments that don't
-              exist in our database. You can still upload it but be aware that
-              formulas may not be displayed correctly until the issue has been
-              resolved. The missing pigments are:
-            </p>
-            <div className="my-4">
-              {missingPigments.map((missingPigment, indexPigment) => {
-                return (
-                  <span key={missingPigment}>
-                    {missingPigment}
-                    {indexPigment === missingPigments.length - 1 ? "" : ", "}
-                  </span>
-                );
-              })}
-            </div>
 
-            <p
-              style={{ color: "red" }}
-              className={
-                isValidationMessageVisible
-                  ? "hiddenBlock active-4"
-                  : "hiddenBlock"
-              }
-            >
-              Please contact your organization for instructions on how to add
-              these pigments to our database.
-            </p>
             <Button
               color="primary"
               variant="ghost"
-              // isDisabled={missingPigments.length > 0}
+              isDisabled={mappedComponents.length === 0}
               onPress={handleConfirmColumnHeaders}
             >
               Confirm and upload series
