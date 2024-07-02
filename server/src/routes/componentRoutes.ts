@@ -536,16 +536,19 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const components = db.collection("components");
   const formulaSwatchColors = db.collection("formulaSwatchColors");
+  const receivedComponents: FormulaComponentInterface[] =
+    req.body.formulaComponents;
 
-  const formulaCodes = Array.from(
-    new Set(
-      req.body.map(({ FormulaCode }: any) => {
-        return FormulaCode;
-      })
-    )
-  );
+  // const formulaCodes = Array.from(
+  //   new Set(
+  //     receivedComponents.map(({ FormulaCode }: any) => {
+  //       return FormulaCode;
+  //     })
+  //   )
+  // );
 
-  const receivedComponents: FormulaComponentInterface[] = req.body;
+  console.log(req.body);
+  return;
 
   const componentsGroupedByFormula = Map.groupBy(
     receivedComponents,
@@ -556,12 +559,15 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
 
   for (const [indexFormula, formula] of componentsGroupedByFormula.entries()) {
     const componentsHexValues = await returnHexColorPrepping(formula);
-    console.log("componentsHexValues: ", componentsHexValues)
-    // const finalHexColor = returnHexColor(componentsHexValues);
-    // newFormulaColorSwatches.push({
-    //   formulaCode: formula[0].FormulaCode,
-    //   formulaColor: finalHexColor,
-    // });
+    console.log("componentsHexValues: ", componentsHexValues);
+    const finalHexColor = returnHexColor(componentsHexValues);
+    newFormulaColorSwatches.push({
+      formulaCode: formula[0].FormulaCode,
+      formulaColor: finalHexColor,
+      isUserCreatedFormula: true,
+      createdBy: req.body.userEmail,
+      company: req.body.company,
+    });
   }
 
   return;

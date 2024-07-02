@@ -7,11 +7,21 @@ router.post("/", async (req: Request, res: Response) => {
   // console.log(req.body);
   const db = await createMongoDBConnection();
   const series = db.collection("series");
+
+  const doesSeriesAlreadyExist = await series.findOne({
+    seriesName: req.body.seriesName,
+  });
+
+  if (doesSeriesAlreadyExist) {
+    res.status(200).json({ message: "Series already exist" });
+    return
+  }
+
   const createSeries = await series.insertOne({
     seriesName: req.body.seriesName,
   });
 
-  res.json(createSeries);
+  res.status(201).json({message: "Series created"});
 });
 
 router.delete("/", async (req: Request, res: Response) => {

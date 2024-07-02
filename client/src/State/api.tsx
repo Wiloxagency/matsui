@@ -129,7 +129,14 @@ export const api = createApi({
         body: payload,
       }),
     }),
-    importFormulas: builder.mutation<void, FormulaComponentInterface[]>({
+    importFormulas: builder.mutation<
+      void,
+      {
+        formulaComponents: FormulaComponentInterface[];
+        company: string;
+        createdBy: string;
+      }
+    >({
       query: (payload) => ({
         url: "components/ImportFormulas",
         method: "POST",

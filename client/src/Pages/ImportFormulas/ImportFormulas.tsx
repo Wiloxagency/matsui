@@ -143,24 +143,38 @@ export default function ImportFormulas() {
 
     await addSeries({ seriesName: newSeriesName })
       .unwrap()
-      .then(async () => {
-        const importFormulasPayload = JSONFormulas.map((component: any) => {
-          // (component: FormulaComponentInterface) => {
-          return { ...component, FormulaSerie: newSeriesName };
-        });
+      .then(async (response: any) => {
+        if (response.message === "Series already exist") {
+          alert(`Series named ${newSeriesName} already exist`);
+          return;
+        } else if (response.message === "Series created") {
+          const importFormulasComponents = JSONFormulas.map(
+            (component: any) => {
+              // (component: FormulaComponentInterface) => {
+              return { ...component, FormulaSerie: newSeriesName };
+            }
+          );
 
-        await importFormulas(importFormulasPayload)
-          .unwrap()
-          .then((importFormulasResponse: any) => {
-            console.log("importFormulasResponse: ", importFormulasResponse);
-            console.log(
-              "importFormulasResponse: ",
-              importFormulasResponse.insertedCount
-            );
-            setNumberOfImportedComponents(importFormulasResponse.insertedCount);
-            triggerGetSeries();
-            onOpenChangeImportedSeriesModal();
-          });
+          const importFormulasPayload = {
+            formulaComponents: importFormulasComponents,
+            company: localStorage.getItem("userCompany")!,
+            createdBy: localStorage.getItem("userEmail")!,
+          };
+          await importFormulas(importFormulasPayload)
+            .unwrap()
+            .then((importFormulasResponse: any) => {
+              console.log("importFormulasResponse: ", importFormulasResponse);
+              console.log(
+                "importFormulasResponse: ",
+                importFormulasResponse.insertedCount
+              );
+              setNumberOfImportedComponents(
+                importFormulasResponse.insertedCount
+              );
+              triggerGetSeries();
+              onOpenChangeImportedSeriesModal();
+            });
+        }
       });
   }
 
