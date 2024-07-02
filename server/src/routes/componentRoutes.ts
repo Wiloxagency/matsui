@@ -556,13 +556,15 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
 
   for (const [indexFormula, formula] of componentsGroupedByFormula.entries()) {
     const componentsHexValues = await returnHexColorPrepping(formula);
-    const finalHexColor = returnHexColor(componentsHexValues);
-    newFormulaColorSwatches.push({
-      formulaCode: formula[0].FormulaCode,
-      formulaColor: finalHexColor,
-    });
+    console.log("componentsHexValues: ", componentsHexValues)
+    // const finalHexColor = returnHexColor(componentsHexValues);
+    // newFormulaColorSwatches.push({
+    //   formulaCode: formula[0].FormulaCode,
+    //   formulaColor: finalHexColor,
+    // });
   }
 
+  return;
   await formulaSwatchColors.insertMany(newFormulaColorSwatches);
 
   try {
