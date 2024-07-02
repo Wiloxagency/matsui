@@ -163,19 +163,26 @@ export default function ImportFormulas() {
           await importFormulas(importFormulasPayload)
             .unwrap()
             .then((importFormulasResponse: any) => {
-              console.log("importFormulasResponse: ", importFormulasResponse);
-              console.log(
-                "importFormulasResponse: ",
-                importFormulasResponse.insertedCount
-              );
+              // console.log("importFormulasResponse: ", importFormulasResponse);
+              // console.log(
+              //   "importFormulasResponse: ",
+              //   importFormulasResponse.insertedCount
+              // );
               setNumberOfImportedComponents(
                 importFormulasResponse.insertedCount
               );
               triggerGetSeries();
               onOpenChangeImportedSeriesModal();
+              resetFields();
             });
         }
       });
+  }
+
+  function resetFields() {
+    setNewSeriesName("");
+    setJSONFormulas([]);
+    setMappedComponents([]);
   }
 
   async function validateUploadedComponents() {

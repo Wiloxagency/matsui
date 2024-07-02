@@ -547,9 +547,6 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
   //   )
   // );
 
-  console.log(req.body);
-  return;
-
   const componentsGroupedByFormula = Map.groupBy(
     receivedComponents,
     ({ FormulaCode }) => FormulaCode
@@ -559,22 +556,25 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
 
   for (const [indexFormula, formula] of componentsGroupedByFormula.entries()) {
     const componentsHexValues = await returnHexColorPrepping(formula);
-    console.log("componentsHexValues: ", componentsHexValues);
-    const finalHexColor = returnHexColor(componentsHexValues);
+    let finalHexColor;
+    if (componentsHexValues.length === 0) {
+      finalHexColor = "fffff";
+    } else {
+      finalHexColor = returnHexColor(componentsHexValues);
+    }
     newFormulaColorSwatches.push({
       formulaCode: formula[0].FormulaCode,
       formulaColor: finalHexColor,
       isUserCreatedFormula: true,
-      createdBy: req.body.userEmail,
+      createdBy: req.body.createdBy,
       company: req.body.company,
     });
   }
 
-  return;
   await formulaSwatchColors.insertMany(newFormulaColorSwatches);
 
   try {
-    const insertManyResponse = await components.insertMany(req.body);
+    const insertManyResponse = await components.insertMany(receivedComponents);
     res.json(insertManyResponse);
   } catch (error) {
     console.error("Error importing compoents:", error);
