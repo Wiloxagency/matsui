@@ -14,6 +14,7 @@ import { Spinner } from "@nextui-org/spinner";
 import { useEffect, useState } from "react";
 import {
   FormulaComponentInterface,
+  FormulaInterface,
   PigmentInterface,
 } from "../../../interfaces/interfaces";
 import "./CreateFormulaModal.scss";
@@ -37,6 +38,7 @@ interface CreateFormulaModalProps {
   fetchedPigments: PigmentInterface[] | undefined;
   refetchFormulas: () => void;
   isEditOrCreate: "edit" | "create";
+  selectedFormula: FormulaInterface | undefined;
 }
 
 export default function CreateFormulaModal({
@@ -46,8 +48,8 @@ export default function CreateFormulaModal({
   fetchedPigments,
   refetchFormulas,
   isEditOrCreate,
+  selectedFormula,
 }: CreateFormulaModalProps) {
-  console.log(isEditOrCreate);
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
   const [selectedNewFormulaSeries, setSelectedNewFormulaSeries] =
@@ -279,7 +281,15 @@ export default function CreateFormulaModal({
     triggerAddedFormulaNotification();
   }
 
-  useEffect(() => {}, [newFormulaComponents]);
+  // useEffect(() => {}, [newFormulaComponents]);
+  useEffect(() => {
+    if (isEditOrCreate === "edit" && selectedFormula) {
+      console.log(selectedFormula);
+      setSelectedNewFormulaSeries(selectedFormula.formulaSeries);
+      setNewFormulaCode(selectedFormula.formulaCode);
+      setNewFormulaDescription(selectedFormula.formulaDescription);
+    }
+  }, [isEditOrCreate]);
 
   return (
     <>
@@ -295,7 +305,7 @@ export default function CreateFormulaModal({
           {(onClose: () => void) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Create new formula
+               { isEditOrCreate === "create" ? "Create new formula" : "Edit formula"}
               </ModalHeader>
               <ModalBody>
                 {/* <form> */}

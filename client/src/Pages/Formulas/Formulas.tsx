@@ -262,6 +262,7 @@ export default function Formulas() {
         fetchedPigments={fetchedPigments}
         refetchFormulas={refetchFormulas}
         isEditOrCreate={isEditOrCreateFormula}
+        selectedFormula={selectedFormula}
       />
       <div
         className={
@@ -455,6 +456,7 @@ export default function Formulas() {
               <Button
                 startContent={<FaPen />}
                 color="primary"
+                isDisabled={!selectedFormula}
                 onPress={() => handleEditOrCreateFormulaClick("edit")}
               >
                 EDIT FORMULA
