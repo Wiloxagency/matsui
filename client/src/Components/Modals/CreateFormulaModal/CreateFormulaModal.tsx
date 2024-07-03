@@ -36,6 +36,7 @@ interface CreateFormulaModalProps {
   fetchedSeries: { seriesName: string }[] | undefined;
   fetchedPigments: PigmentInterface[] | undefined;
   refetchFormulas: () => void;
+  isEditOrCreate: "edit" | "create";
 }
 
 export default function CreateFormulaModal({
@@ -44,7 +45,9 @@ export default function CreateFormulaModal({
   fetchedSeries,
   fetchedPigments,
   refetchFormulas,
+  isEditOrCreate,
 }: CreateFormulaModalProps) {
+  console.log(isEditOrCreate);
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
   const [selectedNewFormulaSeries, setSelectedNewFormulaSeries] =

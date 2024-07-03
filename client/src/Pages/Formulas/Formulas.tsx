@@ -10,6 +10,7 @@ import {
   FaClone,
   FaFileExport,
   FaPen,
+  FaPlus,
   FaPrint,
   FaSearch,
 } from "react-icons/fa";
@@ -90,6 +91,10 @@ export default function Formulas() {
 
   // const isSmallScreen = useMediaQuery({ query: "(max-width: 1200px)" });
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
+
+  const [isEditOrCreateFormula, setIsEditOrCreateFormula] = useState<
+    "edit" | "create"
+  >("create");
 
   const {
     isOpen: isOpenCreateFormulaModal,
@@ -220,6 +225,11 @@ export default function Formulas() {
     }
   }
 
+  function handleEditOrCreateFormulaClick(option: "edit" | "create") {
+    setIsEditOrCreateFormula(option);
+    onOpenCreateFormulaModal();
+  }
+
   useEffect(() => {
     if (fetchedUsers) {
       const extractedCompanies = returnUniqueCompanies(fetchedUsers);
@@ -240,7 +250,10 @@ export default function Formulas() {
 
   return (
     <>
-      <ToastContainer containerId="formulaPageToastContainer" transition={Flip} />
+      <ToastContainer
+        containerId="formulaPageToastContainer"
+        transition={Flip}
+      />
 
       <CreateFormulaModal
         isOpenCreateFormulaModal={isOpenCreateFormulaModal}
@@ -248,6 +261,7 @@ export default function Formulas() {
         fetchedSeries={fetchedSeries}
         fetchedPigments={fetchedPigments}
         refetchFormulas={refetchFormulas}
+        isEditOrCreate={isEditOrCreateFormula}
       />
       <div
         className={
@@ -267,9 +281,11 @@ export default function Formulas() {
               EXPORT FORMULAS
             </Button>
             <Button
-              startContent={<FaPen />}
+              startContent={<FaPlus />}
               color="primary"
-              onClick={onOpenCreateFormulaModal}
+              onPress={() => {
+                handleEditOrCreateFormulaClick("create");
+              }}
             >
               CREATE NEW FORMULA
             </Button>
@@ -436,6 +452,13 @@ export default function Formulas() {
                 FORMULA DETAILS:{" "}
                 {selectedFormula && selectedFormula.formulaDescription}
               </span>
+              <Button
+                startContent={<FaPen />}
+                color="primary"
+                onPress={() => handleEditOrCreateFormulaClick("edit")}
+              >
+                EDIT FORMULA
+              </Button>
             </div>
             <div
               className="card"
