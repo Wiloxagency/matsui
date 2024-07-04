@@ -22,7 +22,7 @@ import CreateFormulaModal from "../../Components/Modals/CreateFormulaModal/Creat
 import Swatches from "../../Components/Swatches/Swatches";
 import {
   api,
-  useAddFormulaMutation,
+  useAddOrEditFormulaMutation,
   useGetFormulasQuery,
   useGetInkSystemsQuery,
   useGetPigmentsQuery,
@@ -49,7 +49,7 @@ export default function Formulas() {
   const [companies, setCompanies] = useState<{ name: string }[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<string>();
 
-  const [addFormula] = useAddFormulaMutation();
+  const [addOrEditFormula] = useAddOrEditFormulaMutation();
 
   const {
     data: fetchedFormulas,
@@ -207,15 +207,16 @@ export default function Formulas() {
             ComponentCode: component.componentCode,
             ComponentDescription: component.componentDescription,
             Percentage: String(component.percentage),
-            isFormulaActive: selectedFormula.isActive,
           };
         }
       );
 
-      await addFormula({
+      await addOrEditFormula({
         formulaComponents: filledNewFormulaComponents,
         company: localStorage.getItem("userCompany")!,
         createdBy: localStorage.getItem("userEmail")!,
+        isFormulaActive: selectedFormula.isActive,
+        isEditOrCreate: "create",
       })
         .unwrap()
         .then(() => {
@@ -263,6 +264,7 @@ export default function Formulas() {
         refetchFormulas={refetchFormulas}
         isEditOrCreate={isEditOrCreateFormula}
         selectedFormula={selectedFormula}
+        setSelectedFormula={setSelectedFormula}
       />
       <div
         className={

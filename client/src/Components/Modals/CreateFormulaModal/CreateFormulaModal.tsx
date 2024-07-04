@@ -11,7 +11,7 @@ import {
 } from "@nextui-org/modal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Spinner } from "@nextui-org/spinner";
-import { useEffect, useState } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import {
   FormulaComponentInterface,
   FormulaInterface,
@@ -28,7 +28,7 @@ import { FaX } from "react-icons/fa6";
 import { useMediaQuery } from "react-responsive";
 import { Flip, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useAddFormulaMutation } from "../../../State/api";
+import { useAddOrEditFormulaMutation } from "../../../State/api";
 import { returnHexColor } from "../../../Utilities/returnHexColor";
 
 interface CreateFormulaModalProps {
@@ -39,6 +39,9 @@ interface CreateFormulaModalProps {
   refetchFormulas: () => void;
   isEditOrCreate: "edit" | "create";
   selectedFormula: FormulaInterface | undefined;
+  setSelectedFormula: Dispatch<
+    React.SetStateAction<FormulaInterface | undefined>
+  >;
 }
 
 export default function CreateFormulaModal({
@@ -49,6 +52,7 @@ export default function CreateFormulaModal({
   refetchFormulas,
   isEditOrCreate,
   selectedFormula,
+  setSelectedFormula,
 }: CreateFormulaModalProps) {
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
@@ -88,7 +92,7 @@ export default function CreateFormulaModal({
     "Percentage"
   );
 
-  const [addFormula] = useAddFormulaMutation();
+  const [addOrEditFormula] = useAddOrEditFormulaMutation();
 
   const triggerAddedFormulaNotification = () => toast("🎨 Formula added!");
 
@@ -119,7 +123,7 @@ export default function CreateFormulaModal({
     componentsShallowCopy[receivedIndexComponent] = componentShallowCopy;
     setNewFormulaComponents([...componentsShallowCopy]);
     setNewFormulaColor(returnHexColor(componentsShallowCopy, fetchedPigments!));
-    console.log(returnHexColor(componentsShallowCopy, fetchedPigments!));
+    // console.log(returnHexColor(componentsShallowCopy, fetchedPigments!));
   }
 
   async function handleComponentPercentageChange(
@@ -136,10 +140,8 @@ export default function CreateFormulaModal({
     componentsShallowCopy[receivedIndexComponent] = componentShallowCopy;
     setNewFormulaComponents([...componentsShallowCopy]);
 
-    // Convert to number for calculations
-    // const numericValue = Number(value);
     setNewFormulaColor(returnHexColor(componentsShallowCopy, fetchedPigments!));
-    console.log(returnHexColor(componentsShallowCopy, fetchedPigments!));
+    // console.log(returnHexColor(componentsShallowCopy, fetchedPigments!));
   }
 
   function handleFormulaWeightChange(value: number) {
@@ -266,17 +268,20 @@ export default function CreateFormulaModal({
         ComponentCode: component.ComponentCode,
         ComponentDescription: component.ComponentDescription,
         Percentage: component.Percentage,
-        isFormulaActive: isNewFormulaActive,
       };
     });
 
-    await addFormula({
+    await addOrEditFormula({
       formulaComponents: filledNewFormulaComponents,
       company: localStorage.getItem("userCompany")!,
       createdBy: localStorage.getItem("userEmail")!,
+      isEditOrCreate: isEditOrCreate,
+      isFormulaActive: isNewFormulaActive,
     });
+
     refetchFormulas();
     handleReset();
+    setSelectedFormula(undefined);
     onOpenChangeCreateFormulaModal(false);
     triggerAddedFormulaNotification();
   }
@@ -284,12 +289,41 @@ export default function CreateFormulaModal({
   // useEffect(() => {}, [newFormulaComponents]);
   useEffect(() => {
     if (isEditOrCreate === "edit" && selectedFormula) {
-      console.log(selectedFormula);
       setSelectedNewFormulaSeries(selectedFormula.formulaSeries);
       setNewFormulaCode(selectedFormula.formulaCode);
       setNewFormulaDescription(selectedFormula.formulaDescription);
+      const mappedComponents = selectedFormula.components.map((component) => {
+        return {
+          FormulaSerie: selectedNewFormulaSeries,
+          FormulaCode: newFormulaCode,
+          FormulaDescription: newFormulaDescription,
+          ComponentCode: component.componentCode,
+          ComponentDescription: component.componentDescription,
+          Percentage: String(component.percentage),
+        };
+      });
+      setNewFormulaColor(returnHexColor(mappedComponents, fetchedPigments!));
+      setNewFormulaComponents(mappedComponents);
     }
-  }, [isEditOrCreate]);
+
+    if (isEditOrCreate === "create") {
+      setSelectedNewFormulaSeries("");
+      setNewFormulaCode("");
+      setNewFormulaDescription("");
+      setNewFormulaColor("#fff");
+      setNewFormulaWeight(100);
+      setNewFormulaComponents([
+        {
+          FormulaSerie: "",
+          FormulaCode: "",
+          FormulaDescription: "",
+          ComponentCode: "ALPHA BASE",
+          ComponentDescription: "",
+          Percentage: "",
+        },
+      ]);
+    }
+  }, [isEditOrCreate, selectedFormula]);
 
   return (
     <>
@@ -305,32 +339,36 @@ export default function CreateFormulaModal({
           {(onClose: () => void) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-               { isEditOrCreate === "create" ? "Create new formula" : "Edit formula"}
+                {isEditOrCreate === "create"
+                  ? "Create new formula"
+                  : "Edit formula"}
               </ModalHeader>
               <ModalBody>
                 {/* <form> */}
-                <Select
-                  label="Select series"
-                  variant="bordered"
-                  radius="full"
-                  //   placeholder="301"
-                  isRequired={true}
-                  value={selectedNewFormulaSeries}
-                  onChange={(e) => handleSelectNewFormulaSeries(e)}
-                >
-                  {fetchedSeries !== undefined ? (
-                    fetchedSeries.map((series) => (
-                      <SelectItem
-                        key={series.seriesName}
-                        value={series.seriesName}
-                      >
-                        {series.seriesName}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <Spinner className="m-auto" />
-                  )}
-                </Select>
+                {selectedFormula && (
+                  <Select
+                    label="Select series"
+                    variant="bordered"
+                    radius="full"
+                    // placeholder="301"
+                    isRequired={true}
+                    selectedKeys={[selectedNewFormulaSeries]}
+                    onChange={(e) => handleSelectNewFormulaSeries(e)}
+                  >
+                    {fetchedSeries !== undefined ? (
+                      fetchedSeries.map((series) => (
+                        <SelectItem
+                          key={series.seriesName}
+                          value={series.seriesName}
+                        >
+                          {series.seriesName}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <Spinner className="m-auto" />
+                    )}
+                  </Select>
+                )}
 
                 <Input
                   label="Formula code"
@@ -622,20 +660,22 @@ export default function CreateFormulaModal({
                     </div>
                   }
                 >
-                  <Button
-                    color="danger"
-                    variant="light"
-                    className="mr-auto"
-                    onPress={handleReset}
-                  >
-                    Reset fields
-                  </Button>
+                  {isEditOrCreate === "create" && (
+                    <Button
+                      color="danger"
+                      variant="light"
+                      className="mr-auto"
+                      onPress={handleReset}
+                    >
+                      Reset fields
+                    </Button>
+                  )}
                 </Tooltip>
                 <Button color="default" variant="flat" onPress={onClose}>
                   Close
                 </Button>
                 <Button color="primary" type="submit" onPress={handleSubmit}>
-                  Create
+                  {isEditOrCreate === "edit" ? "Save changes" : "Create"}
                 </Button>
               </ModalFooter>
             </>

@@ -41,7 +41,6 @@ export interface FormulaComponentInterface {
   ComponentDescription: string;
   // Percentage: number;
   Percentage: string;
-  isFormulaActive?: boolean;
   swatchColor?: string;
   hex?: string;
 }
@@ -88,4 +87,5 @@ export interface FormulaSwatchInterface {
   isUserCreatedFormula?: boolean;
   company?: string;
   createdBy?: string;
+  isFormulaActive?: boolean;
 }

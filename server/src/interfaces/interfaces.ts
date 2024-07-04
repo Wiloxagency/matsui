@@ -24,6 +24,7 @@ export interface FormulaSwatchInterface {
   isUserCreatedFormula?: boolean;
   company?: string;
   createdBy?: string;
+  isFormulaActive?: boolean;
 }
 
 export interface FormulaComponentInterface {
@@ -33,5 +34,4 @@ export interface FormulaComponentInterface {
   ComponentCode: string;
   ComponentDescription: string;
   Percentage: number;
-  isFormulaActive?: boolean;
 }

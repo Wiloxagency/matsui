@@ -88,20 +88,22 @@ export default function FormulaDetailsTable({
           {formula.components.map((component) => {
             return (
               <Tr key={component.componentCode}>
-                <span
+                {/* <span
                   className="flex justify-center"
-                >
-                  <Td>
-                    {component.hex ? (
+                > */}
+                <Td>
+                  {component.hex ? (
+                    <div className="flex justify-center">
                       <span
-                        className="miniSwatch flex justify-center"
+                        className="miniSwatch"
                         style={{ backgroundColor: "#" + component.hex }}
                       ></span>
-                    ) : (
-                      "❌"
-                    )}
-                  </Td>
-                </span>
+                    </div>
+                  ) : (
+                    "❌"
+                  )}
+                </Td>
+                {/* </span> */}
                 <Td>{component.componentCode}</Td>
                 <Td>{component.componentDescription}</Td>
                 <Td>{Number(component.percentage)}</Td>

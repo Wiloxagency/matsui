@@ -108,16 +108,18 @@ export const api = createApi({
     getPigments: builder.query<Array<PigmentInterface>, void>({
       query: () => "components/GetPigments",
     }),
-    addFormula: builder.mutation<
+    addOrEditFormula: builder.mutation<
       void,
       {
         formulaComponents: FormulaComponentInterface[];
         company: string;
         createdBy: string;
+        isEditOrCreate: "edit" | "create";
+        isFormulaActive: boolean
       }
     >({
       query: (payload) => ({
-        url: "components/CreateFormula",
+        url: "components/CreateOrEditFormula",
         method: "POST",
         body: payload,
       }),
@@ -228,7 +230,7 @@ export const {
   useGetSeriesQuery,
   useGetInkSystemsQuery,
   useGetPigmentsQuery,
-  useAddFormulaMutation,
+  useAddOrEditFormulaMutation,
   useDeleteSeriesMutation,
   useAddSeriesMutation,
   useImportFormulasMutation,

@@ -489,7 +489,7 @@ router.get("/GetFormulaSwatchColors", async (req: Request, res: Response) => {
   res.json(allFormulaSwatchColors);
 });
 
-router.post("/CreateFormula", async (req: Request, res: Response) => {
+router.post("/CreateOrEditFormula", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const formulaSwatchColors = db.collection("formulaSwatchColors");
   const components = db.collection("components");
@@ -505,8 +505,10 @@ router.post("/CreateFormula", async (req: Request, res: Response) => {
 
     let newFormulaCode = receivedComponents[0].FormulaCode;
 
-    while (await checkIfFormulaCodeExists(newFormulaCode)) {
-      newFormulaCode = incrementName(newFormulaCode);
+    if (req.body.isEditOrCreate === "create") {
+      while (await checkIfFormulaCodeExists(newFormulaCode)) {
+        newFormulaCode = incrementName(newFormulaCode);
+      }
     }
 
     const newFormulaSwatch: FormulaSwatchInterface = {
@@ -515,6 +517,7 @@ router.post("/CreateFormula", async (req: Request, res: Response) => {
       isUserCreatedFormula: true,
       company: req.body.company,
       createdBy: req.body.createdBy,
+      isFormulaActive: req.body.isFormulaActive,
     };
 
     const updatedComponents = receivedComponents.map((component) => ({
@@ -522,8 +525,30 @@ router.post("/CreateFormula", async (req: Request, res: Response) => {
       FormulaCode: newFormulaCode,
     }));
 
-    await formulaSwatchColors.insertOne(newFormulaSwatch);
-    await components.insertMany(updatedComponents);
+    if (req.body.isEditOrCreate === "create") {
+      await formulaSwatchColors.insertOne(newFormulaSwatch);
+      await components.insertMany(updatedComponents);
+    } else if (req.body.isEditOrCreate === "edit") {
+      await formulaSwatchColors.updateOne(
+        { formulaCode: newFormulaCode },
+
+        {
+          $set: {
+            formulaCode: newFormulaCode,
+            formulaColor: finalHexColor,
+            isFormulaActive: req.body.isFormulaActive,
+          },
+        }
+      );
+      for (const component of receivedComponents) {
+        const deleteComponent = await components.deleteOne({
+          FormulaSerie: component.FormulaSerie,
+          FormulaCode: newFormulaCode,
+        });
+        // console.log(deleteComponent);
+      }
+      await components.insertMany(updatedComponents);
+    }
 
     res.json("Success");
   } catch (error) {
@@ -687,10 +712,6 @@ function calculateColorDistance(
       Math.pow(color1.b - color2.b, 2)
   );
 }
-
-// console.log(incrementName("testName"));
-// console.log(incrementName("testName (1)"));
-// console.log(incrementName("testName (2)"));
 
 async function checkIfFormulaCodeExists(
   receivedFormulaCode: string
