@@ -9,6 +9,7 @@ interface BottomBarProps {
 
 export default function BottomBar({ handleLogout }: BottomBarProps) {
   const location = useLocation();
+  const isAdmin = localStorage.getItem("isAdmin");
 
   return (
     <>
@@ -17,6 +18,7 @@ export default function BottomBar({ handleLogout }: BottomBarProps) {
           <ul>
             {pages.map((page) => {
               const Icon = page.icon;
+              if (page.path === "/admin" && !isAdmin) return;
               return (
                 <li
                   key={page.path}

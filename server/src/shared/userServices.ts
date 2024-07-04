@@ -19,6 +19,7 @@ export async function getUserByEmail(
       registrationDate: user.registrationDate,
       createdFormulas: user.createdFormulas,
       lastAccess: user.lastAccess,
+      isAdmin: user.isAdmin
     };
   } else {
     return null;

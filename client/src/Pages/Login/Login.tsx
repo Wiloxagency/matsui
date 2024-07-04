@@ -51,7 +51,7 @@ export function Login() {
     axios
       .post(API_URL + "register", JSON.stringify({ email, password }), {
         headers: { "Content-type": "application/json" },
-        withCredentials: true,
+        // withCredentials: true,
       })
       .then((response: AxiosResponse) => {
         setIsRegisterButtonLoading(false);
@@ -88,12 +88,14 @@ export function Login() {
           setLoginFormMessage("Please confirm your email before logging in");
           return;
         } else {
-          // console.log(response);
           localStorage.setItem("accessToken", response.data.accessToken);
           localStorage.setItem("userEmail", email);
           localStorage.setItem("userCompany", response.data.userCompany);
-          const accessToken = response.data.accessToken;
-          accessToken;
+          if (response.data.isAdmin) {
+            localStorage.setItem("isAdmin", response.data.isAdmin);
+          }
+          // const accessToken = response.data.accessToken;
+          // accessToken;
           // TODO: MAKE THIS WORK 👇🏻
           // setAuth({
           //   email: response.data.email,

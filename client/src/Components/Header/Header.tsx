@@ -12,6 +12,7 @@ export default function Header({ handleLogout }: HeaderProps) {
   const location = useLocation();
 
   const userEmail = localStorage.getItem("userEmail");
+  const isAdmin = localStorage.getItem("isAdmin");
 
   return (
     <div className="headerContainer">
@@ -20,6 +21,8 @@ export default function Header({ handleLogout }: HeaderProps) {
         <nav>
           <ul>
             {pages.map((page) => {
+              if (page.path === "/admin" && !isAdmin) return;
+              if (page.path === "/import" && !isAdmin) return;
               return (
                 <li
                   key={page.path}

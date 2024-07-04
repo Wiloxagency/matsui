@@ -102,6 +102,8 @@ export default function Formulas() {
     onOpenChange: onOpenChangeCreateFormulaModal,
   } = useDisclosure();
 
+  const isAdmin = localStorage.getItem("isAdmin");
+
   const triggerDuplicatedFormulaNotification = () =>
     toast("😁 Formula duplicated!");
 
@@ -455,14 +457,16 @@ export default function Formulas() {
                 FORMULA DETAILS:{" "}
                 {selectedFormula && selectedFormula.formulaDescription}
               </span>
-              <Button
-                startContent={<FaPen />}
-                color="primary"
-                isDisabled={!selectedFormula}
-                onPress={() => handleEditOrCreateFormulaClick("edit")}
-              >
-                EDIT FORMULA
-              </Button>
+              {isAdmin && (
+                <Button
+                  startContent={<FaPen />}
+                  color="primary"
+                  isDisabled={!selectedFormula}
+                  onPress={() => handleEditOrCreateFormulaClick("edit")}
+                >
+                  EDIT FORMULA
+                </Button>
+              )}
             </div>
             <div
               className="card"

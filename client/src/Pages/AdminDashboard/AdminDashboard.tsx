@@ -14,6 +14,7 @@ import EditUserModal from "../../Components/Modals/EditUserModal/EditUserModal";
 import ResetUserPasswordModal from "../../Components/Modals/ResetUserPasswordModal/ResetUserPasswordModal";
 import Swatches from "../../Components/Swatches/Swatches";
 import UsersTable from "../../Components/UsersTable/UsersTable";
+import { useNavigate } from "react-router-dom";
 // import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
 
 export default function AdminDashboard() {
@@ -58,6 +59,10 @@ export default function AdminDashboard() {
   >();
 
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
+
+  const isAdmin = localStorage.getItem("isAdmin");
+
+  const navigate = useNavigate();
 
   const [
     triggerGetUserFormulas,
@@ -190,6 +195,12 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (indexesSelectedUsers !== undefined) updateEmailRecipients();
   }, [indexesSelectedUsers]);
+
+  useEffect(() => {
+    if (!isAdmin) {
+      navigate("/formulas");
+    }
+  });
 
   return (
     <>

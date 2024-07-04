@@ -18,6 +18,7 @@ import {
 import "./ImportFormulas.scss";
 import { FormulaComponentInterface } from "../../interfaces/interfaces";
 import MissingPigmentsModal from "../../Components/Modals/MissingPigmentsModal/MissingPigments";
+import { useNavigate } from "react-router-dom";
 
 // interface ImportFormulaHeaderColumnIndexesInterface {
 //   indexFormulaCode: number;
@@ -79,6 +80,10 @@ export default function ImportFormulas() {
   const [deleteSeries] = useDeleteSeriesMutation();
 
   const [triggerGetSeries] = api.endpoints.getSeries.useLazyQuery();
+
+  const navigate = useNavigate();
+
+  const isAdmin = localStorage.getItem("isAdmin");
 
   const handleTemplateDownload = () => {
     axios({
@@ -279,6 +284,12 @@ export default function ImportFormulas() {
       validateUploadedComponents();
     }
   }, [extractedHeaders]);
+
+  useEffect(() => {
+    if (!isAdmin) {
+      navigate("/formulas");
+    }
+  });
 
   return (
     <>
