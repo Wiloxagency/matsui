@@ -94,7 +94,11 @@ export default function CreateFormulaModal({
 
   const [addOrEditFormula] = useAddOrEditFormulaMutation();
 
-  const triggerAddedFormulaNotification = () => toast("🎨 Formula added!");
+  const triggerAddedFormulaNotification = () => {
+    isEditOrCreate === "create"
+      ? toast("🎨 Formula added!")
+      : toast("🎨 Formula edited!");
+  };
 
   const handleSelectNewFormulaSeries = (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -106,6 +110,15 @@ export default function CreateFormulaModal({
     receivedComponentCode: string,
     receivedIndexComponent: number
   ) {
+    // PREVENT DUPLICATE PIGMENTS 👇🏻
+    if (
+      newFormulaComponents.findIndex(
+        (component) => component.ComponentCode === receivedComponentCode
+      ) !== -1
+    ) {
+      return;
+    }
+
     const matchingPigment = fetchedPigments?.find(
       (pigment) => pigment.code === receivedComponentCode
     );

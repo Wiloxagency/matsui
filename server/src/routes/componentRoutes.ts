@@ -531,7 +531,6 @@ router.post("/CreateOrEditFormula", async (req: Request, res: Response) => {
     } else if (req.body.isEditOrCreate === "edit") {
       await formulaSwatchColors.updateOne(
         { formulaCode: newFormulaCode },
-
         {
           $set: {
             formulaCode: newFormulaCode,
@@ -540,13 +539,12 @@ router.post("/CreateOrEditFormula", async (req: Request, res: Response) => {
           },
         }
       );
-      for (const component of receivedComponents) {
-        const deleteComponent = await components.deleteOne({
-          FormulaSerie: component.FormulaSerie,
-          FormulaCode: newFormulaCode,
-        });
-        // console.log(deleteComponent);
-      }
+      const deleteComponents = await components.deleteMany({
+        FormulaSerie: receivedComponents[0].FormulaSerie,
+        FormulaCode: newFormulaCode,
+      });
+      // console.log(deleteComponent);
+
       await components.insertMany(updatedComponents);
     }
 
