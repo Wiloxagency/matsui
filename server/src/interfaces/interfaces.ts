@@ -10,7 +10,7 @@ export interface UserInterface {
   registrationDate: Date;
   createdFormulas: number;
   lastAccess: Date;
-
+  isAdmin?: boolean;
   TEMP?: string;
 }
 

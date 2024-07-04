@@ -77,6 +77,7 @@ router.post("/login", async (req: Request, res: Response) => {
       message: "Success",
       // accessToken,
       userCompany: fetchedUser.company,
+      isAdmin: fetchedUser.isAdmin
     });
   } catch (error) {
     console.error(error);
