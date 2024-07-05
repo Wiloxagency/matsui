@@ -31,6 +31,7 @@ export interface FormulaInterface {
   }[];
   inkSystem: string;
   createdBy?: string
+  company?: string
 }
 
 export interface FormulaComponentInterface {

@@ -468,16 +468,15 @@ export default function Formulas() {
                 FORMULA DETAILS:{" "}
                 {selectedFormula && selectedFormula.formulaDescription}
               </span>
-              {isAdmin && (
-                <Button
-                  startContent={<FaPen />}
-                  color="primary"
-                  isDisabled={!selectedFormula || !selectedFormula.createdBy}
-                  onPress={() => handleEditOrCreateFormulaClick("edit")}
-                >
-                  EDIT FORMULA
-                </Button>
-              )}
+
+              <Button
+                startContent={<FaPen />}
+                color="primary"
+                isDisabled={!selectedFormula || !selectedFormula.createdBy}
+                onPress={() => handleEditOrCreateFormulaClick("edit")}
+              >
+                EDIT FORMULA
+              </Button>
             </div>
             <div
               className="card"

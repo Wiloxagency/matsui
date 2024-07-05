@@ -43,6 +43,7 @@ export default function Swatches({
       inkSystem: "",
       components: clickedFormula.components,
       createdBy: clickedFormula.formulaSwatchColor.createdBy,
+      company: clickedFormula.formulaSwatchColor.company
     };
     setSelectedFormula(fullFormula);
     if (triggerGetSimilarFormulas) {
