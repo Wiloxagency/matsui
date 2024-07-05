@@ -4,6 +4,9 @@ import {
   FormulaInterface,
   GetFormulasResultInterface,
 } from "../../interfaces/interfaces";
+import { FaPen } from "react-icons/fa";
+import { Button } from "@nextui-org/button";
+import { Tooltip } from "@nextui-org/tooltip";
 
 interface SwatchesProps {
   formulas: GetFormulasResultInterface[] | undefined;
@@ -14,6 +17,7 @@ interface SwatchesProps {
     formulaCode: string;
     formulaSeries: string;
   }) => void;
+  handleEditOrCreateFormulaClick?: (value: "edit") => void;
 }
 
 export default function Swatches({
@@ -22,8 +26,8 @@ export default function Swatches({
   selectedFormula,
   selectedSeries,
   triggerGetSimilarFormulas,
+  handleEditOrCreateFormulaClick,
 }: SwatchesProps) {
-
   function handleSelectFormula(clickedFormula: GetFormulasResultInterface) {
     // console.log(clickedFormula);
     const fullFormula: FormulaInterface = {
@@ -42,6 +46,11 @@ export default function Swatches({
         formulaSeries: selectedSeries,
       });
     }
+  }
+
+  function handleEditFormula(clickedFormula: GetFormulasResultInterface) {
+    handleSelectFormula(clickedFormula);
+    if (handleEditOrCreateFormulaClick) handleEditOrCreateFormulaClick("edit");
   }
 
   if (formulas !== undefined)
@@ -67,6 +76,19 @@ export default function Swatches({
                   <div className="swatchTitle">{formula._id}</div>
                   {/* <div>{formula.formulaDescription}</div> */}
                 </div>
+                {formula.formulaSwatchColor.createdBy && (
+                  <Tooltip content="This formula is editable">
+                    <Button
+                      className="editSwatchButton"
+                      isIconOnly={true}
+                      size="sm"
+                      variant="solid"
+                      onPress={() => handleEditFormula(formula)}
+                    >
+                      <FaPen></FaPen>
+                    </Button>
+                  </Tooltip>
+                )}
               </span>
             );
           })}

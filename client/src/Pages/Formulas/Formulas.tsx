@@ -433,6 +433,7 @@ export default function Formulas() {
                   setSelectedFormula={setSelectedFormula}
                   selectedSeries={selectedSeries}
                   triggerGetSimilarFormulas={triggerGetSimilarFormulas}
+                  handleEditOrCreateFormulaClick={handleEditOrCreateFormulaClick}
                 />
               ) : (
                 <Spinner className="m-auto" />

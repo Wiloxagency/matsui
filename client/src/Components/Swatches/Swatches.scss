@@ -9,6 +9,7 @@
     // height    : 80%;
     .swatch {
         display               : flex;
+        position              : relative;
         min-width             : 7rem;
         max-width             : 7rem;
         min-height            : 8rem;
@@ -56,4 +57,11 @@
         }
     }
 
+}
+
+.editSwatchButton {
+    position: absolute;
+    right   : .5rem;
+    top     : .5rem;
+    opacity : .49;
 }
