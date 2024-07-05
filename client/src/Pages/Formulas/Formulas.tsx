@@ -35,6 +35,9 @@ import "./Formulas.scss";
 import { Flip, ToastContainer, toast } from "react-toastify";
 
 export default function Formulas() {
+  const isAdmin = localStorage.getItem("isAdmin");
+  const userCompany = localStorage.getItem("userCompany");
+
   const [selectedSeries, setSelectedSeries] = useState<string>("301");
   const [formulaSearchQuery, setFormulaSearchQuery] = useState<string>("");
   const [totalFormulaCost, setTotalFormulaCost] = useState<number>(0);
@@ -48,7 +51,6 @@ export default function Formulas() {
   const { data: fetchedUsers } = useGetUsersQuery();
   const [companies, setCompanies] = useState<{ name: string }[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<string>();
-
   const [addOrEditFormula] = useAddOrEditFormulaMutation();
 
   const {
@@ -59,7 +61,8 @@ export default function Formulas() {
   } = useGetFormulasQuery({
     formulaSeries: selectedSeries,
     formulaSearchQuery: formulaSearchQuery,
-    company: selectedCompany,
+    userCompany: userCompany!,
+    selectedCompany: selectedCompany,
   });
 
   const {
@@ -101,8 +104,6 @@ export default function Formulas() {
     onOpen: onOpenCreateFormulaModal,
     onOpenChange: onOpenChangeCreateFormulaModal,
   } = useDisclosure();
-
-  const isAdmin = localStorage.getItem("isAdmin");
 
   const triggerDuplicatedFormulaNotification = () =>
     toast("😁 Formula duplicated!");
@@ -240,12 +241,12 @@ export default function Formulas() {
     }
   }, [fetchedUsers]);
 
-  useEffect(() => {
-    if (selectedCompany) {
-      refetchFormulas();
-      // console.log("selectedCompany: ", selectedCompany);
-    }
-  }, [selectedCompany]);
+  // useEffect(() => {
+  //   if (selectedCompany) {
+  //     setIncludeSystemFormulas(false);
+  //     refetchFormulas();
+  //   }
+  // }, [selectedCompany, refetchFormulas]);
 
   // TODO: IMPLEMENT THIS TO PREVENT FORMULAS REFETCHING EVERY TIME
   // A LETTER IS TYPED 👇🏻

@@ -30,7 +30,8 @@ router.post(
     let userFormulasCodes: string[] = [];
     const searchQuery: string = req.body.formulaSearchQuery;
 
-    // console.log(req.body);
+    console.log(req.body);
+    // console.log(req.body.includeSystemFormulas);
 
     if (req.body.userEmail) {
       const formulaSwatchColors = db.collection("formulaSwatchColors");
@@ -123,10 +124,10 @@ router.post(
       { $project: { fromItems: 0 } }
     );
 
-    if (req.body.company) {
+    if (req.body.selectedCompany) {
       pipeline.push({
         $match: {
-          [companyPath]: req.body.company,
+          [companyPath]: req.body.selectedCompany,
         },
       });
     }

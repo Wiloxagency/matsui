@@ -13,6 +13,7 @@ export default function Header({ handleLogout }: HeaderProps) {
 
   const userEmail = localStorage.getItem("userEmail");
   const isAdmin = localStorage.getItem("isAdmin");
+  const userCompany = localStorage.getItem("userCompany");
 
   return (
     <div className="headerContainer">
@@ -40,6 +41,7 @@ export default function Header({ handleLogout }: HeaderProps) {
         </nav>
 
         <p className="email">{userEmail}</p>
+        <p className="company">({userCompany})</p>
         <p className="logout" onClick={handleLogout}>
           Log out
         </p>

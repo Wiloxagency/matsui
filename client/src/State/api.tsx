@@ -79,8 +79,10 @@ export const api = createApi({
       {
         formulaSeries?: string;
         formulaSearchQuery?: string;
-        company?: string;
+        userCompany?: string;
+        selectedCompany?: string;
         userEmail?: string;
+        includeSystemFormulas?: boolean;
       }
     >({
       query: (arg) => ({
@@ -89,7 +91,8 @@ export const api = createApi({
         body: {
           formulaSeries: arg.formulaSeries,
           formulaSearchQuery: arg.formulaSearchQuery,
-          company: arg.company,
+          userCompany: arg.userCompany,
+          selectedCompany: arg.selectedCompany,
           userEmail: arg.userEmail,
         },
         headers: {
@@ -115,7 +118,7 @@ export const api = createApi({
         company: string;
         createdBy: string;
         isEditOrCreate: "edit" | "create";
-        isFormulaActive: boolean
+        isFormulaActive: boolean;
       }
     >({
       query: (payload) => ({
