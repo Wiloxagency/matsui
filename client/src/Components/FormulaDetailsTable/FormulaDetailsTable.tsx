@@ -47,7 +47,7 @@ export default function FormulaDetailsTable({
 }: FormulaDetailsTableProps) {
   const { data: fetchedPigments } = useGetPigmentsQuery();
 
-  console.log(formula);
+  // console.log(formula);
 
   function returnComponentPrice(receivedComponent: {
     componentCode: string;

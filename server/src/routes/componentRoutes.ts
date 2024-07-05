@@ -132,6 +132,14 @@ router.post(
       });
     }
 
+    if (!req.body.selectedCompany) {
+      pipeline.push({
+        $match: {
+          [companyPath]: { $in: [req.body.userCompany, null] },
+        },
+      });
+    }
+
     if (req.body.userEmail) {
       pipeline.push({
         $match: {
