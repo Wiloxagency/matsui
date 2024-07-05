@@ -29,6 +29,8 @@ export default function Swatches({
   handleEditOrCreateFormulaClick,
 }: SwatchesProps) {
   const isAdmin = localStorage.getItem("isAdmin");
+  const userCompany = localStorage.getItem("userCompany");
+  console.log("userCompany: ", userCompany);
 
   function handleSelectFormula(clickedFormula: GetFormulasResultInterface) {
     // console.log(clickedFormula);
@@ -56,6 +58,19 @@ export default function Swatches({
     if (handleEditOrCreateFormulaClick) handleEditOrCreateFormulaClick("edit");
   }
 
+  function isFormulaEditableByUser(
+    formula: GetFormulasResultInterface
+  ): boolean {
+    if (formula.formulaSwatchColor.createdBy && isAdmin) return true;
+
+    if (
+      formula.formulaSwatchColor.createdBy &&
+      userCompany === formula.formulaSwatchColor.company
+    )
+      return true;
+    return false;
+  }
+
   if (formulas !== undefined)
     return (
       <>
@@ -79,7 +94,7 @@ export default function Swatches({
                   <div className="swatchTitle">{formula._id}</div>
                   {/* <div>{formula.formulaDescription}</div> */}
                 </div>
-                {isAdmin && formula.formulaSwatchColor.createdBy && (
+                {isFormulaEditableByUser(formula) && (
                   <Tooltip content="This formula is editable">
                     <Button
                       className="editSwatchButton"
