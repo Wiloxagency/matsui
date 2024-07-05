@@ -38,6 +38,7 @@ export default function Swatches({
       reportedAsError: false,
       inkSystem: "",
       components: clickedFormula.components,
+      createdBy: clickedFormula.formulaSwatchColor.createdBy,
     };
     setSelectedFormula(fullFormula);
     if (triggerGetSimilarFormulas) {

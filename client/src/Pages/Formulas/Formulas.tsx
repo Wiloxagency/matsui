@@ -363,52 +363,59 @@ export default function Formulas() {
                 {isGetSeriesLoading && <Spinner className="m-auto" />}
               </span>
             </div>
-            <div className="dropdownAndLabelRow">
-              <label>COMPANY</label>
 
-              <span className="selectContainer">
-                {!selectedCompany && (
-                  <Select
-                    aria-label="COMPANY"
-                    variant="bordered"
-                    radius="full"
-                    placeholder="Select a company"
-                    onSelectionChange={(keys) =>
-                      setSelectedCompany(String(Array.from(keys)[0]))
-                    }
-                  >
-                    {companies.map((company) => (
-                      <SelectItem key={company.name}>{company.name}</SelectItem>
-                    ))}
-                  </Select>
-                )}
-                {selectedCompany && (
-                  <Select
-                    isDisabled={selectedCompany === ""}
-                    isOpen={isResetCompanySelectOpen}
-                    aria-label="COMPANY"
-                    variant="bordered"
-                    radius="full"
-                    placeholder="Select a company"
-                    selectedKeys={new Set([selectedCompany!])}
-                    endContent={
-                      selectedCompany && (
-                        <Tooltip content={<p>Reset company field</p>}>
-                          <span onClick={handleResetCompanyField}>🗑️</span>
-                        </Tooltip>
-                      )
-                    }
-                    onSelectionChange={(keys) =>
-                      setSelectedCompany(String(Array.from(keys)[0]))
-                    }
-                  >
-                    {companies.map((company) => (
-                      <SelectItem key={company.name}>{company.name}</SelectItem>
-                    ))}
-                  </Select>
-                )}
-              </span>
-            </div>
+            {isAdmin && (
+              <div className="dropdownAndLabelRow">
+                <label>COMPANY</label>
+
+                <span className="selectContainer">
+                  {!selectedCompany && (
+                    <Select
+                      aria-label="COMPANY"
+                      variant="bordered"
+                      radius="full"
+                      placeholder="Select a company"
+                      onSelectionChange={(keys) =>
+                        setSelectedCompany(String(Array.from(keys)[0]))
+                      }
+                    >
+                      {companies.map((company) => (
+                        <SelectItem key={company.name}>
+                          {company.name}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  )}
+                  {selectedCompany && (
+                    <Select
+                      isDisabled={selectedCompany === ""}
+                      isOpen={isResetCompanySelectOpen}
+                      aria-label="COMPANY"
+                      variant="bordered"
+                      radius="full"
+                      placeholder="Select a company"
+                      selectedKeys={new Set([selectedCompany!])}
+                      endContent={
+                        selectedCompany && (
+                          <Tooltip content={<p>Reset company field</p>}>
+                            <span onClick={handleResetCompanyField}>🗑️</span>
+                          </Tooltip>
+                        )
+                      }
+                      onSelectionChange={(keys) =>
+                        setSelectedCompany(String(Array.from(keys)[0]))
+                      }
+                    >
+                      {companies.map((company) => (
+                        <SelectItem key={company.name}>
+                          {company.name}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  )}
+                </span>
+              </div>
+            )}
 
             <div className="searchBarRow">
               <Input
@@ -433,7 +440,9 @@ export default function Formulas() {
                   setSelectedFormula={setSelectedFormula}
                   selectedSeries={selectedSeries}
                   triggerGetSimilarFormulas={triggerGetSimilarFormulas}
-                  handleEditOrCreateFormulaClick={handleEditOrCreateFormulaClick}
+                  handleEditOrCreateFormulaClick={
+                    handleEditOrCreateFormulaClick
+                  }
                 />
               ) : (
                 <Spinner className="m-auto" />
@@ -462,7 +471,7 @@ export default function Formulas() {
                 <Button
                   startContent={<FaPen />}
                   color="primary"
-                  isDisabled={!selectedFormula}
+                  isDisabled={!selectedFormula || !selectedFormula.createdBy}
                   onPress={() => handleEditOrCreateFormulaClick("edit")}
                 >
                   EDIT FORMULA

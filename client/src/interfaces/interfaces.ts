@@ -30,6 +30,7 @@ export interface FormulaInterface {
     hex?: string;
   }[];
   inkSystem: string;
+  createdBy?: string
 }
 
 export interface FormulaComponentInterface {
