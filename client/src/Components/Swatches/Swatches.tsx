@@ -28,6 +28,8 @@ export default function Swatches({
   triggerGetSimilarFormulas,
   handleEditOrCreateFormulaClick,
 }: SwatchesProps) {
+  const isAdmin = localStorage.getItem("isAdmin");
+
   function handleSelectFormula(clickedFormula: GetFormulasResultInterface) {
     // console.log(clickedFormula);
     const fullFormula: FormulaInterface = {
@@ -77,7 +79,7 @@ export default function Swatches({
                   <div className="swatchTitle">{formula._id}</div>
                   {/* <div>{formula.formulaDescription}</div> */}
                 </div>
-                {formula.formulaSwatchColor.createdBy && (
+                {isAdmin && formula.formulaSwatchColor.createdBy && (
                   <Tooltip content="This formula is editable">
                     <Button
                       className="editSwatchButton"
