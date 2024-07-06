@@ -5,6 +5,8 @@ import { useDisclosure } from "@nextui-org/modal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Spinner } from "@nextui-org/spinner";
 import { Tooltip } from "@nextui-org/tooltip";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import { useEffect, useState } from "react";
 import {
   FaClone,
@@ -15,6 +17,7 @@ import {
   FaSearch,
 } from "react-icons/fa";
 import { useMediaQuery } from "react-responsive";
+import { Flip, ToastContainer, toast } from "react-toastify";
 import * as XLSX from "xlsx";
 import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
 import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
@@ -32,7 +35,7 @@ import {
 import { returnUniqueCompanies } from "../../Utilities/returnUniqueCompanies";
 import { FormulaInterface } from "../../interfaces/interfaces";
 import "./Formulas.scss";
-import { Flip, ToastContainer, toast } from "react-toastify";
+import PrintFormulaTemplate from "./PrintFormulaTemplate";
 
 export default function Formulas() {
   const isAdmin = localStorage.getItem("isAdmin");
@@ -234,6 +237,33 @@ export default function Formulas() {
     onOpenCreateFormulaModal();
   }
 
+  async function generatePdf() {
+    const input = document.getElementById("divToPrint");
+    try {
+      html2canvas(input!).then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF();
+        // pdf.addImage(imgData, 'JPEG', 0, 0);
+        pdf.addImage({
+          imageData: imgData,
+          format: "JPEG",
+          x: 0,
+          y: 0,
+          width: 0,
+          height: 0,
+        });
+        // pdf.output('dataurlnewwindow');
+        pdf.save("download.pdf");
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  function handlePrintFormula() {
+    generatePdf();
+  }
+
   useEffect(() => {
     if (fetchedUsers) {
       const extractedCompanies = returnUniqueCompanies(fetchedUsers);
@@ -254,6 +284,9 @@ export default function Formulas() {
 
   return (
     <>
+      <div id="divToPrint">
+        <PrintFormulaTemplate />
+      </div>
       <ToastContainer
         containerId="formulaPageToastContainer"
         transition={Flip}
@@ -549,7 +582,7 @@ export default function Formulas() {
                     <Button
                       variant="bordered"
                       startContent={<FaPrint />}
-                      onPress={() => {}}
+                      onPress={handlePrintFormula}
                     >
                       PRINT FORMULA
                     </Button>

@@ -30,7 +30,7 @@ export default function Swatches({
 }: SwatchesProps) {
   const isAdmin = localStorage.getItem("isAdmin");
   const userCompany = localStorage.getItem("userCompany");
-  console.log("userCompany: ", userCompany);
+  // console.log("userCompany: ", userCompany);
 
   function handleSelectFormula(clickedFormula: GetFormulasResultInterface) {
     // console.log(clickedFormula);
