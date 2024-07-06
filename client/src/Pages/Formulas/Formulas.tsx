@@ -108,6 +108,8 @@ export default function Formulas() {
     onOpenChange: onOpenChangeCreateFormulaModal,
   } = useDisclosure();
 
+  const [selectedTemplateSize, setSelectedTemplateSize] = useState<number>(0);
+
   const triggerDuplicatedFormulaNotification = () =>
     toast("😁 Formula duplicated!");
 
@@ -285,7 +287,7 @@ export default function Formulas() {
   return (
     <>
       <div id="divToPrint">
-        <PrintFormulaTemplate />
+        <PrintFormulaTemplate templateSize={selectedTemplateSize} />
       </div>
       <ToastContainer
         containerId="formulaPageToastContainer"
@@ -585,6 +587,27 @@ export default function Formulas() {
                       onPress={handlePrintFormula}
                     >
                       PRINT FORMULA
+                    </Button>
+                    <Button
+                      isIconOnly={true}
+                      color={selectedTemplateSize === 1 ? "success" : "default"}
+                      onPress={() => setSelectedTemplateSize(1)}
+                    >
+                      1
+                    </Button>
+                    <Button
+                      isIconOnly={true}
+                      color={selectedTemplateSize === 2 ? "success" : "default"}
+                      onPress={() => setSelectedTemplateSize(2)}
+                    >
+                      2
+                    </Button>
+                    <Button
+                      isIconOnly={true}
+                      color={selectedTemplateSize === 3 ? "success" : "default"}
+                      onPress={() => setSelectedTemplateSize(3)}
+                    >
+                      3
                     </Button>
                   </div>
                 </>

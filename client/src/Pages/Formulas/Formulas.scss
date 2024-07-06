@@ -124,10 +124,26 @@
     // top        : 50%;
     // left       : 50%;
     // transform  : translate3d(-50%, -50%, 0);
-    color      : red;
+    // color      : red;
 }
 
-.printFormulaTemplate1 {
-    background-color: rebeccapurple;
-    height          : 100px;
+.printFormulaTemplate {
+    // background-color: rebeccapurple;
+    border: 1px solid black;
+    height: 100px;
+}
+
+.templateSize1 {
+    width : 7in;
+    height: 4.5in;
+}
+
+.templateSize2 {
+    width : 3.5in;
+    height: 2.25in;
+}
+
+.templateSize3 {
+    width : 2.5in;
+    height: 1.5in;
 }
