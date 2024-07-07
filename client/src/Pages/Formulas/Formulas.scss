@@ -135,13 +135,10 @@
     background-color         : white;
     border                   : 2px dashed black;
     height                   : 100px;
-    padding                  : 2rem;
 
     .templateHeader {
-        display      : flex;
-        align-items  : center;
-        gap          : 1.4rem;
-        margin-bottom: 1rem;
+        display    : flex;
+        align-items: center;
 
         p {
             font-weight: 600;
@@ -155,21 +152,98 @@
 }
 
 .printFormulaTemplate.size1 {
-    width : 6in;
-    height: 4in;
+    width  : 6in;
+    height : 4in;
+    padding: 1rem 2rem;
 
-    img {
-        width : 35px;
-        height: auto;
+    .templateHeader {
+        gap          : 1.4rem;
+        margin-bottom: 1.4rem;
+
+        img {
+            width : 35px;
+            height: 35px;
+
+            margin-bottom: -1rem;
+        }
+
+        .miniSwatch {
+            margin-bottom: -1rem;
+        }
     }
 }
 
 .printFormulaTemplate.size2 {
-    width : 3.5in;
-    height: 2.25in;
+    width    : 3in;
+    height   : 2in;
+    padding  : .75rem 1rem;
+    font-size: .5rem;
+
+    .templateHeader {
+        gap          : .75rem;
+        margin-bottom: .5rem;
+
+        img {
+            width : 16px;
+            height: auto;
+
+            margin-bottom: -.5rem;
+        }
+
+        .miniSwatch {
+            min-width : 1rem;
+            max-width : 1rem;
+            min-height: .75rem;
+            max-height: .75rem;
+
+            margin-bottom: -.5rem;
+        }
+    }
+
+    th {
+        text-align: start;
+    }
+
+    th,
+    td {
+        padding: .15rem;
+    }
 }
 
 .printFormulaTemplate.size3 {
-    width : 2.5in;
-    height: 1.5in;
+    width : 2in;
+    height: 1.3in;
+
+    padding  : .25rem;
+    font-size: .3rem;
+
+    .templateHeader {
+        gap          : .75rem;
+        margin-bottom: .2rem;
+
+        img {
+            width : 10px;
+            height: auto;
+
+            margin-bottom: -.35rem;
+        }
+
+        .miniSwatch {
+            min-width : .75rem;
+            max-width : .75rem;
+            min-height: .5rem;
+            max-height: .5rem;
+
+            margin-bottom: -.35rem;
+        }
+    }
+
+    th {
+        text-align: start;
+    }
+
+    th,
+    td {
+        padding: .1rem;
+    }
 }

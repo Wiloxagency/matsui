@@ -30,7 +30,7 @@ router.post(
     let userFormulasCodes: string[] = [];
     const searchQuery: string = req.body.formulaSearchQuery;
 
-    console.log(req.body);
+    // console.log(req.body);
     // console.log(req.body.includeSystemFormulas);
 
     if (req.body.userEmail) {

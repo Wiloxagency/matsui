@@ -248,21 +248,34 @@ export default function Formulas() {
   async function generatePdf() {
     const input = document.getElementById("divToPrint");
     try {
-      html2canvas(input!).then((canvas) => {
+      html2canvas(input!, { scale: 4 }).then((canvas) => {
         const imgData = canvas.toDataURL("image/png");
-        const pdf = new jsPDF();
+        const pdf = new jsPDF({ unit: "in" });
+
         // pdf.addImage(imgData, 'JPEG', 0, 0);
         pdf.addImage({
           imageData: imgData,
           format: "JPEG",
-          x: 18,
-          y: 18,
-          width: 0,
-          height: 0,
+          x: 1,
+          y: 1,
+          width:
+            selectedTemplateSize === 1
+              ? 6
+              : selectedTemplateSize === 2
+              ? 3
+              : 2,
+          height:
+            selectedTemplateSize === 1
+              ? 4
+              : selectedTemplateSize === 2
+              ? 2
+              : 1.3,
         });
-        // pdf.save("download.pdf");
         pdf.autoPrint();
-        pdf.output("dataurlnewwindow");
+        // pdf.save("download.pdf");
+        // pdf.output("dataurlnewwindow");
+        const blob = pdf.output("blob");
+        window.open(URL.createObjectURL(blob));
       });
     } catch (error) {
       console.error(error);
@@ -621,13 +634,13 @@ export default function Formulas() {
                           </DropdownItem>
                           <DropdownItem
                             key="2"
-                            description="Approximately 3.5x2.25 in"
+                            description="Approximately 3x2 in"
                           >
                             Medium
                           </DropdownItem>
                           <DropdownItem
                             key="3"
-                            description="Approximately 2.5x1.5 in"
+                            description="Approximately 2x1.3 in"
                           >
                             Small
                           </DropdownItem>

@@ -15,9 +15,9 @@ import {
 import { returnHexColor } from "../../Utilities/returnHexColor";
 
 interface PrintFormulaTemplateProps {
-  templateSize: number;
   formula: FormulaInterface;
-  fetchedPigments: PigmentInterface[];
+  fetchedPigments?: PigmentInterface[];
+  templateSize?: number;
 }
 
 const columns = [
@@ -27,7 +27,7 @@ const columns = [
   },
   {
     key: "componentDescription",
-    label: "ROLE",
+    label: "PRODUCT",
   },
   {
     key: "percentage",
@@ -35,57 +35,97 @@ const columns = [
   },
   {
     key: "g",
-    label: "Quantity (g)",
+    label: "QUANTITY (g)",
   },
 ];
+
+function returnMappedComponents(receivedFormula: FormulaInterface) {
+  const mappedComponents = receivedFormula.components.map((component) => {
+    return {
+      FormulaSerie: receivedFormula.formulaSeries,
+      FormulaCode: receivedFormula.formulaCode,
+      FormulaDescription: receivedFormula.formulaDescription,
+      ComponentCode: component.componentCode,
+      ComponentDescription: component.componentDescription,
+      Percentage: String(component.percentage),
+    };
+  });
+  return mappedComponents;
+}
+
+function TemplateTable({ formula }: PrintFormulaTemplateProps) {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>CODE</th>
+          <th>PRODUCT</th>
+          <th>%</th>
+          <th>QUANTITY (g)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {formula.components.map((component) => {
+          return (
+            <tr key={component.componentCode}>
+              <td>{component.componentCode}</td>
+              <td>{component.componentDescription}</td>
+              <td>{component.percentage}</td>
+              <td>{((1000 * component.percentage) / 100).toFixed(3)}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+}
+
+function TemplateHeader({
+  formula,
+  fetchedPigments,
+}: PrintFormulaTemplateProps) {
+  return (
+    <div className="templateHeader">
+      <img src={mLogo} />
+      <p>
+        <strong>{formula.formulaCode} </strong>({formula.formulaDescription})
+      </p>
+      <span
+        style={{
+          marginLeft: "auto",
+          fontWeight: "600",
+        }}
+      >
+        1000g
+      </span>
+      <span
+        className="miniSwatch"
+        style={{
+          backgroundColor: returnHexColor(
+            returnMappedComponents(formula),
+            fetchedPigments!
+          ),
+        }}
+      ></span>
+    </div>
+  );
+}
 
 export default function PrintFormulaTemplate({
   templateSize,
   formula,
   fetchedPigments,
 }: PrintFormulaTemplateProps) {
-  const mappedComponents = formula.components.map((component) => {
-    return {
-      FormulaSerie: formula.formulaSeries,
-      FormulaCode: formula.formulaCode,
-      FormulaDescription: formula.formulaDescription,
-      ComponentCode: component.componentCode,
-      ComponentDescription: component.componentDescription,
-      Percentage: String(component.percentage),
-    };
-  });
-
   {
     return templateSize === 1 ? (
       <div className="printFormulaTemplate size1">
-        <div className="templateHeader">
-          <img src={mLogo} />
-          <p>
-            <strong>{formula.formulaCode} </strong>({formula.formulaDescription}
-            )
-          </p>
-          <span
-            style={{
-              marginLeft: "auto",
-              fontWeight: "600",
-            }}
-          >
-            1000g
-          </span>
-          <span
-            className="miniSwatch"
-            style={{
-              backgroundColor: returnHexColor(
-                mappedComponents,
-                fetchedPigments
-              ),
-            }}
-          ></span>
-        </div>
-        {/* {formula.formulaDescription} */}
-
+        <TemplateHeader
+          formula={formula}
+          fetchedPigments={fetchedPigments}
+          templateSize={templateSize}
+        />
         <Table
-          isCompact={mappedComponents.length > 7 ? true : false}
+          isCompact={formula.components.length > 7 ? true : false}
           removeWrapper
           aria-label="Example table with dynamic content"
         >
@@ -118,9 +158,23 @@ export default function PrintFormulaTemplate({
         </Table>
       </div>
     ) : templateSize === 2 ? (
-      <div className="printFormulaTemplate size2">SIZE SHOULD BE</div>
+      <div className="printFormulaTemplate size2">
+        <TemplateHeader
+          formula={formula}
+          fetchedPigments={fetchedPigments}
+          templateSize={templateSize}
+        />
+        <TemplateTable formula={formula} />
+      </div>
     ) : (
-      <div className="printFormulaTemplate size3">SIZE SHOULD BE</div>
+      <div className="printFormulaTemplate size3">
+        <TemplateHeader
+          formula={formula}
+          fetchedPigments={fetchedPigments}
+          templateSize={templateSize}
+        />
+        <TemplateTable formula={formula} />
+      </div>
     );
   }
 }
