@@ -248,13 +248,14 @@ export default function Formulas() {
         pdf.addImage({
           imageData: imgData,
           format: "JPEG",
-          x: 0,
-          y: 0,
+          x: 20,
+          y: 20,
           width: 0,
           height: 0,
         });
-        // pdf.output('dataurlnewwindow');
-        pdf.save("download.pdf");
+        // pdf.save("download.pdf");
+        pdf.autoPrint()
+        pdf.output('dataurlnewwindow');
       });
     } catch (error) {
       console.error(error);
