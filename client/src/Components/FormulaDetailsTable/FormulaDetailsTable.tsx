@@ -3,7 +3,6 @@ import "../../../node_modules/react-super-responsive-table/dist/SuperResponsiveT
 import { useGetPigmentsQuery } from "../../State/api";
 import { FormulaInterface } from "../../interfaces/interfaces";
 import "./FormulaDetailsTable.scss";
-import { Dispatch, SetStateAction } from "react";
 
 const columns = [
   {
@@ -36,8 +35,6 @@ interface FormulaDetailsTableProps {
   formula: FormulaInterface;
   formulaQuantity: number;
   formulaUnit: "g" | "kg" | "lb" | string;
-  totalFormulaCost: number;
-  setTotalFormulaCost: Dispatch<SetStateAction<number>>;
 }
 
 export default function FormulaDetailsTable({
@@ -63,10 +60,6 @@ export default function FormulaDetailsTable({
       const componentWeight = formulaQuantity * receivedComponent.percentage;
       const componentPrice =
         (componentWeight * selectedPigment[0].pricePerKg) / 10000;
-
-      // setTotalFormulaCost(totalFormulaCost + componentPrice);
-
-      // updateTotalFormulaCost(componentPrice);
       return componentPrice.toFixed(3);
     }
     return "❌";

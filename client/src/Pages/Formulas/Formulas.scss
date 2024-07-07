@@ -134,9 +134,9 @@
     // align-items           : space-between;
     // justify-content    : space-between;
     background-color         : white;
-    border                   : 2px dotted black;
+    border                   : 2px dashed black;
     height                   : 100px;
-    padding                  : 1rem;
+    padding                  : 2rem;
 
     .templateHeader {
         display      : flex;
@@ -149,7 +149,8 @@
         }
 
         .miniSwatch {
-            margin-left: auto;
+            min-width: 3rem;
+            max-width: 3rem;
         }
     }
 }

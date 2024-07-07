@@ -34,8 +34,8 @@ const columns = [
     label: "%",
   },
   {
-    key: "Gr",
-    label: "Quantity (Gr)",
+    key: "g",
+    label: "Quantity (g)",
   },
 ];
 
@@ -65,6 +65,14 @@ export default function PrintFormulaTemplate({
             )
           </p>
           <span
+            style={{
+              marginLeft: "auto",
+              fontWeight: "600",
+            }}
+          >
+            1000g
+          </span>
+          <span
             className="miniSwatch"
             style={{
               backgroundColor: returnHexColor(
@@ -77,9 +85,9 @@ export default function PrintFormulaTemplate({
         {/* {formula.formulaDescription} */}
 
         <Table
+          isCompact={mappedComponents.length > 7 ? true : false}
           removeWrapper
           aria-label="Example table with dynamic content"
-          bottomContent={<div>helloo</div>}
         >
           <TableHeader columns={columns}>
             {(column) => (
@@ -87,11 +95,23 @@ export default function PrintFormulaTemplate({
             )}
           </TableHeader>
           <TableBody items={formula.components}>
-            {(item) => (
-              <TableRow key={item.componentCode}>
-                {(columnKey) => (
-                  <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-                )}
+            {(formulaComponent) => (
+              <TableRow key={formulaComponent.componentCode}>
+                {(columnKey) =>
+                  columnKey === "g" ? (
+                    <TableCell>
+                      <span>
+                        {((1000 * formulaComponent.percentage) / 100).toFixed(
+                          3
+                        )}
+                      </span>
+                    </TableCell>
+                  ) : (
+                    <TableCell>
+                      {getKeyValue(formulaComponent, columnKey)}
+                    </TableCell>
+                  )
+                }
               </TableRow>
             )}
           </TableBody>
