@@ -286,9 +286,15 @@ export default function Formulas() {
 
   return (
     <>
-      <div id="divToPrint">
-        <PrintFormulaTemplate templateSize={selectedTemplateSize} />
-      </div>
+      {selectedFormula && fetchedPigments && (
+        <div id="divToPrint">
+          <PrintFormulaTemplate
+            templateSize={selectedTemplateSize}
+            formula={selectedFormula}
+            fetchedPigments={fetchedPigments}
+          />
+        </div>
+      )}
       <ToastContainer
         containerId="formulaPageToastContainer"
         transition={Flip}

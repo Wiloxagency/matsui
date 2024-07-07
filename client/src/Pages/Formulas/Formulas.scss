@@ -119,31 +119,57 @@
 }
 
 #divToPrint {
-    position   : absolute;
-    top     : -1000px;
-    // top        : 50%;
-    // left       : 50%;
-    // transform  : translate3d(-50%, -50%, 0);
+    position         : absolute;
+    // top           : -1000px;
+    top              : 50%;
+    left             : 50%;
+    transform        : translate3d(-50%, -50%, 0);
     // color      : red;
+    z-index          : 9;
 }
 
 .printFormulaTemplate {
-    // background-color: rebeccapurple;
-    border: 1px solid black;
-    height: 100px;
+    display                  : flex;
+    flex-direction           : column;
+    // align-items           : space-between;
+    // justify-content    : space-between;
+    background-color         : white;
+    border                   : 2px dotted black;
+    height                   : 100px;
+    padding                  : 1rem;
+
+    .templateHeader {
+        display      : flex;
+        align-items  : center;
+        gap          : 1.4rem;
+        margin-bottom: 1rem;
+
+        p {
+            font-weight: 600;
+        }
+
+        .miniSwatch {
+            margin-left: auto;
+        }
+    }
 }
 
-.templateSize1 {
-    width : 7in;
-    height: 4.5in;
+.printFormulaTemplate.size1 {
+    width : 6in;
+    height: 4in;
+
+    img {
+        width : 35px;
+        height: auto;
+    }
 }
 
-.templateSize2 {
+.printFormulaTemplate.size2 {
     width : 3.5in;
     height: 2.25in;
 }
 
-.templateSize3 {
+.printFormulaTemplate.size3 {
     width : 2.5in;
     height: 1.5in;
 }

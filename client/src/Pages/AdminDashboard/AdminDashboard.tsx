@@ -18,6 +18,8 @@ import { useNavigate } from "react-router-dom";
 // import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
 
 export default function AdminDashboard() {
+  const userCompany = localStorage.getItem("userCompany");
+
   const {
     isOpen: isOpenEditUserModal,
     onOpen: onOpenEditUserModal,
@@ -146,7 +148,12 @@ export default function AdminDashboard() {
       );
       if (filteredArray.length === 1) {
         const lastUserSelected = fetchedUsers![filteredArray[0]];
-        triggerGetUserFormulas({ userEmail: lastUserSelected.email })
+
+        console.log("userCompany: ", userCompany);
+        triggerGetUserFormulas({
+          userEmail: lastUserSelected.email,
+          userCompany: userCompany!,
+        })
           .unwrap()
           .then(() => {
             setIsUserFormulasVisible(true);
@@ -160,7 +167,10 @@ export default function AdminDashboard() {
       ];
       if (indexesSelectedUsers.length === 0) {
         const selectedUser = fetchedUsers![receivedUserIndex];
-        triggerGetUserFormulas({ userEmail: selectedUser.email })
+        triggerGetUserFormulas({
+          userEmail: selectedUser.email,
+          userCompany: userCompany!,
+        })
           .unwrap()
           .then(() => {
             setIsUserFormulasVisible(true);
