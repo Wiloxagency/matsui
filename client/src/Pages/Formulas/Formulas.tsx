@@ -1,4 +1,4 @@
-import { Button } from "@nextui-org/button";
+import { Button, ButtonGroup } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
 import { Input } from "@nextui-org/input";
 import { useDisclosure } from "@nextui-org/modal";
@@ -9,6 +9,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useEffect, useState } from "react";
 import {
+  FaChevronDown,
   FaClone,
   FaFileExport,
   FaPen,
@@ -36,6 +37,12 @@ import { returnUniqueCompanies } from "../../Utilities/returnUniqueCompanies";
 import { FormulaInterface } from "../../interfaces/interfaces";
 import "./Formulas.scss";
 import PrintFormulaTemplate from "./PrintFormulaTemplate";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/dropdown";
 
 export default function Formulas() {
   const isAdmin = localStorage.getItem("isAdmin");
@@ -107,7 +114,7 @@ export default function Formulas() {
     onOpenChange: onOpenChangeCreateFormulaModal,
   } = useDisclosure();
 
-  const [selectedTemplateSize, setSelectedTemplateSize] = useState<number>(0);
+  const [selectedTemplateSize, setSelectedTemplateSize] = useState<number>(1);
 
   const triggerDuplicatedFormulaNotification = () =>
     toast("😁 Formula duplicated!");
@@ -248,14 +255,14 @@ export default function Formulas() {
         pdf.addImage({
           imageData: imgData,
           format: "JPEG",
-          x: 20,
-          y: 20,
+          x: 18,
+          y: 18,
           width: 0,
           height: 0,
         });
         // pdf.save("download.pdf");
-        pdf.autoPrint()
-        pdf.output('dataurlnewwindow');
+        pdf.autoPrint();
+        pdf.output("dataurlnewwindow");
       });
     } catch (error) {
       console.error(error);
@@ -272,13 +279,6 @@ export default function Formulas() {
       setCompanies(extractedCompanies);
     }
   }, [fetchedUsers]);
-
-  // useEffect(() => {
-  //   if (selectedCompany) {
-  //     setIncludeSystemFormulas(false);
-  //     refetchFormulas();
-  //   }
-  // }, [selectedCompany, refetchFormulas]);
 
   // TODO: IMPLEMENT THIS TO PREVENT FORMULAS REFETCHING EVERY TIME
   // A LETTER IS TYPED 👇🏻
@@ -585,34 +585,55 @@ export default function Formulas() {
                     >
                       DUPLICATE FORMULA
                     </Button>
-                    <Button
-                      variant="bordered"
-                      startContent={<FaPrint />}
-                      onPress={handlePrintFormula}
-                    >
-                      PRINT FORMULA
-                    </Button>
-                    <Button
-                      isIconOnly={true}
-                      color={selectedTemplateSize === 1 ? "success" : "default"}
-                      onPress={() => setSelectedTemplateSize(1)}
-                    >
-                      1
-                    </Button>
-                    <Button
-                      isIconOnly={true}
-                      color={selectedTemplateSize === 2 ? "success" : "default"}
-                      onPress={() => setSelectedTemplateSize(2)}
-                    >
-                      2
-                    </Button>
-                    <Button
-                      isIconOnly={true}
-                      color={selectedTemplateSize === 3 ? "success" : "default"}
-                      onPress={() => setSelectedTemplateSize(3)}
-                    >
-                      3
-                    </Button>
+                    <ButtonGroup variant="bordered">
+                      <Button
+                        startContent={<FaPrint />}
+                        onPress={handlePrintFormula}
+                      >
+                        PRINT FORMULA (
+                        {selectedTemplateSize === 1
+                          ? "L"
+                          : selectedTemplateSize === 2
+                          ? "M"
+                          : "S"}
+                        )
+                      </Button>
+                      <Dropdown placement="bottom-end">
+                        <DropdownTrigger>
+                          <Button isIconOnly>
+                            <FaChevronDown />
+                          </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                          disallowEmptySelection
+                          aria-label="Template size"
+                          selectionMode="single"
+                          onSelectionChange={(key) => {
+                            setSelectedTemplateSize(Number(Array.from(key)[0]));
+                          }}
+                          className="max-w-[300px]"
+                        >
+                          <DropdownItem
+                            key="1"
+                            description="Approximately 6x4 in"
+                          >
+                            Large
+                          </DropdownItem>
+                          <DropdownItem
+                            key="2"
+                            description="Approximately 3.5x2.25 in"
+                          >
+                            Medium
+                          </DropdownItem>
+                          <DropdownItem
+                            key="3"
+                            description="Approximately 2.5x1.5 in"
+                          >
+                            Small
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </Dropdown>
+                    </ButtonGroup>
                   </div>
                 </>
               ) : (
