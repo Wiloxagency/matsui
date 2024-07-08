@@ -13,11 +13,18 @@ import { Document } from "mongodb";
 
 const router = Router();
 
-router.get("/", async (req: Request, res: Response) => {
+router.post("/GetComponents", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const components = db.collection("components");
-  const allComponents = await components.find().toArray();
-  res.json(allComponents);
+  if (req.body.series) {
+    const seriesComponents = await components
+      .find({ FormulaSerie: req.body.series })
+      .toArray();
+    res.json(seriesComponents);
+  } else {
+    const allComponents = await components.find().toArray();
+    res.json(allComponents);
+  }
 });
 
 router.post(

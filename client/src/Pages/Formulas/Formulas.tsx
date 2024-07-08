@@ -155,7 +155,7 @@ export default function Formulas() {
   };
 
   function handleExportFormulas() {
-    triggerGetAllComponents()
+    triggerGetAllComponents({ series: selectedSeries })
       .unwrap()
       .then((allComponents) => {
         // console.log(allComponents);
@@ -185,8 +185,11 @@ export default function Formulas() {
 
         const workbook = XLSX.utils.book_new();
         const worksheet = XLSX.utils.json_to_sheet(reorderedComponents);
-        XLSX.utils.book_append_sheet(workbook, worksheet, "All components");
-        XLSX.writeFileXLSX(workbook, "matsui_all_components.xlsx");
+        XLSX.utils.book_append_sheet(workbook, worksheet, selectedSeries);
+        XLSX.writeFileXLSX(
+          workbook,
+          `matsui_${selectedSeries}_components.xlsx`
+        );
       });
   }
 
@@ -259,11 +262,7 @@ export default function Formulas() {
           x: 1,
           y: 1,
           width:
-            selectedTemplateSize === 1
-              ? 6
-              : selectedTemplateSize === 2
-              ? 3
-              : 2,
+            selectedTemplateSize === 1 ? 6 : selectedTemplateSize === 2 ? 3 : 2,
           height:
             selectedTemplateSize === 1
               ? 4

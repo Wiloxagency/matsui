@@ -215,8 +215,17 @@ export const api = createApi({
         },
       }),
     }),
-    getAllComponents: builder.query<Array<FormulaComponentInterface>, void>({
-      query: () => "components/",
+    getAllComponents: builder.query<
+      Array<FormulaComponentInterface>,
+      { series?: string }
+    >({
+      query: (arg) => ({
+        method: "POST",
+        url: "components/GetComponents",
+        body: {
+          series: arg.series,
+        },
+      }),
     }),
     deleteUser: builder.mutation<void, { userEmail: string }>({
       query: (payload) => ({
