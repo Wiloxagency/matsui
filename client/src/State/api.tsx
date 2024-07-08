@@ -183,7 +183,7 @@ export const api = createApi({
         recipients: string[];
         subject: string;
         message: string;
-        isResetPasswordEmail?: boolean
+        isResetPasswordEmail?: boolean;
       }
     >({
       query: (payload) => {
@@ -225,6 +225,21 @@ export const api = createApi({
         body: payload,
       }),
     }),
+    resetUserPassword: builder.query<
+      void,
+      {
+        resetPasswordCode: string;
+        newPassword: string;
+      }
+    >({
+      query: (payload) => {
+        return {
+          method: "POST",
+          url: "users/ResetPassword",
+          body: payload,
+        };
+      },
+    }),
   }),
 });
 
@@ -244,4 +259,5 @@ export const {
   useGetSimilarFormulasQuery,
   useGetAllComponentsQuery,
   useDeleteUserMutation,
+  useResetUserPasswordQuery,
 } = api;

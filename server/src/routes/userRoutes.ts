@@ -115,4 +115,9 @@ router.post("/SendEmail", async (req: Request, res: Response) => {
   }
 });
 
+router.post("/ResetPassword", async (req: Request, res: Response) => {
+  console.log(req.body);
+  res.json({ message: "Success" });
+});
+
 export default router;
