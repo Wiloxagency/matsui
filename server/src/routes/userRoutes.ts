@@ -1,7 +1,12 @@
+import bcrypt from "bcrypt";
 import { Router, Request, Response } from "express";
 import { createMongoDBConnection } from "../shared/mongodbConfig";
 import handlebars = require("handlebars");
-import { returnEncryptedString } from "../shared/stringEncryption";
+import {
+  returnDecryptedString,
+  returnEncryptedString,
+} from "../shared/stringEncryption";
+import { ObjectId } from "mongodb";
 const fs = require("fs");
 
 const router = Router();
@@ -42,10 +47,7 @@ router.get("/:id", async (req: Request, res: Response) => {});
 
 router.post("/SendEmail", async (req: Request, res: Response) => {
   try {
-    // console.log(req.body);
-
     const nodemailer = require("nodemailer");
-
     const transporter = nodemailer.createTransport({
       host: "sandbox.smtp.mailtrap.io",
       port: 587,
@@ -85,7 +87,7 @@ router.post("/SendEmail", async (req: Request, res: Response) => {
       const encryptedId = returnEncryptedString(String(fetchedUser!._id));
 
       const resetPasswordLink =
-        "https://" + FRONTEND_URL + "/resetPassword/" + encryptedId;
+        "https://" + FRONTEND_URL + "/passwordReset/" + encryptedId;
 
       replacements = {
         resetPasswordLink: resetPasswordLink,
@@ -116,8 +118,24 @@ router.post("/SendEmail", async (req: Request, res: Response) => {
 });
 
 router.post("/ResetPassword", async (req: Request, res: Response) => {
-  console.log(req.body);
-  res.json({ message: "Success" });
+  const db = await createMongoDBConnection();
+  const users = db.collection("users");
+  const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
+
+  try {
+    const decryptedId = new ObjectId(
+      returnDecryptedString(req.body.encryptedId)
+    );
+    const activateUser = await users.updateOne(
+      { _id: decryptedId },
+      { $set: { password: hashedPassword } }
+    );
+    res.json({ message: "Success" });
+    // res.json(activateUser);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json();
+  }
 });
 
 export default router;

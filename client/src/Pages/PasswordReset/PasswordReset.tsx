@@ -9,7 +9,7 @@ import { api } from "../../State/api";
 export default function PasswordReset() {
   const navigate = useNavigate();
   const params = useParams();
-  const passwordResetCode = params.passwordResetCode;
+  const encryptedId = params.encryptedId;
   const [newPassword, setNewPassword] = useState<string>("");
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const [isSpinnerVisible, setIsSpinnerVisible] = useState<boolean>(false);
@@ -21,27 +21,39 @@ export default function PasswordReset() {
   function handleConfirm() {
     setIsSpinnerVisible(true);
     triggerConfirmPasswordChange({
-      resetPasswordCode: passwordResetCode!,
+      encryptedId: encryptedId!,
       newPassword: newPassword,
     })
       .unwrap()
       .then((response: any) => {
         setIsSpinnerVisible(false);
         if (response.message === "Success") {
-          setResponseMessage("Success");
-          return;
+          setResponseMessage(
+            "Password changed! You will be redirected in a few seconds"
+          );
           setTimeout(() => {
-            navigate("/formulas");
+            navigate("/login");
           }, 2000);
         } else {
-          setResponseMessage("error");
+          setIsSpinnerVisible(false);
+          setResponseMessage(
+            "Error resetting password. Please contact your organization"
+          );
         }
+      })
+      .catch((error) => {
+        console.error(error);
+        setIsSpinnerVisible(false);
+        setResponseMessage(
+          "Error resetting password. Please contact your organization"
+        );
       });
   }
 
   return (
+    // <div className="emailVerificationLayout">
     <div className="passwordResetMainContainer">
-      <div className="card">
+      <div className="card m-auto text-center">
         <strong>Reset password</strong>
         <Input
           label="New password"
@@ -62,7 +74,13 @@ export default function PasswordReset() {
             </button>
           }
         ></Input>
-        <p>{responseMessage}</p>
+        <p
+          className={
+            responseMessage !== "" ? "hiddenBlock active-4" : "hiddenBlock"
+          }
+        >
+          {responseMessage}
+        </p>
         <Button
           color="primary"
           onPress={handleConfirm}

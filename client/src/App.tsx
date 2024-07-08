@@ -24,7 +24,7 @@ export default function App() {
         element={<EmailVerification />}
       />
       <Route
-        path="passwordReset/:passwordResetCode"
+        path="passwordReset/:encryptedId"
         element={<PasswordReset />}
       />
     </Routes>

@@ -228,7 +228,7 @@ export const api = createApi({
     resetUserPassword: builder.query<
       void,
       {
-        resetPasswordCode: string;
+        encryptedId: string;
         newPassword: string;
       }
     >({
