@@ -26,7 +26,7 @@ import { ChromePicker } from "react-color";
 import { FaTrash } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import { useMediaQuery } from "react-responsive";
-import { Flip, ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAddOrEditFormulaMutation } from "../../../State/api";
 import { returnHexColor } from "../../../Utilities/returnHexColor";
@@ -340,7 +340,6 @@ export default function CreateFormulaModal({
 
   return (
     <>
-      <ToastContainer transition={Flip} />
       <Modal
         isOpen={isOpenCreateFormulaModal}
         onOpenChange={onOpenChangeCreateFormulaModal}

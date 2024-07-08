@@ -18,7 +18,7 @@ import {
   FaSearch,
 } from "react-icons/fa";
 import { useMediaQuery } from "react-responsive";
-import { Flip, ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
 import FormulaDetailsTable from "../../Components/FormulaDetailsTable/FormulaDetailsTable";
 import FormulaPercentagesGraph from "../../Components/FormulaPercentagesGraph/FormulaPercentagesGraph";
@@ -307,11 +307,6 @@ export default function Formulas() {
           />
         </div>
       )}
-      <ToastContainer
-        containerId="formulaPageToastContainer"
-        transition={Flip}
-      />
-
       <CreateFormulaModal
         isOpenCreateFormulaModal={isOpenCreateFormulaModal}
         onOpenChangeCreateFormulaModal={onOpenChangeCreateFormulaModal}

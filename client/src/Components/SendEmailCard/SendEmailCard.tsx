@@ -3,11 +3,11 @@ import { Input, Textarea } from "@nextui-org/input";
 import { Dispatch, SetStateAction, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
-import { Flip, ToastContainer, toast } from "react-toastify";
+import { useMediaQuery } from "react-responsive";
+import { toast } from "react-toastify";
 import { api } from "../../State/api";
 import { UserInterface } from "../../interfaces/interfaces";
 import "./SendEmailCard.scss";
-import { useMediaQuery } from "react-responsive";
 
 interface SendEmailCardProps {
   setIsSendEmailActive: Dispatch<SetStateAction<boolean>>;
@@ -60,10 +60,6 @@ export default function SendEmailCard({
 
   return (
     <>
-      <ToastContainer
-        containerId="sendEmailCardToastContainer"
-        transition={Flip}
-      />
       <div
         className={
           isMobile ? "card sendEmailCard mobileLayout" : "card sendEmailCard"

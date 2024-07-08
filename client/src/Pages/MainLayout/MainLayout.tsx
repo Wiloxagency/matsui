@@ -4,6 +4,7 @@ import BottomBar from "../../Components/BottomBar/BottomBar";
 import Header from "../../Components/Header/Header";
 import "./MainLayout.scss";
 import { useEffect } from "react";
+import { Flip, ToastContainer } from "react-toastify";
 
 export default function MainLayout() {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ export default function MainLayout() {
   if (accessToken) {
     return (
       <>
+        <ToastContainer transition={Flip} />
         {isSmallScreen ? (
           <BottomBar handleLogout={handleLogout} />
         ) : (
@@ -42,7 +44,7 @@ export default function MainLayout() {
         </div>
       </>
     );
-  // } else {
-  //   navigate("/login");
+    // } else {
+    //   navigate("/login");
   }
 }

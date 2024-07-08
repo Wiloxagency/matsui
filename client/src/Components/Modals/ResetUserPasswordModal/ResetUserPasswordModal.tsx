@@ -6,8 +6,8 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@nextui-org/modal";
+import { toast } from "react-toastify";
 import { api } from "../../../State/api";
-import { Flip, toast, ToastContainer } from "react-toastify";
 
 interface ResetUserPasswordModalProps {
   isOpen: boolean;
@@ -44,10 +44,6 @@ export default function ResetUserPasswordModal({
 
   return (
     <>
-      <ToastContainer
-        containerId="resetUserPasswordModalToastContainer"
-        transition={Flip}
-      />
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
