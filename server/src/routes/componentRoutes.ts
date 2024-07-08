@@ -423,6 +423,7 @@ router.post("/CreateOrEditFormula", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const formulaSwatchColors = db.collection("formulaSwatchColors");
   const components = db.collection("components");
+  const users = db.collection("users");
   const receivedComponents: FormulaComponentInterface[] =
     req.body.formulaComponents;
 
@@ -458,6 +459,12 @@ router.post("/CreateOrEditFormula", async (req: Request, res: Response) => {
     if (req.body.isEditOrCreate === "create") {
       await formulaSwatchColors.insertOne(newFormulaSwatch);
       await components.insertMany(updatedComponents);
+      await users.updateOne(
+        { email: req.body.createdBy },
+        {
+          $inc: { createdFormulas: 1 },
+        }
+      );
     } else if (req.body.isEditOrCreate === "edit") {
       await formulaSwatchColors.updateOne(
         { formulaCode: newFormulaCode },

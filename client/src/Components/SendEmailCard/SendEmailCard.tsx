@@ -60,7 +60,10 @@ export default function SendEmailCard({
 
   return (
     <>
-      <ToastContainer transition={Flip} />
+      <ToastContainer
+        containerId="sendEmailCardToastContainer"
+        transition={Flip}
+      />
       <div
         className={
           isMobile ? "card sendEmailCard mobileLayout" : "card sendEmailCard"

@@ -358,30 +358,29 @@ export default function CreateFormulaModal({
               </ModalHeader>
               <ModalBody>
                 {/* <form> */}
-                {selectedFormula && (
-                  <Select
-                    label="Select series"
-                    variant="bordered"
-                    radius="full"
-                    // placeholder="301"
-                    isRequired={true}
-                    selectedKeys={[selectedNewFormulaSeries]}
-                    onChange={(e) => handleSelectNewFormulaSeries(e)}
-                  >
-                    {fetchedSeries !== undefined ? (
-                      fetchedSeries.map((series) => (
-                        <SelectItem
-                          key={series.seriesName}
-                          value={series.seriesName}
-                        >
-                          {series.seriesName}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <Spinner className="m-auto" />
-                    )}
-                  </Select>
-                )}
+
+                <Select
+                  label="Select series"
+                  variant="bordered"
+                  radius="full"
+                  // placeholder="301"
+                  isRequired={true}
+                  selectedKeys={[selectedNewFormulaSeries]}
+                  onChange={(e) => handleSelectNewFormulaSeries(e)}
+                >
+                  {fetchedSeries !== undefined ? (
+                    fetchedSeries.map((series) => (
+                      <SelectItem
+                        key={series.seriesName}
+                        value={series.seriesName}
+                      >
+                        {series.seriesName}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <Spinner className="m-auto" />
+                  )}
+                </Select>
 
                 <Input
                   label="Formula code"

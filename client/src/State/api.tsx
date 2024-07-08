@@ -183,6 +183,7 @@ export const api = createApi({
         recipients: string[];
         subject: string;
         message: string;
+        isResetPasswordEmail?: boolean
       }
     >({
       query: (payload) => {

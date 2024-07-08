@@ -28,7 +28,7 @@ const readFile = promisify(fs.readFile);
 // initializePassport(passport);
 
 const router = Router();
-const MAILGUN_PASSWORD: string = process.env.MAILGUN_PASSWORD as string;
+// const MAILGUN_PASSWORD: string = process.env.MAILGUN_PASSWORD as string;
 const FRONTEND_URL: string = process.env.FRONTEND_URL as string;
 
 router.get("/wakeUpServer", (req: Request, res: Response) => {

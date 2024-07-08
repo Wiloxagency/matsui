@@ -336,21 +336,18 @@ export default function AdminDashboard() {
                   )}
                 </div>
               </span>
-              <span className="bottomHalf">
+              {/* <span className="bottomHalf">
                 <div className="sectionHeader">
                   FORMULA DETAILS: DC NEO 285 C
                 </div>
                 <div className="card">
-                  {/* {selectedFormula && (
-                    <FormulaDetailsTable formula={selectedFormula}  />
-                  )} */}
                   <span className="m-auto text-center">
                     Click on a formula to see its details
                     <br />
                     (under construction)
                   </span>
                 </div>
-              </span>
+              </span> */}
             </>
           )}
         </div>

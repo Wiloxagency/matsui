@@ -1,9 +1,12 @@
 import { Router, Request, Response } from "express";
 import { createMongoDBConnection } from "../shared/mongodbConfig";
 import handlebars = require("handlebars");
+import { returnEncryptedString } from "../shared/stringEncryption";
 const fs = require("fs");
 
 const router = Router();
+
+const FRONTEND_URL: string = process.env.FRONTEND_URL as string;
 
 router.get("/", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
@@ -53,27 +56,57 @@ router.post("/SendEmail", async (req: Request, res: Response) => {
       },
     });
 
-    const source = fs
-      .readFileSync("./src/emailTemplates/generic.html", "utf-8")
-      .toString();
-    const template = handlebars.compile(source);
+    let source;
+    let template;
+    let replacements;
+    let htmlToSend;
 
-    const replacements = {
-      message: req.body.message,
-    };
-    const htmlToSend = template(replacements);
+    if (!req.body.isResetPasswordEmail) {
+      source = fs
+        .readFileSync("./src/emailTemplates/generic.html", "utf-8")
+        .toString();
+      template = handlebars.compile(source);
+      replacements = {
+        message: req.body.message,
+      };
+      htmlToSend = template(replacements);
+    } else {
+      const db = await createMongoDBConnection();
+      const users = db.collection("users");
+      const fetchedUser = await users.findOne({
+        email: req.body.recipients[0],
+      });
+      // console.log("fetchedUser: ", fetchedUser);
+      source = fs
+        .readFileSync("./src/emailTemplates/resetPassword.html", "utf-8")
+        .toString();
+      template = handlebars.compile(source);
+
+      const encryptedId = returnEncryptedString(String(fetchedUser!._id));
+
+      const resetPasswordLink =
+        "https://" + FRONTEND_URL + "/resetPassword/" + encryptedId;
+
+      replacements = {
+        resetPasswordLink: resetPasswordLink,
+      };
+      htmlToSend = template(replacements);
+    }
+
     // console.log("htmlToSend: ", htmlToSend);
 
-    const info = await transporter.sendMail({
+    const sendEmail = await transporter.sendMail({
       from: '"Matsui Color 🖌️" <from@example.com', // sender address
       // from: '"This is a test 👻" <postmaster@sandboxd15c86dfa0e8480ea7c4711442934f64.mailgun.org>', // sender address
       to: req.body.recipients, // list of receivers
-      subject: req.body.subject + " 🚀", // Subject line
+      subject: req.body.isResetPasswordEmail
+        ? "Reset your password 🔑"
+        : req.body.subject + " 🚀", // Subject line
       // text: "Hello world?", // plain text body
       html: htmlToSend, // html body
     });
 
-    console.log("Message sent: %s", info.messageId);
+    console.log("Message sent: %s", sendEmail.messageId);
 
     res.json({ message: "Message sent" });
   } catch (error) {
