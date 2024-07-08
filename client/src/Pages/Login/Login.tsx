@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import video from "../../assets/doesthiswork.mp4";
 import logo from "../../assets/matsui_logo.png";
 import "./Login.scss";
+import { api } from "../../State/api";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const forbiddenProviders = ["gmail", "hotmail", "outlook", "yahoo"];
@@ -23,6 +24,7 @@ export function Login() {
   const [isSignInButtonLoading, setIsSignInButtonLoading] = useState(false);
   const [isRegisterButtonLoading, setIsRegisterButtonLoading] = useState(false);
   const [isProviderAllowed, setIsProviderAllowed] = useState<boolean>(true);
+  const [triggerSendEmail] = api.endpoints.sendEmail.useLazyQuery();
 
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
   // console.log("isMobile: ", isMobile);
@@ -115,6 +117,31 @@ export function Login() {
       });
   };
 
+  function handleResetPassword() {
+    if (email === "") {
+      setLoginFormMessage("Type your email to reset your password");
+      return;
+    }
+
+    setLoginFormMessage("");
+
+    const sendEmailPayload = {
+      recipients: [email],
+      subject: "",
+      message: "",
+      isResetPasswordEmail: true,
+    };
+
+    triggerSendEmail(sendEmailPayload)
+      .unwrap()
+      .then((payload: any) => {
+        if (payload.message === "Message sent") {
+          setLoginFormMessage(`Email sent to ${email}`);
+        }
+      })
+      .catch((error) => console.error("rejected", error));
+  }
+
   useEffect(() => {
     if (emailRef.current !== null) {
       emailRef.current.focus();
@@ -205,7 +232,9 @@ export function Login() {
           </Button>
           {/* </Link> */}
 
-          <div className="forgotPassword">Forgot your password?</div>
+          <div className="forgotPassword" onClick={handleResetPassword}>
+            Forgot your password? Click here to reset it
+          </div>
         </form>
       </div>
     </>

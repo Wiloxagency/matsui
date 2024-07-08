@@ -6,6 +6,7 @@ import MainLayout from "./Pages/MainLayout/MainLayout";
 import ImportFormulas from "./Pages/ImportFormulas/ImportFormulas";
 import InkCalculator from "./Pages/InkCalculator/InkCalculator";
 import EmailVerification from "./Pages/EmailVerification/EmailVerification";
+import PasswordReset from "./Pages/PasswordReset/PasswordReset";
 
 export default function App() {
   return (
@@ -21,6 +22,10 @@ export default function App() {
       <Route
         path="verification/:verificationCode"
         element={<EmailVerification />}
+      />
+      <Route
+        path="passwordReset/:passwordResetCode"
+        element={<PasswordReset />}
       />
     </Routes>
   );
