@@ -25,6 +25,7 @@ export interface FormulaSwatchInterface {
   company?: string;
   createdBy?: string;
   isFormulaActive?: boolean;
+  formulaSeries?: string
 }
 
 export interface FormulaComponentInterface {

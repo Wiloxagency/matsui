@@ -164,6 +164,7 @@ export default function ImportFormulas() {
             formulaComponents: importFormulasComponents,
             company: localStorage.getItem("userCompany")!,
             createdBy: localStorage.getItem("userEmail")!,
+            formulaSeries: newSeriesName
           };
           await importFormulas(importFormulasPayload)
             .unwrap()

@@ -535,6 +535,7 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
       isUserCreatedFormula: true,
       createdBy: req.body.createdBy,
       company: req.body.company,
+      formulaSeries: req.body.formulaSeries
     });
   }
 

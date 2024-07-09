@@ -15,12 +15,13 @@ export function returnHexColor(
 ): string {
   // Extract ComponentCode values and map them with their respective percentages
   // console.log(receivedComponents);
+
   const componentData = receivedComponents.map((item: any) => ({
     code: item.ComponentCode,
     percentage: item.Percentage,
     isBase: item.isBase,
   }));
-  // console.log("componentData: ", componentData);
+  // console.log("componen tData: ", componentData);
 
   // Extract just the codes for the query
   const componentCodes = componentData.map((item: any) => item.code);
@@ -50,6 +51,7 @@ export function returnHexColor(
     return "#fff";
   }
   const adjustedComponents = adjustPercentages(hexValues);
+  if (adjustedComponents === null) return "#000";
 
   // console.info("adjustedComponents:", adjustedComponents);
 
@@ -102,11 +104,14 @@ function cmykToHex(c: number, m: number, y: number, k: number): string {
   return `${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
-function adjustPercentages(components: FormulaComponent[]): FormulaComponent[] {
+function adjustPercentages(
+  components: FormulaComponent[]
+): FormulaComponent[] | null {
   // Filtrar los componentes que no son base
   const filteredComponents = components.filter(
     (component) => !component.isBase
   );
+  if (filteredComponents.length === 0) return null;
 
   // Calcular la suma total de los porcentajes actuales
   const totalPercentage = filteredComponents.reduce((sum, component) => {
