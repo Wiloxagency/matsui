@@ -78,7 +78,7 @@ export default function ImportFormulas() {
   const [addSeries] = useAddSeriesMutation();
   const [importFormulas] = useImportFormulasMutation();
   const [deleteSeries] = useDeleteSeriesMutation();
-
+  const [isSpinnerVisible, setIsSpinnerVisible] = useState<boolean>(false);
   const [triggerGetSeries] = api.endpoints.getSeries.useLazyQuery();
 
   const navigate = useNavigate();
@@ -145,7 +145,7 @@ export default function ImportFormulas() {
     //   return;
     // }
     // const remappedJSONFormulas = await remapJSONFormulas(columnValues);
-
+    setIsSpinnerVisible(true);
     await addSeries({ seriesName: newSeriesName })
       .unwrap()
       .then(async (response: any) => {
@@ -164,11 +164,13 @@ export default function ImportFormulas() {
             formulaComponents: importFormulasComponents,
             company: localStorage.getItem("userCompany")!,
             createdBy: localStorage.getItem("userEmail")!,
-            formulaSeries: newSeriesName
+            formulaSeries: newSeriesName,
           };
           await importFormulas(importFormulasPayload)
             .unwrap()
             .then((importFormulasResponse: any) => {
+              setIsSpinnerVisible(false);
+
               // console.log("importFormulasResponse: ", importFormulasResponse);
               // console.log(
               //   "importFormulasResponse: ",
@@ -180,6 +182,10 @@ export default function ImportFormulas() {
               triggerGetSeries();
               onOpenChangeImportedSeriesModal();
               resetFields();
+            })
+            .catch((error) => {
+              console.error(error);
+              setIsSpinnerVisible(false);
             });
         }
       });
@@ -470,6 +476,7 @@ export default function ImportFormulas() {
               variant="ghost"
               isDisabled={mappedComponents.length === 0}
               onPress={handleConfirmColumnHeaders}
+              isLoading={isSpinnerVisible}
             >
               Confirm and upload series
             </Button>

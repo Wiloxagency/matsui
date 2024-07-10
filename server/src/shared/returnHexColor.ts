@@ -54,6 +54,7 @@ export async function returnHexColorPrepping(
 
 export function returnHexColor(formulaComponents: FormulaComponent[]): string {
   const adjustedComponents = adjustPercentages(formulaComponents);
+  if (adjustedComponents === null) return "#000";
 
   // console.info("adjustedComponents:", adjustedComponents);
 

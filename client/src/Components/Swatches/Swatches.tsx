@@ -33,7 +33,7 @@ export default function Swatches({
   // console.log("userCompany: ", userCompany);
 
   function handleSelectFormula(clickedFormula: GetFormulasResultInterface) {
-    // console.log(clickedFormula);
+    console.log(clickedFormula);
     const fullFormula: FormulaInterface = {
       formulaSeries: selectedSeries,
       formulaCode: clickedFormula._id,

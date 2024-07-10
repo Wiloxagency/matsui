@@ -18,9 +18,14 @@ const port = process.env.PORT || 3000;
 
 const FRONTEND_URL: string = process.env.FRONTEND_URL as string;
 
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+    limit: "50mb",
+    parameterLimit: 50000,
+  })
+);
 
 const corsOptions: CorsOptions = {
   // origin: [FRONTEND_URL, "http://localhost:5173"],
@@ -43,7 +48,7 @@ app.use(cors(corsOptions));
 
 app.use("/", router);
 
-wakeUpServer()
+wakeUpServer();
 wakeUpServerCron.start();
 
 app.listen(port, () => {
