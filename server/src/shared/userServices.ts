@@ -19,7 +19,9 @@ export async function getUserByEmail(
       registrationDate: user.registrationDate,
       createdFormulas: user.createdFormulas,
       lastAccess: user.lastAccess,
-      isAdmin: user.isAdmin
+      isAdmin: user.isAdmin,
+      phone: user.phone,
+      supplier: user.supplier,
     };
   } else {
     return null;

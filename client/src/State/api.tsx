@@ -108,6 +108,9 @@ export const api = createApi({
     getSeries: builder.query<Array<{ seriesName: string }>, void>({
       query: () => "components/GetSeries",
     }),
+    getSuppliers: builder.query<Array<{ name: string }>, void>({
+      query: () => "/Supplier",
+    }),
     getPigments: builder.query<Array<PigmentInterface>, void>({
       query: () => "components/GetPigments",
     }),
@@ -269,4 +272,5 @@ export const {
   useGetAllComponentsQuery,
   useDeleteUserMutation,
   useResetUserPasswordQuery,
+  useGetSuppliersQuery,
 } = api;

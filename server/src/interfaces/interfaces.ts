@@ -10,6 +10,8 @@ export interface UserInterface {
   registrationDate: Date;
   createdFormulas: number;
   lastAccess: Date;
+  phone: string;
+  supplier: string;
   isAdmin?: boolean;
   TEMP?: string;
 }
@@ -25,7 +27,7 @@ export interface FormulaSwatchInterface {
   company?: string;
   createdBy?: string;
   isFormulaActive?: boolean;
-  formulaSeries?: string
+  formulaSeries?: string;
 }
 
 export interface FormulaComponentInterface {

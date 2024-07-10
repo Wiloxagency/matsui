@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import video from "../../assets/doesthiswork.mp4";
 import logo from "../../assets/matsui_logo.png";
 import "./Login.scss";
-import { api } from "../../State/api";
+import { api, useGetSuppliersQuery } from "../../State/api";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Input } from "@nextui-org/input";
 const API_URL = import.meta.env.VITE_API_URL;
@@ -22,7 +22,7 @@ export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
-  const [selectedSupplier, setSelectedSupplier] = useState("Good Paints")
+  const [selectedSupplier, setSelectedSupplier] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loginFormMessage, setLoginFormMessage] = useState("");
   const [isSignInButtonLoading, setIsSignInButtonLoading] = useState(false);
@@ -31,6 +31,8 @@ export function Login() {
   const [triggerSendEmail] = api.endpoints.sendEmail.useLazyQuery();
   const [isRegistrationModeActive, setIsRegistrationModeActive] =
     useState<boolean>(false);
+
+  const { data: fetchedSuppliers } = useGetSuppliersQuery();
 
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
   // console.log("isMobile: ", isMobile);
@@ -54,13 +56,19 @@ export function Login() {
   }
 
   const handleRegister = async () => {
+    console.log("Clicked confirm");
+    return;
     setIsRegisterButtonLoading(true);
     setLoginFormMessage("");
     axios
-      .post(API_URL + "register", JSON.stringify({ email, password, selectedSupplier, phone }), {
-        headers: { "Content-type": "application/json" },
-        // withCredentials: true,
-      })
+      .post(
+        API_URL + "register",
+        JSON.stringify({ email, password, selectedSupplier, phone }),
+        {
+          headers: { "Content-type": "application/json" },
+          // withCredentials: true,
+        }
+      )
       .then((response: AxiosResponse) => {
         setIsRegisterButtonLoading(false);
         if (response.status === 200) {
@@ -123,14 +131,6 @@ export function Login() {
       });
   };
 
-  function handleCreateNewAccount() {
-    if (isRegistrationModeActive) {
-      handleRegister();
-      return;
-    }
-    setIsRegistrationModeActive(true);
-  }
-
   function handleResetPassword() {
     if (email === "") {
       setLoginFormMessage("Type your email to reset your password");
@@ -155,6 +155,27 @@ export function Login() {
       })
       .catch((error) => console.error("rejected", error));
   }
+
+  function handleSetPhone(receivedPhone: string) {
+    const validation = new RegExp(/^[0-9\b\+\-\(\)]+$/);
+
+    if (receivedPhone === "" || validation.test(receivedPhone)) {
+      setPhone(receivedPhone);
+    }
+  }
+
+  function handleCreateNewAccount() {
+    setLoginFormMessage("");
+    if (isRegistrationModeActive) {
+      handleRegister();
+    } else {
+      setIsRegistrationModeActive(true);
+    }
+  }
+
+  const handleSelectionChange = (e: any) => {
+    setSelectedSupplier(e.target.value);
+  };
 
   useEffect(() => {
     if (emailRef.current !== null) {
@@ -225,13 +246,16 @@ export function Login() {
               <Input
                 label="Phone"
                 radius="full"
-                required
                 endContent={<FaPhone className="icon" />}
+                value={phone}
+                onChange={(event) => handleSetPhone(event.target.value)}
+                isInvalid={phone !== "" && phone.length < 6}
+                required
               ></Input>
             </div>
           )}
 
-          {isRegistrationModeActive && (
+          {isRegistrationModeActive && fetchedSuppliers && (
             <Select
               label="Supplier"
               size="lg"
@@ -244,10 +268,12 @@ export function Login() {
               radius="full"
               placeholder="Select supplier"
               color="primary"
+              selectedKeys={[selectedSupplier]}
+              onChange={handleSelectionChange}
             >
-              <SelectItem key="temp">Good Paints</SelectItem>
-              <SelectItem key="temp">Curated Colors</SelectItem>
-              <SelectItem key="temp">Chatoyancy Co.</SelectItem>
+              {fetchedSuppliers.map((supplier) => (
+                <SelectItem key={supplier.name}>{supplier.name}</SelectItem>
+              ))}
             </Select>
           )}
 
@@ -266,20 +292,36 @@ export function Login() {
             </div>
           )}
 
-          {/* <Link to="/formulas"> */}
-          <Button
-            type="button"
-            className="newAccount"
-            size="lg"
-            isLoading={isRegisterButtonLoading}
-            onClick={handleCreateNewAccount}
-            isDisabled={email === "" || password === "" || !isProviderAllowed}
-          >
-            {!isRegistrationModeActive
-              ? "Create new account"
-              : "Confirm account creation"}
-          </Button>
-          {/* </Link> */}
+          {!isRegistrationModeActive && (
+            <Button
+              type="button"
+              className="newAccount"
+              size="lg"
+              isLoading={isRegisterButtonLoading}
+              onClick={handleCreateNewAccount}
+              isDisabled={email === "" || password === "" || !isProviderAllowed}
+            >
+              Create new account
+            </Button>
+          )}
+          {isRegistrationModeActive && (
+            <Button
+              type="button"
+              className="newAccount"
+              size="lg"
+              isLoading={isRegisterButtonLoading}
+              onClick={handleRegister}
+              isDisabled={
+                email === "" ||
+                password === "" ||
+                phone.length < 6 ||
+                !isProviderAllowed ||
+                selectedSupplier === ""
+              }
+            >
+              Confirm account creation
+            </Button>
+          )}
 
           {!isRegistrationModeActive && (
             <div className="forgotPassword" onClick={handleResetPassword}>

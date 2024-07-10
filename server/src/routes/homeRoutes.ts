@@ -134,6 +134,8 @@ router.post("/register", async (req: Request, res: Response) => {
         registrationDate: currentDate,
         createdFormulas: 0,
         lastAccess: currentDate,
+        phone: req.body.phone,
+        supplier: req.body.supplier,
       };
 
       const insertNewUserResponse = await users.insertOne(newUser);
@@ -171,6 +173,13 @@ router.post("/emailVerification", async (req: Request, res: Response) => {
     console.log(error);
     res.status(500).json();
   }
+});
+
+router.get("/Supplier", async (req: Request, res: Response) => {
+  const db = await createMongoDBConnection();
+  const suppliers = db.collection("suppliers");
+  const allSuppliers = await suppliers.find().toArray();
+  res.json(allSuppliers);
 });
 
 async function sendVerificationEmail(
