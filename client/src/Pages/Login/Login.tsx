@@ -1,7 +1,7 @@
 import { Button } from "@nextui-org/button";
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useRef, useState } from "react";
-import { FaEye, FaEyeSlash, FaLock, FaUser } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaLock, FaPhone, FaUser } from "react-icons/fa";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
 // import { useAuth } from "../../Context/AuthProvider";
@@ -9,6 +9,8 @@ import video from "../../assets/doesthiswork.mp4";
 import logo from "../../assets/matsui_logo.png";
 import "./Login.scss";
 import { api } from "../../State/api";
+import { Select, SelectItem } from "@nextui-org/select";
+import { Input } from "@nextui-org/input";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const forbiddenProviders = ["gmail", "hotmail", "outlook", "yahoo"];
@@ -25,6 +27,8 @@ export function Login() {
   const [isRegisterButtonLoading, setIsRegisterButtonLoading] = useState(false);
   const [isProviderAllowed, setIsProviderAllowed] = useState<boolean>(true);
   const [triggerSendEmail] = api.endpoints.sendEmail.useLazyQuery();
+  const [isRegistrationModeActive, setIsRegistrationModeActive] =
+    useState<boolean>(false);
 
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
   // console.log("isMobile: ", isMobile);
@@ -117,6 +121,12 @@ export function Login() {
       });
   };
 
+  function handleCreateNewAccount() {
+    setIsRegistrationModeActive(true);
+    return;
+    handleRegister();
+  }
+
   function handleResetPassword() {
     if (email === "") {
       setLoginFormMessage("Type your email to reset your password");
@@ -172,26 +182,27 @@ export function Login() {
             Only business emails are allowed
           </p>
           <div className="inputContainer">
-            <input
+            <Input
+              radius="full"
               type="email"
-              name="email"
-              placeholder="Email"
+              label="Email"
               value={email}
               onChange={(event) => handleSetEmail(event.target.value)}
               ref={emailRef}
               required
-            ></input>
-            <FaUser className="icon" />
+              endContent={<FaUser className="icon" />}
+            ></Input>
           </div>
           <div className="inputContainer">
-            <input
+            <Input
+              label="Password"
+              radius="full"
               type={isPasswordVisible ? "text" : "password"}
               name="password"
-              placeholder="Password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               required
-            ></input>
+            ></Input>
             <FaLock className="icon" />
             {isPasswordVisible ? (
               <FaEyeSlash
@@ -205,6 +216,36 @@ export function Login() {
               />
             )}
           </div>
+          {isRegistrationModeActive && (
+            <div className="inputContainer">
+              <Input
+                label="Phone"
+                radius="full"
+                required
+                endContent={<FaPhone className="icon" />}
+              ></Input>
+            </div>
+          )}
+
+          {isRegistrationModeActive && (
+            <Select
+              label="Supplier"
+              size="lg"
+              classNames={{
+                label: "text-white",
+                value: "text-white",
+              }}
+              aria-label="SELECT SUPPLIER"
+              variant="bordered"
+              radius="full"
+              placeholder="Select supplier"
+              color="primary"
+            >
+              <SelectItem key="temp">Good Paints</SelectItem>
+              <SelectItem key="temp">Curated Colors</SelectItem>
+              <SelectItem key="temp">Chatoyancy Co.</SelectItem>
+            </Select>
+          )}
 
           <p
             className={
@@ -213,11 +254,13 @@ export function Login() {
           >
             {loginFormMessage}
           </p>
-          <div>
-            <Button type="submit" size="lg" isLoading={isSignInButtonLoading}>
-              Sign in
-            </Button>
-          </div>
+          {!isRegistrationModeActive && (
+            <div>
+              <Button type="submit" size="lg" isLoading={isSignInButtonLoading}>
+                Sign in
+              </Button>
+            </div>
+          )}
 
           {/* <Link to="/formulas"> */}
           <Button
@@ -225,16 +268,26 @@ export function Login() {
             className="newAccount"
             size="lg"
             isLoading={isRegisterButtonLoading}
-            onClick={handleRegister}
+            onClick={handleCreateNewAccount}
             isDisabled={email === "" || password === "" || !isProviderAllowed}
           >
             Create new account{" "}
           </Button>
           {/* </Link> */}
 
-          <div className="forgotPassword" onClick={handleResetPassword}>
-            Forgot your password? Click here to reset it
-          </div>
+          {!isRegistrationModeActive && (
+            <div className="forgotPassword" onClick={handleResetPassword}>
+              Forgot your password? Click here to reset it
+            </div>
+          )}
+          {isRegistrationModeActive && (
+            <div
+              className="forgotPassword"
+              onClick={() => setIsRegistrationModeActive(false)}
+            >
+              Already have an account? Sign in instead
+            </div>
+          )}
         </form>
       </div>
     </>
