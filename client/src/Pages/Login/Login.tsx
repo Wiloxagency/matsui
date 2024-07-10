@@ -21,6 +21,8 @@ export function Login() {
   const emailRef = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [selectedSupplier, setSelectedSupplier] = useState("Good Paints")
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loginFormMessage, setLoginFormMessage] = useState("");
   const [isSignInButtonLoading, setIsSignInButtonLoading] = useState(false);
@@ -55,7 +57,7 @@ export function Login() {
     setIsRegisterButtonLoading(true);
     setLoginFormMessage("");
     axios
-      .post(API_URL + "register", JSON.stringify({ email, password }), {
+      .post(API_URL + "register", JSON.stringify({ email, password, selectedSupplier, phone }), {
         headers: { "Content-type": "application/json" },
         // withCredentials: true,
       })
@@ -122,9 +124,11 @@ export function Login() {
   };
 
   function handleCreateNewAccount() {
+    if (isRegistrationModeActive) {
+      handleRegister();
+      return;
+    }
     setIsRegistrationModeActive(true);
-    return;
-    handleRegister();
   }
 
   function handleResetPassword() {
@@ -271,7 +275,9 @@ export function Login() {
             onClick={handleCreateNewAccount}
             isDisabled={email === "" || password === "" || !isProviderAllowed}
           >
-            Create new account{" "}
+            {!isRegistrationModeActive
+              ? "Create new account"
+              : "Confirm account creation"}
           </Button>
           {/* </Link> */}
 
