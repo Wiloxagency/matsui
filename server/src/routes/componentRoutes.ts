@@ -506,13 +506,34 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
   const receivedComponents: FormulaComponentInterface[] =
     req.body.formulaComponents;
 
-  // const formulaCodes = Array.from(
-  //   new Set(
-  //     receivedComponents.map(({ FormulaCode }: any) => {
-  //       return FormulaCode;
-  //     })
-  //   )
-  // );
+  const receivedFormulaCodes = Array.from(
+    new Set(
+      receivedComponents.map(({ FormulaCode }: any) => {
+        return FormulaCode;
+      })
+    )
+  );
+
+  const alreadyExistingFormulas = await formulaSwatchColors
+    .find({
+      formulaCode: { $in: receivedFormulaCodes },
+    })
+    .toArray();
+
+  const alreadyExistingFormulasCodes = Array.from(
+    new Set(
+      alreadyExistingFormulas.map(({ formulaCode }: any) => {
+        return formulaCode;
+      })
+    )
+  );
+
+  var result = receivedFormulaCodes.filter(
+    (item) => alreadyExistingFormulasCodes.indexOf(item) == -1
+  );
+
+  console.log(result);
+  return;
 
   const componentsGroupedByFormula = Map.groupBy(
     receivedComponents,
@@ -535,7 +556,7 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
       isUserCreatedFormula: true,
       createdBy: req.body.createdBy,
       company: req.body.company,
-      formulaSeries: req.body.formulaSeries
+      formulaSeries: req.body.formulaSeries,
     });
   }
 
