@@ -10,6 +10,7 @@ import {
   returnHexColorPrepping,
 } from "../shared/returnHexColor";
 import { Document } from "mongodb";
+import axios from "axios";
 // import { authenticateToken } from "../shared/jwtMiddleware";
 
 const router = Router();
@@ -544,6 +545,7 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
   );
 
   let newFormulaColorSwatches: FormulaSwatchInterface[] = [];
+  let nullFormulaCodes: string[] = [];
 
   for (const [
     indexFormula,
@@ -551,30 +553,50 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
   ] of componentsGroupedByFormula.entries()) {
     // CHECK IF FORMULA CODE IS NEW
     if (uniqueNewFormulaCodes.includes(formulaComponents[0].FormulaCode)) {
-      console.log("FORMULA IS UNIQUE");
-      return;
-    }
-    const componentsHexValues = await returnHexColorPrepping(
-      formulaComponents,
-      allPigments
-    );
-    let finalHexColor;
-    if (componentsHexValues.length === 0) {
-      finalHexColor = "fffff";
-    } else {
-      finalHexColor = returnHexColor(componentsHexValues);
-    }
-    newFormulaColorSwatches.push({
-      formulaCode: formulaComponents[0].FormulaCode,
-      formulaColor: finalHexColor,
-      isUserCreatedFormula: true,
-      createdBy: req.body.createdBy,
-      company: req.body.company,
-      // formulaSeries: req.body.formulaSeries,
-    });
-  }
+      axios
+        .post(
+          "https://sophia-lms-production.azurewebsites.net/api/PantoneToHex",
+          { pantoneCode: formulaComponents[0].FormulaCode }
+        )
+        .then((response) => {
+          console.log(response.data);
 
-  console.log(newFormulaColorSwatches);
+          if (response.data.hex === null) {
+            nullFormulaCodes.push(formulaComponents[0].FormulaCode);
+          } else {
+            newFormulaColorSwatches.push({
+              formulaCode: formulaComponents[0].FormulaCode,
+              formulaColor: response.data.hex,
+              isUserCreatedFormula: true,
+              createdBy: req.body.createdBy,
+              company: req.body.company,
+            });
+          }
+        })
+        .catch((error) => console.log(error));
+    } else {
+      // const componentsHexValues = await returnHexColorPrepping(
+      //   formulaComponents,
+      //   allPigments
+      // );
+      // let finalHexColor;
+      // if (componentsHexValues.length === 0) {
+      //   finalHexColor = "fffff";
+      // } else {
+      //   finalHexColor = returnHexColor(componentsHexValues);
+      // }
+
+      const finalHexColor = "000";
+
+      newFormulaColorSwatches.push({
+        formulaCode: formulaComponents[0].FormulaCode,
+        formulaColor: finalHexColor,
+        isUserCreatedFormula: true,
+        createdBy: req.body.createdBy,
+        company: req.body.company,
+      });
+    }
+  }
 
   return;
 
