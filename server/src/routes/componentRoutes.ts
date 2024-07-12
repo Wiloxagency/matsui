@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import {
   FormulaComponentInterface,
   FormulaSwatchInterface,
+  PigmentInterface,
 } from "../interfaces/interfaces";
 import { createMongoDBConnection } from "../shared/mongodbConfig";
 import {
@@ -503,6 +504,8 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const components = db.collection("components");
   const formulaSwatchColors = db.collection("formulaSwatchColors");
+  const pigments = db.collection<PigmentInterface>("pigments");
+  const allPigments = await pigments.find().toArray();
   const receivedComponents: FormulaComponentInterface[] =
     req.body.formulaComponents;
 
@@ -528,12 +531,9 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
     )
   );
 
-  var result = receivedFormulaCodes.filter(
+  var uniqueNewFormulaCodes = receivedFormulaCodes.filter(
     (item) => alreadyExistingFormulasCodes.indexOf(item) == -1
   );
-
-  console.log(result);
-  return;
 
   const componentsGroupedByFormula = Map.groupBy(
     receivedComponents,
@@ -542,8 +542,19 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
 
   let newFormulaColorSwatches: FormulaSwatchInterface[] = [];
 
-  for (const [indexFormula, formula] of componentsGroupedByFormula.entries()) {
-    const componentsHexValues = await returnHexColorPrepping(formula);
+  for (const [
+    indexFormula,
+    formulaComponents,
+  ] of componentsGroupedByFormula.entries()) {
+    // CHECK IF FORMULA CODE IS NEW
+    if (uniqueNewFormulaCodes.includes(formulaComponents[0].FormulaCode)) {
+      console.log("FORMULA IS UNIQUE");
+      return;
+    }
+    const componentsHexValues = await returnHexColorPrepping(
+      formulaComponents,
+      allPigments
+    );
     let finalHexColor;
     if (componentsHexValues.length === 0) {
       finalHexColor = "fffff";
@@ -551,18 +562,21 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
       finalHexColor = returnHexColor(componentsHexValues);
     }
     newFormulaColorSwatches.push({
-      formulaCode: formula[0].FormulaCode,
+      formulaCode: formulaComponents[0].FormulaCode,
       formulaColor: finalHexColor,
       isUserCreatedFormula: true,
       createdBy: req.body.createdBy,
       company: req.body.company,
-      formulaSeries: req.body.formulaSeries,
+      // formulaSeries: req.body.formulaSeries,
     });
   }
 
-  await formulaSwatchColors.insertMany(newFormulaColorSwatches);
+  console.log(newFormulaColorSwatches);
+
+  return;
 
   try {
+    await formulaSwatchColors.insertMany(newFormulaColorSwatches);
     const insertManyResponse = await components.insertMany(receivedComponents);
     res.json(insertManyResponse);
   } catch (error) {

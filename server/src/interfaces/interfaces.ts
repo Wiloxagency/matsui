@@ -38,3 +38,21 @@ export interface FormulaComponentInterface {
   ComponentDescription: string;
   Percentage: number;
 }
+
+export interface PigmentInterface {
+  _id:
+    | ObjectId
+    | {
+        $oid: string;
+      }
+    | any;
+  code: string;
+  description: string;
+  serie: string;
+  lab: number[];
+  hex: string;
+  cmyk: number[];
+  rgb: number[];
+  pricePerKg: number;
+  isBase?: boolean;
+}

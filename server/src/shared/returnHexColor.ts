@@ -1,4 +1,7 @@
-import { FormulaComponentInterface } from "../interfaces/interfaces";
+import {
+  FormulaComponentInterface,
+  PigmentInterface,
+} from "../interfaces/interfaces";
 import { createMongoDBConnection } from "./mongodbConfig";
 
 //TODO: COMBINE BOTH FUNCTIONS INTO 1 👇🏻
@@ -10,11 +13,9 @@ type FormulaComponent = {
 };
 
 export async function returnHexColorPrepping(
-  receivedComponents: FormulaComponentInterface[]
+  receivedComponents: FormulaComponentInterface[],
+  receivedPigments: PigmentInterface[]
 ): Promise<FormulaComponent[]> {
-  const db = await createMongoDBConnection();
-  const pigments = db.collection("pigments");
-
   // Extract ComponentCode values and map them with their respective percentages
   const componentData = receivedComponents.map((item: any) => ({
     code: item.ComponentCode,
@@ -26,11 +27,15 @@ export async function returnHexColorPrepping(
   const componentCodes = componentData.map((item: any) => item.code);
 
   // Query pigments collection for matching ComponentCode values
-  const matchingPigments = await pigments
-    .find({
-      code: { $in: componentCodes },
-    })
-    .toArray();
+  const matchingPigments = receivedPigments.filter((pigment) =>
+    componentCodes.includes(pigment.code)
+  );
+
+  // const matchingPigments = await pigments
+  //   .find({
+  //     code: { $in: componentCodes },
+  //   })
+  //   .toArray();
 
   // Map the pigments with their respective percentages
   const hexValues = matchingPigments.map((pigment: any) => {
