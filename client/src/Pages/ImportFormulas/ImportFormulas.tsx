@@ -168,8 +168,10 @@ export default function ImportFormulas() {
           };
           await importFormulas(importFormulasPayload)
             .unwrap()
-            .then((importFormulasResponse: any) => {
+            .then((importFormulasResponse) => {
               setIsSpinnerVisible(false);
+
+              console.log("Formulas not created: ", importFormulasResponse.formulasNotCreated);
 
               // console.log("importFormulasResponse: ", importFormulasResponse);
               // console.log(
@@ -177,7 +179,7 @@ export default function ImportFormulas() {
               //   importFormulasResponse.insertedCount
               // );
               setNumberOfImportedComponents(
-                importFormulasResponse.insertedCount
+                importFormulasResponse.formulasCreated
               );
               triggerGetSeries();
               onOpenChangeImportedSeriesModal();

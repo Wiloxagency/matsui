@@ -562,16 +562,15 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
         )
         .then((response) => {
           if (response.data.hex === null) {
-            nullFormulaCodes.push(
-              formulaComponents[0].FormulaCode.replace("#", "")
-            );
+            nullFormulaCodes.push(formulaComponents[0].FormulaCode);
           } else {
             newFormulaColorSwatches.push({
               formulaCode: formulaComponents[0].FormulaCode,
-              formulaColor: response.data.hex,
+              formulaColor: response.data.hex.replace("#", ""),
               isUserCreatedFormula: true,
               createdBy: req.body.createdBy,
               company: req.body.company,
+              isHexColorAIProvided: true,
             });
           }
         })
@@ -605,6 +604,12 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
   try {
     await formulaSwatchColors.insertMany(newFormulaColorSwatches);
     const insertManyResponse = await components.insertMany(receivedComponents);
+
+    const importFormulasResponse = {
+      formulasCreated: newFormulaColorSwatches.length,
+      formulasNotCreated: nullFormulaCodes,
+    };
+
     res.json(insertManyResponse);
   } catch (error) {
     console.error("Error importing compoents:", error);

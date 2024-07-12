@@ -28,6 +28,7 @@ export interface FormulaSwatchInterface {
   createdBy?: string;
   isFormulaActive?: boolean;
   formulaSeries?: string;
+  isHexColorAIProvided?: boolean;
 }
 
 export interface FormulaComponentInterface {

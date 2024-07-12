@@ -138,7 +138,10 @@ export const api = createApi({
       }),
     }),
     importFormulas: builder.mutation<
-      void,
+      {
+        formulasCreated: number;
+        formulasNotCreated: string[];
+      },
       {
         formulaComponents: FormulaComponentInterface[];
         company: string;
