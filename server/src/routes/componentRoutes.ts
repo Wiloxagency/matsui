@@ -507,7 +507,9 @@ router.post("/CreateOrEditFormula", async (req: Request, res: Response) => {
 router.post("/ImportFormulas", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const components = db.collection("components");
-  const formulaSwatchColors = db.collection("formulaSwatchColors");
+  const formulaSwatchColors = db.collection<FormulaSwatchInterface>(
+    "formulaSwatchColors"
+  );
   const pigments = db.collection<PigmentInterface>("pigments");
   const allPigments = await pigments.find().toArray();
   const receivedComponents: FormulaComponentInterface[] =
@@ -551,7 +553,7 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
     indexFormula,
     formulaComponents,
   ] of componentsGroupedByFormula.entries()) {
-    // CHECK IF FORMULA CODE IS NEW
+    // IF FORMULA CODE IS NEW
     if (uniqueNewFormulaCodes.includes(formulaComponents[0].FormulaCode)) {
       axios
         .post(
@@ -559,10 +561,10 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
           { pantoneCode: formulaComponents[0].FormulaCode }
         )
         .then((response) => {
-          console.log(response.data);
-
           if (response.data.hex === null) {
-            nullFormulaCodes.push(formulaComponents[0].FormulaCode);
+            nullFormulaCodes.push(
+              formulaComponents[0].FormulaCode.replace("#", "")
+            );
           } else {
             newFormulaColorSwatches.push({
               formulaCode: formulaComponents[0].FormulaCode,
@@ -575,6 +577,10 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
         })
         .catch((error) => console.log(error));
     } else {
+      const matchingFormula = alreadyExistingFormulas.filter(
+        (formula) => formula.formulaCode === formulaComponents[0].FormulaCode
+      )[0];
+
       // const componentsHexValues = await returnHexColorPrepping(
       //   formulaComponents,
       //   allPigments
@@ -586,19 +592,15 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
       //   finalHexColor = returnHexColor(componentsHexValues);
       // }
 
-      const finalHexColor = "000";
-
       newFormulaColorSwatches.push({
         formulaCode: formulaComponents[0].FormulaCode,
-        formulaColor: finalHexColor,
+        formulaColor: matchingFormula.formulaColor,
         isUserCreatedFormula: true,
         createdBy: req.body.createdBy,
         company: req.body.company,
       });
     }
   }
-
-  return;
 
   try {
     await formulaSwatchColors.insertMany(newFormulaColorSwatches);
