@@ -432,12 +432,15 @@ router.post("/CreateOrEditFormula", async (req: Request, res: Response) => {
   const formulaSwatchColors = db.collection("formulaSwatchColors");
   const components = db.collection("components");
   const users = db.collection("users");
+  const pigments = db.collection<PigmentInterface>("pigments");
+  const allPigments = await pigments.find().toArray();
   const receivedComponents: FormulaComponentInterface[] =
     req.body.formulaComponents;
 
   try {
     const componentsHexValues = await returnHexColorPrepping(
-      receivedComponents
+      receivedComponents,
+      allPigments
     );
 
     const finalHexColor = returnHexColor(componentsHexValues);
