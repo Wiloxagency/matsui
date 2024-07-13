@@ -52,11 +52,14 @@ export default function ImportFormulas() {
   const [wasSeriesDeleted, setWasSeriesDeleted] = useState<boolean | undefined>(
     undefined
   );
-  const [numberOfDeletedComponents, setNumberOfDeletedComponents] =
+  const [numberOfDeletedComponents, setNumberOfDeletedComponents] = useState<
+    number | null
+  >(null);
+
+  const [numberOfImportedFormulas, setNumberOfImportedFormulas] =
     useState<number>(0);
 
-  const [numberOfImportedComponents, setNumberOfImportedComponents] =
-    useState<number>(0);
+  const [nullFormulaCodes, setNullFormulaCodes] = useState<string[]>([]);
 
   const { data: fetchedPigments } = useGetPigmentsQuery();
 
@@ -169,16 +172,17 @@ export default function ImportFormulas() {
           await importFormulas(importFormulasPayload)
             .unwrap()
             .then((importFormulasResponse) => {
+              console.log("importFormulasResponse: ", importFormulasResponse);
               setIsSpinnerVisible(false);
 
-              console.log("Formulas not created: ", importFormulasResponse.formulasNotCreated);
+              console.log(
+                "Formulas not created: ",
+                importFormulasResponse.formulasNotCreated
+              );
 
-              // console.log("importFormulasResponse: ", importFormulasResponse);
-              // console.log(
-              //   "importFormulasResponse: ",
-              //   importFormulasResponse.insertedCount
-              // );
-              setNumberOfImportedComponents(
+              setNullFormulaCodes(importFormulasResponse.formulasNotCreated);
+
+              setNumberOfImportedFormulas(
                 importFormulasResponse.formulasCreated
               );
               triggerGetSeries();
@@ -272,6 +276,7 @@ export default function ImportFormulas() {
           payload.deleteSeries.deletedCount > 0 ? true : false;
         setWasSeriesDeleted(wasSeriesDeletedComputation);
         setNumberOfDeletedComponents(payload.deleteComponents.deletedCount);
+        setSeriesToDelete("");
       })
       .catch((error) => console.error("rejected", error));
     deleteSeriesResponse;
@@ -279,7 +284,7 @@ export default function ImportFormulas() {
 
   function handleCloseDeleteSeriesModal() {
     setWasSeriesDeleted(undefined);
-    setNumberOfDeletedComponents(0);
+    setNumberOfDeletedComponents(null);
     triggerGetSeries();
     onOpenChangeDeleteSeriesModal();
   }
@@ -314,8 +319,9 @@ export default function ImportFormulas() {
       <ImportedSeriesModal
         isOpenImportedSeriesModal={isOpenImportedSeriesModal}
         onOpenChangeImportedSeriesModal={onOpenChangeImportedSeriesModal}
-        numberOfImportedComponents={numberOfImportedComponents}
+        numberOfImportedFormulas={numberOfImportedFormulas}
         newSeriesName={newSeriesName}
+        nullFormulaCodes={nullFormulaCodes}
       ></ImportedSeriesModal>
       <MissingPigmentsModal
         isOpenMissingPigmentsModal={isOpenMissingPigmentsModal}

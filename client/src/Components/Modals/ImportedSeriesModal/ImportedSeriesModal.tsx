@@ -10,15 +10,17 @@ import {
 interface ImportedSeriesModalProps {
   isOpenImportedSeriesModal: boolean;
   onOpenChangeImportedSeriesModal: (value: boolean) => void;
-  numberOfImportedComponents: number;
+  numberOfImportedFormulas: number;
+  nullFormulaCodes: string[];
   newSeriesName: string;
 }
 
 export default function ImportedSeriesModal({
   isOpenImportedSeriesModal,
   onOpenChangeImportedSeriesModal,
-  numberOfImportedComponents,
+  numberOfImportedFormulas,
   newSeriesName,
+  nullFormulaCodes,
 }: ImportedSeriesModalProps) {
   return (
     <Modal
@@ -39,7 +41,18 @@ export default function ImportedSeriesModal({
                 Series <strong>{newSeriesName}</strong> was created
                 successfully.
               </p>
-              <p>{numberOfImportedComponents} components were imported</p>
+              <p>{numberOfImportedFormulas} formulas were imported</p>
+              {nullFormulaCodes.length > 0 && (
+                <>
+                  <p>
+                    The following formulas couldn't be created as their codes
+                    did not match any known formulas:
+                  </p>
+                  <p>
+                    <strong>{nullFormulaCodes}</strong>
+                  </p>
+                </>
+              )}
             </ModalBody>
             <ModalFooter>
               <Button color="default" variant="light" onPress={onClose}>

@@ -510,8 +510,6 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
   const formulaSwatchColors = db.collection<FormulaSwatchInterface>(
     "formulaSwatchColors"
   );
-  const pigments = db.collection<PigmentInterface>("pigments");
-  const allPigments = await pigments.find().toArray();
   const receivedComponents: FormulaComponentInterface[] =
     req.body.formulaComponents;
 
@@ -549,19 +547,16 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
   let newFormulaColorSwatches: FormulaSwatchInterface[] = [];
   let nullFormulaCodes: string[] = [];
 
-  for (const [
-    indexFormula,
-    formulaComponents,
-  ] of componentsGroupedByFormula.entries()) {
-    // IF FORMULA CODE IS NEW
-    if (uniqueNewFormulaCodes.includes(formulaComponents[0].FormulaCode)) {
-      axios
-        .post(
-          "https://sophia-lms-production.azurewebsites.net/api/PantoneToHex",
-          { pantoneCode: formulaComponents[0].FormulaCode }
-        )
-        .then((response) => {
-          if (response.data.hex === null) {
+  const promises = Array.from(componentsGroupedByFormula.entries()).map(
+    async ([indexFormula, formulaComponents]) => {
+      // IF FORMULA CODE IS NEW
+      if (uniqueNewFormulaCodes.includes(formulaComponents[0].FormulaCode)) {
+        try {
+          const response = await axios.post(
+            "https://sophia-lms-production.azurewebsites.net/api/PantoneToHex",
+            { pantoneCode: formulaComponents[0].FormulaCode }
+          );
+          if (response.data.hex === "null") {
             nullFormulaCodes.push(formulaComponents[0].FormulaCode);
           } else {
             newFormulaColorSwatches.push({
@@ -573,46 +568,30 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
               isHexColorAIProvided: true,
             });
           }
-        })
-        .catch((error) => console.log(error));
-    } else {
-      const matchingFormula = alreadyExistingFormulas.filter(
-        (formula) => formula.formulaCode === formulaComponents[0].FormulaCode
-      )[0];
-
-      // const componentsHexValues = await returnHexColorPrepping(
-      //   formulaComponents,
-      //   allPigments
-      // );
-      // let finalHexColor;
-      // if (componentsHexValues.length === 0) {
-      //   finalHexColor = "fffff";
-      // } else {
-      //   finalHexColor = returnHexColor(componentsHexValues);
-      // }
-
-      newFormulaColorSwatches.push({
-        formulaCode: formulaComponents[0].FormulaCode,
-        formulaColor: matchingFormula.formulaColor,
-        isUserCreatedFormula: true,
-        createdBy: req.body.createdBy,
-        company: req.body.company,
-      });
+        } catch (error) {
+          console.log(error);
+        }
+      }
     }
-  }
+  );
+
+  await Promise.all(promises);
 
   try {
+    // console.log("nullFormulaCodes", nullFormulaCodes);
+    // console.log("newFormulaColorSwatches: ", newFormulaColorSwatches.length);
+
     await formulaSwatchColors.insertMany(newFormulaColorSwatches);
-    const insertManyResponse = await components.insertMany(receivedComponents);
+    await components.insertMany(receivedComponents);
 
     const importFormulasResponse = {
       formulasCreated: newFormulaColorSwatches.length,
       formulasNotCreated: nullFormulaCodes,
     };
 
-    res.json(insertManyResponse);
+    res.json(importFormulasResponse);
   } catch (error) {
-    console.error("Error importing compoents:", error);
+    console.error("Error importing components:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });

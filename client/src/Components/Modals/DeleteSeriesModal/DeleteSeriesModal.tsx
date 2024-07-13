@@ -6,6 +6,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@nextui-org/modal";
+import { useEffect, useState } from "react";
 
 interface DeleteSeriesModalProps {
   isOpenDeleteSeriesModal: boolean;
@@ -13,7 +14,7 @@ interface DeleteSeriesModalProps {
   seriesToDelete: string;
   handleDeleteSeries: () => void;
   wasSeriesDeleted: boolean | undefined;
-  numberOfDeletedComponents: number;
+  numberOfDeletedComponents: number | null;
   handleCloseDeleteSeriesModal: () => void;
 }
 
@@ -26,6 +27,18 @@ export default function DeleteSeriesModal({
   numberOfDeletedComponents,
   handleCloseDeleteSeriesModal,
 }: DeleteSeriesModalProps) {
+  const [isSpinnerVisible, setIsSpinnerVisible] = useState<boolean>(false);
+
+  function handleDeletionConfirmation() {
+    setIsSpinnerVisible(true);
+    handleDeleteSeries();
+  }
+
+  useEffect(() => {
+    if (seriesToDelete === "") {
+      setIsSpinnerVisible(false);
+    }
+  }, [seriesToDelete]);
   return (
     <Modal
       isOpen={isOpenDeleteSeriesModal}
@@ -62,7 +75,7 @@ export default function DeleteSeriesModal({
                       : `Series ${seriesToDelete} was NOT deleted. Check that you entered the right name.`}
                   </p>
                   <p>
-                    Associated formulas deleted: {numberOfDeletedComponents}
+                    Associated components deleted: {numberOfDeletedComponents}
                   </p>
                 </>
               )}
@@ -78,7 +91,13 @@ export default function DeleteSeriesModal({
                 Close
               </Button>
               {wasSeriesDeleted === undefined ? (
-                <Button color="danger" onPress={handleDeleteSeries}>
+                <Button
+                  color="danger"
+                  onPress={handleDeletionConfirmation}
+                  isLoading={
+                    isSpinnerVisible && numberOfDeletedComponents === null
+                  }
+                >
                   CONFIRM DELETION
                 </Button>
               ) : (
