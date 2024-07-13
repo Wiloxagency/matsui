@@ -287,15 +287,6 @@ export default function Formulas() {
     generatePdf();
   }
 
-  function isGetFormulasSpinnerVisible(): boolean {
-    if (!fetchedFormulas) {
-      return true;
-    }
-    if (fetchedFormulas && fetchedFormulas.length > 0) {
-      return false;
-    }
-    return false;
-  }
 
   useEffect(() => {
     if (fetchedUsers) {
