@@ -56,8 +56,9 @@ export default function ImportFormulas() {
     number | null
   >(null);
 
-  const [numberOfImportedFormulas, setNumberOfImportedFormulas] =
-    useState<number | null >(null);
+  const [numberOfImportedFormulas, setNumberOfImportedFormulas] = useState<
+    number | null
+  >(null);
 
   const [nullFormulaCodes, setNullFormulaCodes] = useState<string[]>([]);
 
@@ -153,7 +154,8 @@ export default function ImportFormulas() {
       .unwrap()
       .then(async (response: any) => {
         if (response.message === "Series already exist") {
-          alert(`Series named ${newSeriesName} already exist`);
+          alert(`Series named ${newSeriesName} already exists`);
+          setIsSpinnerVisible(false);
           return;
         } else if (response.message === "Series created") {
           const importFormulasComponents = JSONFormulas.map(
