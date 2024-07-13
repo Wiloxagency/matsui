@@ -65,7 +65,7 @@ export default function Formulas() {
   const {
     data: fetchedFormulas,
     isSuccess: isGetFormulasSuccessful,
-    isLoading: isGetFormulasLoading,
+    isFetching: isGetFormulasFetching,
     refetch: refetchFormulas,
   } = useGetFormulasQuery({
     formulaSeries: selectedSeries,
@@ -73,6 +73,8 @@ export default function Formulas() {
     userCompany: userCompany!,
     selectedCompany: selectedCompany,
   });
+
+  // const
 
   const {
     data: fetchedInkSystems,
@@ -150,7 +152,7 @@ export default function Formulas() {
 
   const handleSelectSeries = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedSeries(e.target.value);
-    console.log("THIS RUNS");
+    // console.log("THIS RUNS");
     // refetchFormulas();
   };
 
@@ -283,6 +285,16 @@ export default function Formulas() {
 
   function handlePrintFormula() {
     generatePdf();
+  }
+
+  function isGetFormulasSpinnerVisible(): boolean {
+    if (!fetchedFormulas) {
+      return true;
+    }
+    if (fetchedFormulas && fetchedFormulas.length > 0) {
+      return false;
+    }
+    return false;
   }
 
   useEffect(() => {
@@ -494,7 +506,9 @@ export default function Formulas() {
                   }
                 />
               )}
-              {isGetFormulasLoading && <Spinner className="m-auto" />}
+              {isGetFormulasFetching && (
+                <Spinner className="m-auto absolute left-1/4" />
+              )}
               {isGetFormulasSuccessful && fetchedFormulas.length === 0 && (
                 <span className="m-auto">
                   No formulas match the selected filters

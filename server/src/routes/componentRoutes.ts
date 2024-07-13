@@ -55,7 +55,7 @@ router.post(
       const latestFormulaSwatchColors = await formulaSwatchColors
         .find()
         .sort({ _id: -1 })
-        .limit(50)
+        // .limit(50)
         .toArray();
       initialRequestFormulaCodes = latestFormulaSwatchColors.map(
         (formula) => formula.formulaCode
@@ -73,6 +73,7 @@ router.post(
       });
     }
 
+    // THIS MEANS THAT IS THE INITIAL REQUEST FOR THE FORMULAS PAGE 👇🏻
     if (!req.body.formulaSearchQuery && !req.body.userEmail) {
       pipeline.push({
         $match: {
@@ -172,6 +173,7 @@ router.post(
             componentDescription: "$ComponentDescription",
             hex: "$hex",
             percentage: "$Percentage",
+            componentSeries: "$FormulaSerie"
           },
         },
       },
