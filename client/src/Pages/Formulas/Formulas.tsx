@@ -65,7 +65,7 @@ export default function Formulas() {
   const {
     data: fetchedFormulas,
     isSuccess: isGetFormulasSuccessful,
-    // isLoading: isGetFormulasLoading,
+    isLoading: isGetFormulasLoading,
     refetch: refetchFormulas,
   } = useGetFormulasQuery({
     formulaSeries: selectedSeries,
@@ -150,7 +150,7 @@ export default function Formulas() {
 
   const handleSelectSeries = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedSeries(e.target.value);
-
+    console.log("THIS RUNS");
     // refetchFormulas();
   };
 
@@ -481,7 +481,7 @@ export default function Formulas() {
               />
             </div>
             <div className="swatchesComponentContainer">
-              {isGetFormulasSuccessful ? (
+              {isGetFormulasSuccessful && (
                 <Swatches
                   // formulas={formulasInSeries}
                   formulas={fetchedFormulas}
@@ -493,9 +493,8 @@ export default function Formulas() {
                     handleEditOrCreateFormulaClick
                   }
                 />
-              ) : (
-                <Spinner className="m-auto" />
               )}
+              {isGetFormulasLoading && <Spinner className="m-auto" />}
               {isGetFormulasSuccessful && fetchedFormulas.length === 0 && (
                 <span className="m-auto">
                   No formulas match the selected filters
