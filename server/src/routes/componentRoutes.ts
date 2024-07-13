@@ -578,14 +578,13 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
   await Promise.all(promises);
 
   try {
-    // console.log("nullFormulaCodes", nullFormulaCodes);
-    // console.log("newFormulaColorSwatches: ", newFormulaColorSwatches.length);
-
-    await formulaSwatchColors.insertMany(newFormulaColorSwatches);
+    if (newFormulaColorSwatches.length > 0) {
+      await formulaSwatchColors.insertMany(newFormulaColorSwatches);
+    }
     await components.insertMany(receivedComponents);
 
     const importFormulasResponse = {
-      formulasCreated: newFormulaColorSwatches.length,
+      formulasCreated: Array.from(componentsGroupedByFormula.entries()).length,
       formulasNotCreated: nullFormulaCodes,
     };
 

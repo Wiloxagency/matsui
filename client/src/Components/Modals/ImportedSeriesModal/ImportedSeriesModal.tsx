@@ -10,7 +10,7 @@ import {
 interface ImportedSeriesModalProps {
   isOpenImportedSeriesModal: boolean;
   onOpenChangeImportedSeriesModal: (value: boolean) => void;
-  numberOfImportedFormulas: number;
+  numberOfImportedFormulas: number | null;
   nullFormulaCodes: string[];
   newSeriesName: string;
 }
@@ -41,7 +41,9 @@ export default function ImportedSeriesModal({
                 Series <strong>{newSeriesName}</strong> was created
                 successfully.
               </p>
-              <p>{numberOfImportedFormulas} formulas were imported</p>
+              {numberOfImportedFormulas && numberOfImportedFormulas > 0 && (
+                <p>{numberOfImportedFormulas} formulas were imported</p>
+              )}
               {nullFormulaCodes.length > 0 && (
                 <>
                   <p>

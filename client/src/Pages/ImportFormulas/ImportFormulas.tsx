@@ -57,7 +57,7 @@ export default function ImportFormulas() {
   >(null);
 
   const [numberOfImportedFormulas, setNumberOfImportedFormulas] =
-    useState<number>(0);
+    useState<number | null >(null);
 
   const [nullFormulaCodes, setNullFormulaCodes] = useState<string[]>([]);
 
