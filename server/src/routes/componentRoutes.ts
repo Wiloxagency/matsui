@@ -34,7 +34,7 @@ router.post(
   // authenticateToken,
   async (req: Request, res: Response) => {
     const db = await createMongoDBConnection();
-    const components = db.collection("components");
+    const components = db.collection<FormulaComponentInterface>("components");
     let initialRequestFormulaCodes: string[] = [];
     let userFormulasCodes: string[] = [];
     const searchQuery: string = req.body.formulaSearchQuery;
@@ -51,9 +51,39 @@ router.post(
     }
 
     if (!searchQuery || searchQuery === "") {
+      const latestSeriesComponents = await components
+        .find({ FormulaSerie: req.body.formulaSeries })
+        .sort({ _id: -1 })
+        .limit(100)
+        .toArray();
+
+      // Step 1: Find the FormulaCode of the last object
+      const lastFormulaCode =
+        latestSeriesComponents[latestSeriesComponents.length - 1].FormulaCode;
+
+      // Step 2: Traverse backward to find the start index of the last set of objects with the same FormulaCode
+      let startIndex = latestSeriesComponents.length - 1;
+      while (
+        startIndex >= 0 &&
+        latestSeriesComponents[startIndex].FormulaCode === lastFormulaCode
+      ) {
+        startIndex--;
+      }
+
+      // Step 3: Create a new array excluding the last set of objects with the same FormulaCode
+      const filteredComponents = latestSeriesComponents.slice(
+        0,
+        startIndex + 1
+      );
+
+      // Step 4: Get unique FormulaCode values from the filtered array
+      const uniqueFormulaCodes = Array.from(
+        new Set(filteredComponents.map((component) => component.FormulaCode))
+      );
+
       const formulaSwatchColors = db.collection("formulaSwatchColors");
       const latestFormulaSwatchColors = await formulaSwatchColors
-        .find()
+        .find({ formulaCode: { $in: uniqueFormulaCodes } })
         .sort({ _id: -1 })
         // .limit(50)
         .toArray();
@@ -173,7 +203,7 @@ router.post(
             componentDescription: "$ComponentDescription",
             hex: "$hex",
             percentage: "$Percentage",
-            componentSeries: "$FormulaSerie"
+            componentSeries: "$FormulaSerie",
           },
         },
       },
