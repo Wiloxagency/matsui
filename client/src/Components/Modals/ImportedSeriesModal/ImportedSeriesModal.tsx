@@ -53,6 +53,21 @@ export default function ImportedSeriesModal({
                   <p>
                     <strong>{nullFormulaCodes}</strong>
                   </p>
+
+                  <p className="my-4">
+                    {nullFormulaCodes.map(
+                      (nullFormulaCode, indexFormulaCode) => {
+                        return (
+                          <strong key={nullFormulaCode}>
+                            {nullFormulaCode}
+                            {indexFormulaCode === nullFormulaCodes.length - 1
+                              ? ""
+                              : ", "}
+                          </strong>
+                        );
+                      }
+                    )}
+                  </p>
                 </>
               )}
             </ModalBody>

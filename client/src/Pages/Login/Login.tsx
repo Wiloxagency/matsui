@@ -56,8 +56,6 @@ export function Login() {
   }
 
   const handleRegister = async () => {
-    console.log("Clicked confirm");
-    return;
     setIsRegisterButtonLoading(true);
     setLoginFormMessage("");
     axios
