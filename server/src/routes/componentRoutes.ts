@@ -39,7 +39,9 @@ router.post(
     let userFormulasCodes: string[] = [];
     const searchQuery: string = req.body.formulaSearchQuery;
 
-    // console.log(req.body);
+    // const baseFormulas = await
+
+    console.log(req.body);
     // console.log(req.body.includeSystemFormulas);
 
     if (req.body.userEmail) {
@@ -51,6 +53,8 @@ router.post(
     }
 
     if (!searchQuery || searchQuery === "") {
+      // FILTERING BY SERIES ALSO FILTERS BY COMPANY BECAUSE
+      // A SERIES' NAME MUST BE UNIQUE
       const latestSeriesComponents = await components
         .find({ FormulaSerie: req.body.formulaSeries })
         .sort({ _id: -1 })
@@ -85,11 +89,27 @@ router.post(
       const latestFormulaSwatchColors = await formulaSwatchColors
         .find({ formulaCode: { $in: uniqueFormulaCodes } })
         .sort({ _id: -1 })
-        // .limit(50)
         .toArray();
-      initialRequestFormulaCodes = latestFormulaSwatchColors.map(
+
+      const latestFormulaCodes = latestFormulaSwatchColors.map(
         (formula) => formula.formulaCode
       );
+
+      const firstBaseFormulas = await formulaSwatchColors
+        .find()
+        // .sort({ _id: 1 })
+        .limit(50)
+        .toArray();
+      console.log("firstBaseFormulas: ", firstBaseFormulas);
+      const firstBaseFormulaCodes = firstBaseFormulas.map(
+        (formula) => formula.formulaCode
+      );
+
+      initialRequestFormulaCodes = latestFormulaCodes.concat(
+        firstBaseFormulaCodes
+      );
+
+      // console.log(firstBaseFormulaCodes);
     }
 
     const companyPath = "formulaSwatchColor.company";
@@ -105,6 +125,7 @@ router.post(
 
     // THIS MEANS THAT IS THE INITIAL REQUEST FOR THE FORMULAS PAGE 👇🏻
     if (!req.body.formulaSearchQuery && !req.body.userEmail) {
+      console.log("Initial request");
       pipeline.push({
         $match: {
           FormulaCode: {
@@ -175,7 +196,9 @@ router.post(
     if (!req.body.selectedCompany) {
       pipeline.push({
         $match: {
-          [companyPath]: { $in: [req.body.userCompany, null] },
+          // "formulaSwatchColor.company": null,
+          // "formulaSwatchColor.company": req.body.userCompany,
+          "formulaSwatchColor.company": { $in: [req.body.userCompany, null] },
         },
       });
     }
