@@ -190,8 +190,8 @@ export default function AdminDashboard() {
   }
 
   async function handleDeleteUserConfirmation(): Promise<void> {
-    const deleteSeriesResponse = await deleteUser({
-      userEmail: localStorage.getItem("userEmail")!,
+    const deleteUserResponse = await deleteUser({
+      userEmail: selectedUser!.email,
     })
       .unwrap()
       .then(() => {
@@ -199,7 +199,7 @@ export default function AdminDashboard() {
         onOpenChangeDeleteUserModal();
       })
       .catch((error) => console.error("rejected", error));
-    deleteSeriesResponse;
+    deleteUserResponse;
   }
 
   useEffect(() => {

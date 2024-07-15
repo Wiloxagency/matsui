@@ -100,7 +100,7 @@ router.post(
         // .sort({ _id: 1 })
         .limit(50)
         .toArray();
-      console.log("firstBaseFormulas: ", firstBaseFormulas);
+      // console.log("firstBaseFormulas: ", firstBaseFormulas);
       const firstBaseFormulaCodes = firstBaseFormulas.map(
         (formula) => formula.formulaCode
       );
