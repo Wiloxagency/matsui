@@ -199,6 +199,18 @@ export default function EditUserModal({
                       value={selectedUser?.email}
                     />
                     <Input
+                      label="Supplier"
+                      type="text"
+                      disabled
+                      value={selectedUser?.supplier}
+                    />
+                    <Input
+                      label="Phone"
+                      type="tel"
+                      disabled
+                      value={String(selectedUser?.phone)}
+                    />
+                    <Input
                       label="Registration date"
                       type="text"
                       disabled

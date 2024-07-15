@@ -63,6 +63,10 @@ router.post("/login", async (req: Request, res: Response) => {
       return res.json({ message: "User unverified" });
     }
 
+    if (fetchedUser.status === "Inactive") {
+      return res.json({ message: "Account not yet activated" });
+    }
+
     // const accessToken = generateAccessToken(String(fetchedUser._id));
     // const refreshToken = generateRefreshToken(String(fetchedUser._id));
 
@@ -166,7 +170,7 @@ router.post("/emailVerification", async (req: Request, res: Response) => {
     );
     const activateUser = await users.updateOne(
       { _id: decryptedId },
-      { $set: { status: "Active" } }
+      { $set: { status: "Inactive" } }
     );
     res.json(activateUser);
   } catch (error) {

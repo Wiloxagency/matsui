@@ -61,7 +61,7 @@ export function Login() {
     axios
       .post(
         API_URL + "register",
-        JSON.stringify({ email, password, selectedSupplier, phone }),
+        JSON.stringify({ email, password, supplier: selectedSupplier, phone }),
         {
           headers: { "Content-type": "application/json" },
           // withCredentials: true,
@@ -100,6 +100,10 @@ export function Login() {
 
         if (response.data.message === "User unverified") {
           setLoginFormMessage("Please confirm your email before logging in");
+          return;
+        }
+        if (response.data.message === "Account not yet activated") {
+          setLoginFormMessage("Account pending admin approval");
           return;
         } else {
           localStorage.setItem("accessToken", response.data.accessToken);

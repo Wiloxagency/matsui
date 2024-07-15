@@ -15,6 +15,8 @@ export interface UserInterface {
   registrationDate: Date;
   createdFormulas: number;
   lastAccess: Date;
+  supplier: string;
+  phone: number;
 }
 
 export interface FormulaInterface {
@@ -30,8 +32,8 @@ export interface FormulaInterface {
     hex?: string;
   }[];
   inkSystem: string;
-  createdBy?: string
-  company?: string
+  createdBy?: string;
+  company?: string;
 }
 
 export interface FormulaComponentInterface {

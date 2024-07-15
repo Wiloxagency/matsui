@@ -16,10 +16,10 @@ import { UserInterface } from "../../interfaces/interfaces";
 import "./UsersTable.scss";
 
 const columns = [
-  {
-    key: "username",
-    label: "USERNAME",
-  },
+  // {
+  //   key: "username",
+  //   label: "USERNAME",
+  // },
   {
     key: "email",
     label: "EMAIL",
@@ -27,6 +27,10 @@ const columns = [
   {
     key: "company",
     label: "COMPANY",
+  },
+  {
+    key: "supplier",
+    label: "SUPPLIER",
   },
   {
     key: "status",
@@ -91,11 +95,11 @@ export default function UsersTable({
                     onClick={() => handleCheckboxCheck(indexUser)}
                   ></Checkbox>
                 </Td>
-                <Td>
+                {/* <Td>
                   <span className={user.username === "" ? "unsetValue" : ""}>
                     {user.username !== "" ? user.username : "unset"}
                   </span>
-                </Td>
+                </Td> */}
 
                 <Td>{user.email}</Td>
                 <Td>
@@ -103,6 +107,7 @@ export default function UsersTable({
                     {user.company !== "" ? user.company : "unset"}
                   </span>
                 </Td>
+                <Td>{user.supplier}</Td>
                 <Td>{user.status}</Td>
                 <Td>{returnFormattedDate(user.registrationDate)}</Td>
                 <Td>{user.createdFormulas}</Td>

@@ -15,7 +15,7 @@ export default function EmailVerification() {
 
   if (isSuccess) {
     setTimeout(() => {
-      navigate("/formulas");
+      navigate("/login");
     }, 2000);
   }
   console.log("data: ", data);
