@@ -35,7 +35,10 @@ router.post(
   async (req: Request, res: Response) => {
     const db = await createMongoDBConnection();
     const components = db.collection<FormulaComponentInterface>("components");
+    const formulaSwatchColors = db.collection("formulaSwatchColors");
+
     let initialRequestFormulaCodes: string[] = [];
+    let latestFormulaCodes: string[] = [];
     let userFormulasCodes: string[] = [];
     const searchQuery: string = req.body.formulaSearchQuery;
 
@@ -49,10 +52,18 @@ router.post(
       const userFormulas = await formulaSwatchColors
         .find({ createdBy: req.body.userEmail })
         .toArray();
-      userFormulasCodes = userFormulas.map((formula) => formula.formulaCode);
+      console.log("CreatedBy length: ", userFormulas.length);
+      if (userFormulas.length > 0) {
+        userFormulasCodes = userFormulas.map((formula) => formula.formulaCode).slice(0, 50);
+      }
+      if (userFormulas.length === 0) {
+        console.log("USER HAS NO CREATED FORMULAS");
+        res.json([]);
+        return;
+      }
     }
 
-    if (!searchQuery || searchQuery === "") {
+    if (!searchQuery || (searchQuery === "" && !req.body.userEmail)) {
       // FILTERING BY SERIES ALSO FILTERS BY COMPANY BECAUSE
       // A SERIES' NAME MUST BE UNIQUE
       const latestSeriesComponents = await components
@@ -60,40 +71,38 @@ router.post(
         .sort({ _id: -1 })
         .limit(100)
         .toArray();
+      if (latestSeriesComponents.length > 0) {
+        // Step 1: Find the FormulaCode of the last object
+        const lastFormulaCode =
+          latestSeriesComponents[latestSeriesComponents.length - 1].FormulaCode;
 
-      // Step 1: Find the FormulaCode of the last object
-      const lastFormulaCode =
-        latestSeriesComponents[latestSeriesComponents.length - 1].FormulaCode;
+        // Step 2: Traverse backward to find the start index of the last set of objects with the same FormulaCode
+        let startIndex = latestSeriesComponents.length - 1;
+        while (
+          startIndex >= 0 &&
+          latestSeriesComponents[startIndex].FormulaCode === lastFormulaCode
+        ) {
+          startIndex--;
+        }
 
-      // Step 2: Traverse backward to find the start index of the last set of objects with the same FormulaCode
-      let startIndex = latestSeriesComponents.length - 1;
-      while (
-        startIndex >= 0 &&
-        latestSeriesComponents[startIndex].FormulaCode === lastFormulaCode
-      ) {
-        startIndex--;
+        // Step 3: Create a new array excluding the last set of objects with the same FormulaCode
+        const filteredComponents = latestSeriesComponents.slice(
+          0,
+          startIndex + 1
+        );
+
+        // Step 4: Get unique FormulaCode values from the filtered array
+        const uniqueFormulaCodes = Array.from(
+          new Set(filteredComponents.map((component) => component.FormulaCode))
+        );
+        const latestFormulaSwatchColors = await formulaSwatchColors
+          .find({ formulaCode: { $in: uniqueFormulaCodes } })
+          .sort({ _id: -1 })
+          .toArray();
+        latestFormulaCodes = latestFormulaSwatchColors.map(
+          (formula) => formula.formulaCode
+        );
       }
-
-      // Step 3: Create a new array excluding the last set of objects with the same FormulaCode
-      const filteredComponents = latestSeriesComponents.slice(
-        0,
-        startIndex + 1
-      );
-
-      // Step 4: Get unique FormulaCode values from the filtered array
-      const uniqueFormulaCodes = Array.from(
-        new Set(filteredComponents.map((component) => component.FormulaCode))
-      );
-
-      const formulaSwatchColors = db.collection("formulaSwatchColors");
-      const latestFormulaSwatchColors = await formulaSwatchColors
-        .find({ formulaCode: { $in: uniqueFormulaCodes } })
-        .sort({ _id: -1 })
-        .toArray();
-
-      const latestFormulaCodes = latestFormulaSwatchColors.map(
-        (formula) => formula.formulaCode
-      );
 
       const firstBaseFormulas = await formulaSwatchColors
         .find()
@@ -203,13 +212,13 @@ router.post(
       });
     }
 
-    if (req.body.userEmail) {
-      pipeline.push({
-        $match: {
-          [creatorPath]: req.body.userEmail,
-        },
-      });
-    }
+    // if (req.body.userEmail) {
+    //   pipeline.push({
+    //     $match: {
+    //       "formulaSwatchColor.createdBy": req.body.userEmail,
+    //     },
+    //   });
+    // }
 
     pipeline.push({
       $group: {
@@ -232,13 +241,15 @@ router.post(
       },
     });
 
-    // console.log(pipeline);
+    console.log(pipeline);
 
     const formulas = await components
       .aggregate(pipeline)
       .sort({ _id: -1 })
+      .limit(100)
       .toArray();
-    // console.log(formulas);
+    console.log("THIS RUNS 2");
+    console.log("formulas: ", formulas);
     res.json(formulas);
   }
 );
