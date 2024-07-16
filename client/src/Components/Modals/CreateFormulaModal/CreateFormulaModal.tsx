@@ -388,7 +388,7 @@ export default function CreateFormulaModal({
                   isRequired={true}
                   value={newFormulaCode}
                   onChange={(event) => {
-                    setNewFormulaCode(event.target.value);
+                    setNewFormulaCode(event.target.value.toLocaleUpperCase());
                   }}
                 />
                 <Input
