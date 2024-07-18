@@ -11,6 +11,10 @@ import "./Login.scss";
 import { api, useGetSuppliersQuery } from "../../State/api";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Input } from "@nextui-org/input";
+
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const forbiddenProviders = ["gmail", "hotmail", "outlook", "yahoo"];
@@ -185,6 +189,40 @@ export function Login() {
     }
   }, []);
 
+  function ComboBox() {
+    return (
+      <Autocomplete
+        freeSolo
+        disablePortal
+        id="combo-box-demo"
+        options={fetchedSuppliers!.map((supplier) => {
+          return { label: supplier.name };
+        })}
+        sx={{
+          backgroundColor: "white",
+          borderRadius: ".5rem",
+          outline: "none",
+          textDecoration: "none",
+          marginBottom: "1rem",
+          "& label": {
+            // color: "red",
+            fontSize: ".91rem",
+          },
+          "& input": {
+            // width: 200,
+            // bgcolor: "background.paper",
+            // borderRadius: "100rem",
+            color: (theme) =>
+              theme.palette.getContrastText(theme.palette.background.paper),
+          },
+        }}
+        renderInput={(params) => (
+          <TextField {...params} label="Supplier" variant="filled" />
+        )}
+      />
+    );
+  }
+
   return (
     <>
       <div className="backgroundColor"></div>
@@ -278,6 +316,8 @@ export function Login() {
               ))}
             </Select>
           )}
+
+          {fetchedSuppliers && <ComboBox></ComboBox>}
 
           <p
             className={
