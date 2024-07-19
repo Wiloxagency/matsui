@@ -49,6 +49,7 @@ export default function ImportFormulas() {
   const [missingPigments, setMissingPigments] = useState<string[]>([]);
   const [newSeriesName, setNewSeriesName] = useState<string>("");
   const [seriesToDelete, setSeriesToDelete] = useState<string>("");
+  const [validationMessage, setValidationMessage] = useState<string>("");
   const [wasSeriesDeleted, setWasSeriesDeleted] = useState<boolean | undefined>(
     undefined
   );
@@ -205,7 +206,34 @@ export default function ImportFormulas() {
     setMappedComponents([]);
   }
 
+  function areArraysEqual(a: string[], b: string[]): boolean {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] !== b[i]) return false;
+    }
+    return true;
+  }
+
   async function validateUploadedComponents() {
+    setValidationMessage("");
+
+    const referenceHeaders = [
+      "FormulaCode",
+      "FormulaDescription",
+      "ComponentCode",
+      "ComponentDescription",
+      "Percentage",
+    ];
+
+    if (!areArraysEqual(extractedHeaders, referenceHeaders)) {
+      console.log(extractedHeaders);
+      console.log(referenceHeaders);
+      setValidationMessage(
+        "The file you uploaded doesn't match the template structure."
+      );
+    }
+
+    return;
     const extractedComponents = Array.from(
       new Set(
         JSONFormulas.map(({ ComponentCode }: any) => {
@@ -380,6 +408,22 @@ export default function ImportFormulas() {
                 setExtractedHeaders={setExtractedHeaders}
               />
             </div>
+            <p
+            style={{color: "indianred", fontWeight: "600"}}
+              className={
+                validationMessage === ""
+                  ? "hiddenBlock mt-4"
+                  : "hiddenBlock active-2 mt-4"
+              }
+            >
+              {validationMessage}
+            </p>
+            {validationMessage !== "" && (
+              <p>
+                The document headers should be: FormulaCode, FormulaDescription,
+                ComponentCode, ComponentDescription, Percentage`
+              </p>
+            )}
           </div>
         </div>
         <div className="rightSection">
