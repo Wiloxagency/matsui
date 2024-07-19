@@ -115,10 +115,12 @@ export default function AdminDashboard() {
 
   function handleExportUsers() {
     if (fetchedUsers) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const noIdUsers = fetchedUsers.map(({ _id, ...keepAttrs }) => {
-        return keepAttrs;
-      });
+      const noIdUsers = fetchedUsers.map(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        ({ _id, password, isAdmin, ...keepAttrs }) => {
+          return keepAttrs;
+        }
+      );
       const workbook = XLSX.utils.book_new();
       const worksheet = XLSX.utils.json_to_sheet(noIdUsers);
       XLSX.utils.book_append_sheet(workbook, worksheet, "All users");

@@ -131,9 +131,9 @@ router.post("/register", async (req: Request, res: Response) => {
 
       const newUser: UserInterface = {
         email: req.body.email,
-        username: "",
+        username: req.body.username,
         password: hashedPassword,
-        company: "",
+        company: req.body.company,
         status: "Unverified",
         registrationDate: currentDate,
         createdFormulas: 0,

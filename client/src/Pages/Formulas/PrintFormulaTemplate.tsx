@@ -156,6 +156,7 @@ export default function PrintFormulaTemplate({
             )}
           </TableBody>
         </Table>
+        <p className="bigLabel">{formula.formulaCode}</p>
       </div>
     ) : templateSize === 2 ? (
       <div className="printFormulaTemplate size2">
@@ -165,6 +166,7 @@ export default function PrintFormulaTemplate({
           templateSize={templateSize}
         />
         <TemplateTable formula={formula} />
+        <p className="bigLabel">{formula.formulaCode}</p>
       </div>
     ) : (
       <div className="printFormulaTemplate size3">
@@ -174,6 +176,7 @@ export default function PrintFormulaTemplate({
           templateSize={templateSize}
         />
         <TemplateTable formula={formula} />
+        <p className="bigLabel">{formula.formulaCode}</p>
       </div>
     );
   }

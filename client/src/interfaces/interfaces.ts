@@ -17,6 +17,7 @@ export interface UserInterface {
   lastAccess: Date;
   supplier: string;
   phone: number;
+  isAdmin?: boolean
 }
 
 export interface FormulaInterface {

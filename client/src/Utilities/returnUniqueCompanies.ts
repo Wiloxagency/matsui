@@ -10,3 +10,14 @@ export function returnUniqueCompanies(receivedUsers: UserInterface[]) {
   ).map((company) => ({ name: company }));
   return extractedCompanies;
 }
+
+export function returnUniqueCompaniesWithLabel(receivedUsers: UserInterface[]) {
+  const extractedCompanies = Array.from(
+    new Set(
+      receivedUsers
+        .map(({ company }: any) => company)
+        .filter((company: string) => company.trim() !== "")
+    )
+  ).map((company) => ({ label: company }));
+  return extractedCompanies;
+}

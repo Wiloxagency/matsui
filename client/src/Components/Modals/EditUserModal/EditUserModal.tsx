@@ -111,7 +111,7 @@ export default function EditUserModal({
                   </ModalHeader>
                   <ModalBody>
                     <Input
-                      label="Username"
+                      label="Full name"
                       type="text"
                       variant="bordered"
                       value={userUsername}

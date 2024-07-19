@@ -626,19 +626,19 @@ export default function Formulas() {
                         >
                           <DropdownItem
                             key="1"
-                            description="Approximately 6x4 in"
+                            description="Approximately 6x5 in"
                           >
                             Large
                           </DropdownItem>
                           <DropdownItem
                             key="2"
-                            description="Approximately 3x2 in"
+                            description="Approximately 3x2.5 in"
                           >
                             Medium
                           </DropdownItem>
                           <DropdownItem
                             key="3"
-                            description="Approximately 2x1.3 in"
+                            description="Approximately 2x1.7 in"
                           >
                             Small
                           </DropdownItem>

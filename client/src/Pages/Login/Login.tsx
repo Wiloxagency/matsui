@@ -1,7 +1,14 @@
 import { Button } from "@nextui-org/button";
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useRef, useState } from "react";
-import { FaEye, FaEyeSlash, FaLock, FaPhone, FaUser } from "react-icons/fa";
+import {
+  FaEnvelope,
+  FaEye,
+  FaEyeSlash,
+  FaLock,
+  FaPhone,
+  FaUser,
+} from "react-icons/fa";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
 // import { useAuth } from "../../Context/AuthProvider";
@@ -14,6 +21,7 @@ import { Input } from "@nextui-org/input";
 
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+import { returnUniqueCompaniesWithLabel } from "../../Utilities/returnUniqueCompanies";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -24,8 +32,11 @@ export function Login() {
 
   const emailRef = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
+  const [companies, setCompanies] = useState<{ label: string }[]>([]);
+  const [company, setCompany] = useState("");
   const [selectedSupplier, setSelectedSupplier] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loginFormMessage, setLoginFormMessage] = useState("");
@@ -37,6 +48,7 @@ export function Login() {
     useState<boolean>(false);
 
   const { data: fetchedSuppliers } = useGetSuppliersQuery();
+  const [triggerFetchUsers] = api.endpoints.getUsers.useLazyQuery();
 
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
   // console.log("isMobile: ", isMobile);
@@ -60,17 +72,21 @@ export function Login() {
   }
 
   const handleRegister = async () => {
+    const registerUserPayload = {
+      email,
+      password,
+      phone,
+      company,
+      supplier: selectedSupplier,
+      username: fullName,
+    };
     setIsRegisterButtonLoading(true);
     setLoginFormMessage("");
     axios
-      .post(
-        API_URL + "register",
-        JSON.stringify({ email, password, supplier: selectedSupplier, phone }),
-        {
-          headers: { "Content-type": "application/json" },
-          // withCredentials: true,
-        }
-      )
+      .post(API_URL + "register", JSON.stringify(registerUserPayload), {
+        headers: { "Content-type": "application/json" },
+        // withCredentials: true,
+      })
       .then((response: AxiosResponse) => {
         setIsRegisterButtonLoading(false);
         if (response.status === 200) {
@@ -176,6 +192,13 @@ export function Login() {
       handleRegister();
     } else {
       setIsRegistrationModeActive(true);
+      triggerFetchUsers()
+        .unwrap()
+        .then((fetchedUsers) => {
+          const extractedCompanies =
+            returnUniqueCompaniesWithLabel(fetchedUsers);
+          setCompanies(extractedCompanies);
+        });
     }
   }
 
@@ -189,39 +212,11 @@ export function Login() {
     }
   }, []);
 
-  function ComboBox() {
-    return (
-      <Autocomplete
-        freeSolo
-        disablePortal
-        id="combo-box-demo"
-        options={fetchedSuppliers!.map((supplier) => {
-          return { label: supplier.name };
-        })}
-        sx={{
-          backgroundColor: "white",
-          borderRadius: ".5rem",
-          outline: "none",
-          textDecoration: "none",
-          marginBottom: "1rem",
-          "& label": {
-            // color: "red",
-            fontSize: ".91rem",
-          },
-          "& input": {
-            // width: 200,
-            // bgcolor: "background.paper",
-            // borderRadius: "100rem",
-            color: (theme) =>
-              theme.palette.getContrastText(theme.palette.background.paper),
-          },
-        }}
-        renderInput={(params) => (
-          <TextField {...params} label="Supplier" variant="filled" />
-        )}
-      />
-    );
-  }
+  // function ComboBox() {
+  //   return (
+
+  //   );
+  // }
 
   return (
     <>
@@ -254,10 +249,23 @@ export function Login() {
               value={email}
               onChange={(event) => handleSetEmail(event.target.value)}
               ref={emailRef}
+              endContent={<FaEnvelope className="icon" />}
               required
-              endContent={<FaUser className="icon" />}
             ></Input>
           </div>
+          {isRegistrationModeActive && (
+            <div className="inputContainer">
+              <Input
+                radius="full"
+                type="text"
+                label="Full name"
+                value={fullName}
+                onChange={(event) => setFullName(event.target.value)}
+                endContent={<FaUser className="icon" />}
+                required
+              ></Input>
+            </div>
+          )}
           <div className="inputContainer">
             <Input
               label="Password"
@@ -317,7 +325,41 @@ export function Login() {
             </Select>
           )}
 
-          {fetchedSuppliers && <ComboBox></ComboBox>}
+          {isRegistrationModeActive && companies.length > 0 && (
+            <Autocomplete
+              freeSolo
+              disablePortal
+              id="combo-box-demo"
+              options={companies}
+              inputValue={company}
+              onInputChange={(_event, newInputValue) => {
+                setCompany(newInputValue);
+              }}
+              sx={{
+                backgroundColor: "white",
+                borderRadius: ".5rem",
+                outline: "none",
+                textDecoration: "none",
+                marginBottom: "1rem",
+                "& label": {
+                  // color: "red",
+                  fontSize: ".91rem",
+                },
+                "& input": {
+                  // width: 200,
+                  // bgcolor: "background.paper",
+                  // borderRadius: "100rem",
+                  color: (theme) =>
+                    theme.palette.getContrastText(
+                      theme.palette.background.paper
+                    ),
+                },
+              }}
+              renderInput={(params) => (
+                <TextField {...params} label="Company" variant="filled" />
+              )}
+            />
+          )}
 
           <p
             className={

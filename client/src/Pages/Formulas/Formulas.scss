@@ -120,10 +120,10 @@
 
 #divToPrint {
     position         : absolute;
-    top           : -1000px;
-    // top              : 50%;
-    // left             : 50%;
-    // transform        : translate3d(-50%, -50%, 0);
+    // top           : -1000px;
+    top              : 50%;
+    left             : 50%;
+    transform        : translate3d(-50%, -50%, 0);
     z-index          : 9;
 }
 
@@ -149,11 +149,19 @@
             max-width: 3rem;
         }
     }
+
+    .bigLabel {
+        font-weight: 800;
+        width      : max-content;
+        position   : absolute;
+        left       : 50%;
+        transform  : translateX(-50%);
+    }
 }
 
 .printFormulaTemplate.size1 {
     width  : 6in;
-    height : 4in;
+    height : 5in;
     padding: 1rem 2rem;
 
     .templateHeader {
@@ -171,11 +179,16 @@
             margin-bottom: -1rem;
         }
     }
+
+    .bigLabel {
+        font-size: 2rem;
+        bottom   : 1rem;
+    }
 }
 
 .printFormulaTemplate.size2 {
     width    : 3in;
-    height   : 2in;
+    height   : 2.5in;
     padding  : .75rem 1rem;
     font-size: .5rem;
 
@@ -200,6 +213,11 @@
         }
     }
 
+    .bigLabel {
+        font-size: 1rem;
+        bottom   : .7rem;
+    }
+
     th {
         text-align: start;
     }
@@ -212,7 +230,7 @@
 
 .printFormulaTemplate.size3 {
     width : 2in;
-    height: 1.3in;
+    height: 1.7in;
 
     padding  : .25rem;
     font-size: .3rem;
@@ -236,6 +254,11 @@
 
             margin-bottom: -.35rem;
         }
+    }
+
+    .bigLabel {
+        font-size: .7rem;
+        bottom     : .5rem;
     }
 
     th {
