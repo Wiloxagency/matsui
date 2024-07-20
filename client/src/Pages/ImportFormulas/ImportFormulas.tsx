@@ -233,7 +233,6 @@ export default function ImportFormulas() {
       );
     }
 
-    return;
     const extractedComponents = Array.from(
       new Set(
         JSONFormulas.map(({ ComponentCode }: any) => {
