@@ -409,7 +409,7 @@ export default function ImportFormulas() {
               />
             </div>
             <p
-            style={{color: "indianred", fontWeight: "600"}}
+              style={{ color: "indianred", fontWeight: "600" }}
               className={
                 validationMessage === ""
                   ? "hiddenBlock mt-4"
@@ -419,10 +419,30 @@ export default function ImportFormulas() {
               {validationMessage}
             </p>
             {validationMessage !== "" && (
-              <p>
-                The document headers should be: FormulaCode, FormulaDescription,
-                ComponentCode, ComponentDescription, Percentage`
-              </p>
+              <>
+                <p>
+                  <strong>The headers should be:</strong>
+                </p>
+                <p>
+                  FormulaCode, FormulaDescription, ComponentCode,
+                  ComponentDescription, Percentage
+                </p>
+                <p className="mt-4">
+                  <strong>The headers in the file you uploaded are:</strong>
+                </p>
+                <div>
+                  {extractedHeaders.map((header, indexHeader) => {
+                    return (
+                      <span key={header}>
+                        {header}
+                        {indexHeader === extractedHeaders.length - 1
+                          ? ""
+                          : ", "}
+                      </span>
+                    );
+                  })}
+                </div>
+              </>
             )}
           </div>
         </div>
