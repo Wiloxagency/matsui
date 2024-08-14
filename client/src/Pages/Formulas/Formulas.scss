@@ -120,10 +120,10 @@
 
 #divToPrint {
     position         : absolute;
-    // top           : -1000px;
-    top              : 50%;
-    left             : 50%;
-    transform        : translate3d(-50%, -50%, 0);
+    top           : -1000px;
+    // top              : 50%;
+    // left             : 50%;
+    // transform        : translate3d(-50%, -50%, 0);
     z-index          : 9;
 }
 
