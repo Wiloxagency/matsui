@@ -28,7 +28,7 @@ const readFile = promisify(fs.readFile);
 // initializePassport(passport);
 
 const router = Router();
-// const MAILGUN_PASSWORD: string = process.env.MAILGUN_PASSWORD as string;
+const MAILTRAP_PASSWORD: string = process.env.MAILTRAP_PASSWORD as string;
 const FRONTEND_URL: string = process.env.FRONTEND_URL as string;
 
 router.get("/wakeUpServer", (req: Request, res: Response) => {
@@ -193,12 +193,13 @@ async function sendVerificationEmail(
   const nodemailer = require("nodemailer");
 
   const transporter = nodemailer.createTransport({
-    host: "sandbox.smtp.mailtrap.io",
+    // host: "sandbox.smtp.mailtrap.io",
+    host: "live.smtp.mailtrap.io",
     port: 587,
     secure: false, // Use `true` for port 465, `false` for all other ports
     auth: {
-      user: "97da40881803eb",
-      pass: "fa675f5f1506c7",
+      user: "api",
+      pass: MAILTRAP_PASSWORD,
     },
   });
 
