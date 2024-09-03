@@ -48,7 +48,7 @@ export default function Formulas() {
   const isAdmin = localStorage.getItem("isAdmin");
   const userCompany = localStorage.getItem("userCompany");
 
-  const [selectedSeries, setSelectedSeries] = useState<string>("301");
+  const [selectedSeries, setSelectedSeries] = useState<string>("301 RC Neo");
   const [formulaSearchQuery, setFormulaSearchQuery] = useState<string>("");
   const [formulaQuantityAsString, setFormulaQuantityAsString] =
     useState<string>("1000");
@@ -393,7 +393,7 @@ export default function Formulas() {
                     aria-label="SELECT SERIES"
                     variant="bordered"
                     radius="full"
-                    placeholder="301"
+                    placeholder="301 RC Neo"
                     value={selectedSeries}
                     onChange={(e) => handleSelectSeries(e)}
                   >
