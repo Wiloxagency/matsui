@@ -214,7 +214,7 @@ async function sendVerificationEmail(
   const htmlToSend = template(replacements);
 
   const info = await transporter.sendMail({
-    from: '"Matsui Color 🖌️" <from@example.com', // sender address
+    from: '"Matsui Color 🖌️" <info@matsui-color.com>', // sender address
     // from: '"This is a test 👻" <postmaster@sandboxd15c86dfa0e8480ea7c4711442934f64.mailgun.org>', // sender address
     to: receivedRecipientEmail, // list of receivers
     subject: "Verify your email 🚀", // Subject line
