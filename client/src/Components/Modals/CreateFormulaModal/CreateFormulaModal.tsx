@@ -396,7 +396,7 @@ export default function CreateFormulaModal({
                   //     <FaLock className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                   //   }
                   label="Formula description"
-                  placeholder="Ex: 301 RC Neo"
+                  placeholder="Ex: 301 RC Neo serie"
                   variant="bordered"
                   isRequired={true}
                   value={newFormulaDescription}

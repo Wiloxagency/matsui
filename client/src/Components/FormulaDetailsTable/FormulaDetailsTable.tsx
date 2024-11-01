@@ -99,9 +99,9 @@ export default function FormulaDetailsTable({
                   )}
                 </Td>
                 {/* </span> */}
-                <Td>{component.componentCode}</Td>
+                <Td>&nbsp;{component.componentCode}</Td>
                 <Td>{component.componentDescription}</Td>
-                <Td>{Number(component.percentage)}</Td>
+                <Td>{Number(component.percentage.toFixed(3))}</Td>
                 <Td>
                   {((formulaQuantity * component.percentage) / 100).toFixed(3)}{" "}
                   {formulaUnit}

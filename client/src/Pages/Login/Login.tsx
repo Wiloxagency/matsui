@@ -319,9 +319,12 @@ export function Login() {
               selectedKeys={[selectedSupplier]}
               onChange={handleSelectionChange}
             >
-              {fetchedSuppliers.map((supplier) => (
-                <SelectItem key={supplier.name}>{supplier.name}</SelectItem>
-              ))}
+              {fetchedSuppliers
+                .slice() // Creates a shallow copy to avoid modifying the original array
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((supplier) => (
+                  <SelectItem key={supplier.name}>{supplier.name}</SelectItem>
+                ))}
             </Select>
           )}
 
