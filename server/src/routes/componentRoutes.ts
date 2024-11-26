@@ -573,11 +573,8 @@ router.post("/CreateOrEditFormula", async (req: Request, res: Response) => {
 router.post("/ImportFormulas", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const components = db.collection("components");
-  const formulaSwatchColors = db.collection<FormulaSwatchInterface>(
-    "formulaSwatchColors"
-  );
-  const receivedComponents: FormulaComponentInterface[] =
-    req.body.formulaComponents;
+  const formulaSwatchColors = db.collection("formulaSwatchColors");
+  const receivedComponents: FormulaComponentInterface[] = req.body.formulaComponents;
 
   // Group received components by formula code and series
   const componentsGroupedByFormula = Map.groupBy(
@@ -587,25 +584,13 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
 
   const receivedFormulaCodes = Array.from(
     new Set(
-      receivedComponents.map(({ FormulaCode }: any) => {
-        return FormulaCode;
-      })
+      receivedComponents.map(({ FormulaCode }: any) => FormulaCode)
     )
   );
 
   const alreadyExistingFormulas = await formulaSwatchColors
-    .find({
-      formulaCode: { $in: receivedFormulaCodes },
-    })
+    .find({ formulaCode: { $in: receivedFormulaCodes } })
     .toArray();
-
-  const alreadyExistingFormulasCodes = Array.from(
-    new Set(
-      alreadyExistingFormulas.map(({ formulaCode }: any) => {
-        return formulaCode;
-      })
-    )
-  );
 
   let newFormulaColorSwatches: FormulaSwatchInterface[] = [];
   let nullFormulaCodes: string[] = [];
@@ -628,7 +613,7 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
             "https://sophia-lms-production.azurewebsites.net/api/PantoneToHex",
             { pantoneCode: currentFormulaCode }
           );
-          
+
           if (response.data.hex === "null") {
             nullFormulaCodes.push(currentFormulaCode);
           } else {
@@ -660,17 +645,29 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
     for (const [key, formulaComponentsArray] of componentsGroupedByFormula.entries()) {
       const [formulaCode, formulaSerie] = key.split('|');
 
+      // Normalize percentages
+      const totalPercentage = formulaComponentsArray.reduce(
+        (sum, { Percentage }) => sum + Percentage,
+        0
+      );
+
+      if (totalPercentage !== 100.0) {
+        formulaComponentsArray.forEach((component) => {
+          component.Percentage = (component.Percentage / totalPercentage) * 100;
+        });
+      }
+
       // Find existing components for this formula and series
       const existingComponentsForSerie = await components.find({
         FormulaCode: formulaCode,
-        FormulaSerie: formulaSerie
+        FormulaSerie: formulaSerie,
       }).toArray();
 
       // If existing components exist, delete them
       if (existingComponentsForSerie.length > 0) {
-        await components.deleteMany({ 
+        await components.deleteMany({
           FormulaCode: formulaCode,
-          FormulaSerie: formulaSerie
+          FormulaSerie: formulaSerie,
         });
       }
 
@@ -689,6 +686,7 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 router.get("/GetMissingPigments", async (req: Request, res: Response) => {
   const existingPigments = [
