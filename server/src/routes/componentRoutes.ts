@@ -579,6 +579,12 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
   const receivedComponents: FormulaComponentInterface[] =
     req.body.formulaComponents;
 
+  // Group received components by formula code and series
+  const componentsGroupedByFormula = Map.groupBy(
+    receivedComponents,
+    ({ FormulaCode, FormulaSerie }) => `${FormulaCode}|${FormulaSerie}`
+  );
+
   const receivedFormulaCodes = Array.from(
     new Set(
       receivedComponents.map(({ FormulaCode }: any) => {
@@ -601,32 +607,33 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
     )
   );
 
-  var uniqueNewFormulaCodes = receivedFormulaCodes.filter(
-    (item) => alreadyExistingFormulasCodes.indexOf(item) == -1
-  );
-
-  const componentsGroupedByFormula = Map.groupBy(
-    receivedComponents,
-    ({ FormulaCode }) => FormulaCode
-  );
-
   let newFormulaColorSwatches: FormulaSwatchInterface[] = [];
   let nullFormulaCodes: string[] = [];
 
+  // Process formulas and their components
   const promises = Array.from(componentsGroupedByFormula.entries()).map(
     async ([indexFormula, formulaComponents]) => {
-      // IF FORMULA CODE IS NEW
-      if (uniqueNewFormulaCodes.includes(formulaComponents[0].FormulaCode)) {
+      const currentFormulaCode = formulaComponents[0].FormulaCode;
+      const currentFormulaSerie = formulaComponents[0].FormulaSerie;
+
+      // Check if formula color swatch already exists
+      const existingFormulaColorSwatch = alreadyExistingFormulas.find(
+        (swatch) => swatch.formulaCode === currentFormulaCode
+      );
+
+      // If formula color swatch doesn't exist, try to get hex color
+      if (!existingFormulaColorSwatch) {
         try {
           const response = await axios.post(
             "https://sophia-lms-production.azurewebsites.net/api/PantoneToHex",
-            { pantoneCode: formulaComponents[0].FormulaCode }
+            { pantoneCode: currentFormulaCode }
           );
+          
           if (response.data.hex === "null") {
-            nullFormulaCodes.push(formulaComponents[0].FormulaCode);
+            nullFormulaCodes.push(currentFormulaCode);
           } else {
             newFormulaColorSwatches.push({
-              formulaCode: formulaComponents[0].FormulaCode,
+              formulaCode: currentFormulaCode,
               formulaColor: response.data.hex.replace("#", ""),
               isUserCreatedFormula: true,
               createdBy: req.body.createdBy,
@@ -644,10 +651,32 @@ router.post("/ImportFormulas", async (req: Request, res: Response) => {
   await Promise.all(promises);
 
   try {
+    // Insert new formula color swatches if any
     if (newFormulaColorSwatches.length > 0) {
       await formulaSwatchColors.insertMany(newFormulaColorSwatches);
     }
-    await components.insertMany(receivedComponents);
+
+    // Process components for each formula and series
+    for (const [key, formulaComponentsArray] of componentsGroupedByFormula.entries()) {
+      const [formulaCode, formulaSerie] = key.split('|');
+
+      // Find existing components for this formula and series
+      const existingComponentsForSerie = await components.find({
+        FormulaCode: formulaCode,
+        FormulaSerie: formulaSerie
+      }).toArray();
+
+      // If existing components exist, delete them
+      if (existingComponentsForSerie.length > 0) {
+        await components.deleteMany({ 
+          FormulaCode: formulaCode,
+          FormulaSerie: formulaSerie
+        });
+      }
+
+      // Insert new components
+      await components.insertMany(formulaComponentsArray);
+    }
 
     const importFormulasResponse = {
       formulasCreated: Array.from(componentsGroupedByFormula.entries()).length,
