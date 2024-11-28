@@ -47,8 +47,9 @@ import {
 export default function Formulas() {
   const isAdmin = localStorage.getItem("isAdmin");
   const userCompany = localStorage.getItem("userCompany");
+  const userEmail = localStorage.getItem("userEmail");
 
-  const [selectedSeries, setSelectedSeries] = useState<string>("301 RC Neo serie");
+  const [selectedSeries, setSelectedSeries] = useState<string>("301 RC Neo");
   const [formulaSearchQuery, setFormulaSearchQuery] = useState<string>("");
   const [formulaQuantityAsString, setFormulaQuantityAsString] =
     useState<string>("1000");
@@ -393,7 +394,7 @@ export default function Formulas() {
                     aria-label="SELECT SERIES"
                     variant="bordered"
                     radius="full"
-                    placeholder="301 RC Neo serie"
+                    placeholder="301 RC Neo"
                     value={selectedSeries}
                     onChange={(e) => handleSelectSeries(e)}
                   >
@@ -512,22 +513,25 @@ export default function Formulas() {
         <div className="rightSide">
           <div className="formulaDetailsSection">
             <div
-              className={
-                isMobile ? "sectionHeader mobileLayout" : "sectionHeader"
-              }
-            >
-              <span style={{ minWidth: "fit-content" }}>
-                FORMULA DETAILS:{" "}
-                {selectedFormula && selectedFormula.formulaDescription}
-              </span>
-
-              <Button
-                startContent={<FaPen />}
-                color="primary"
-                isDisabled={!selectedFormula || !selectedFormula.createdBy}
-                onPress={() => handleEditOrCreateFormulaClick("edit")}
+                className={
+                  isMobile ? "sectionHeader mobileLayout" : "sectionHeader"
+                }
               >
-                EDIT FORMULA
+                <span style={{ minWidth: "fit-content" }}>
+                  FORMULA DETAILS:{" "}
+                  {selectedFormula && selectedFormula.formulaDescription}
+                </span>
+
+                <Button
+                  startContent={<FaPen />}
+                  color="primary"
+                  isDisabled={
+                    !selectedFormula || 
+                    (!selectedFormula.createdBy && userEmail?.toLowerCase() !== "info@matsui-color.com")
+                  }
+                  onPress={() => handleEditOrCreateFormulaClick("edit")}
+                >
+                  EDIT FORMULA
               </Button>
             </div>
             <div

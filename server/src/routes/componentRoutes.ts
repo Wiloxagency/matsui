@@ -339,7 +339,7 @@ router.post("/", async (req: Request, res: Response) => {
 router.get("/GetSeries", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const series = db.collection("series");
-  const allSeries = await series.find().toArray();
+  const allSeries = await series.find().sort({"seriesName":1}). toArray();
 
   res.json(allSeries);
 });
