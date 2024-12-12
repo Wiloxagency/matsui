@@ -47,7 +47,7 @@ function returnMappedComponents(receivedFormula: FormulaInterface) {
       FormulaDescription: receivedFormula.formulaDescription,
       ComponentCode: component.componentCode,
       ComponentDescription: component.componentDescription,
-      Percentage: String(component.percentage),
+      Percentage: String(component.percentage.toFixed(3)),
     };
   });
   return mappedComponents;
@@ -70,7 +70,7 @@ function TemplateTable({ formula }: PrintFormulaTemplateProps) {
             <tr key={component.componentCode}>
               <td>{component.componentCode}</td>
               <td>{component.componentDescription}</td>
-              <td>{component.percentage}</td>
+              <td>{component.percentage.toFixed(3)}</td>
               <td>{((1000 * component.percentage) / 100).toFixed(3)}</td>
             </tr>
           );
@@ -116,6 +116,8 @@ export default function PrintFormulaTemplate({
   formula,
   fetchedPigments,
 }: PrintFormulaTemplateProps) {
+  console.info(formula);
+  formula = formula
   {
     return templateSize === 1 ? (
       <div className="printFormulaTemplate size1">
@@ -141,9 +143,13 @@ export default function PrintFormulaTemplate({
                   columnKey === "g" ? (
                     <TableCell>
                       <span>
-                        {((1000 * formulaComponent.percentage) / 100).toFixed(
-                          3
-                        )}
+                        {((1000 * formulaComponent.percentage) / 100).toFixed(3)}
+                      </span>
+                    </TableCell>
+                  ) : columnKey === "percentage" ? (
+                    <TableCell>
+                      <span>
+                        {formulaComponent.percentage.toFixed(3)}
                       </span>
                     </TableCell>
                   ) : (

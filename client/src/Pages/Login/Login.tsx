@@ -386,7 +386,7 @@ export function Login() {
               size="lg"
               isLoading={isRegisterButtonLoading}
               onClick={handleCreateNewAccount}
-              isDisabled={email === "" || password === "" || !isProviderAllowed}
+              isDisabled={!isProviderAllowed}
             >
               Create new account
             </Button>
