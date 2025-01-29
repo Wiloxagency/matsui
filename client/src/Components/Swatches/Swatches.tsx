@@ -69,6 +69,9 @@ export default function Swatches({
       userCompany === formula.formulaSwatchColor.company
     )
       return true;
+
+    if (localStorage.getItem("userEmail")?.toLowerCase() == "info@matsui-color.com") return true;
+
     return false;
   }
 

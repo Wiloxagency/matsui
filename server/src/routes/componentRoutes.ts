@@ -15,6 +15,17 @@ import axios from "axios";
 
 const router = Router();
 
+// Function to normalize the data
+function normalizeComponents(components: any[]): FormulaComponentInterface[] {
+  return components.map(component => ({
+    ...component,
+    // Convert Percentage to number if it's a string
+    Percentage: typeof component.Percentage === 'string' 
+      ? parseFloat(component.Percentage) 
+      : component.Percentage
+  }));
+}
+
 router.post("/GetComponents", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const components = db.collection("components");
@@ -44,7 +55,7 @@ router.post(
 
     // const baseFormulas = await
 
-    console.log(req.body);
+    // console.log(req.body);
     // console.log(req.body.includeSystemFormulas);
 
     if (req.body.userEmail) {
@@ -52,12 +63,12 @@ router.post(
       const userFormulas = await formulaSwatchColors
         .find({ createdBy: req.body.userEmail })
         .toArray();
-      console.log("CreatedBy length: ", userFormulas.length);
+      // console.log("CreatedBy length: ", userFormulas.length);
       if (userFormulas.length > 0) {
         userFormulasCodes = userFormulas.map((formula) => formula.formulaCode).slice(0, 50);
       }
       if (userFormulas.length === 0) {
-        console.log("USER HAS NO CREATED FORMULAS");
+        // console.log("USER HAS NO CREATED FORMULAS");
         res.json([]);
         return;
       }
@@ -134,7 +145,7 @@ router.post(
 
     // THIS MEANS THAT IS THE INITIAL REQUEST FOR THE FORMULAS PAGE 👇🏻
     if (!req.body.formulaSearchQuery && !req.body.userEmail) {
-      console.log("Initial request");
+      // console.log("Initial request");
       pipeline.push({
         $match: {
           FormulaCode: {
@@ -241,15 +252,15 @@ router.post(
       },
     });
 
-    console.log(pipeline);
+    // console.log(pipeline);
 
     const formulas = await components
       .aggregate(pipeline)
       .sort({ _id: -1 })
       .limit(100)
       .toArray();
-    console.log("THIS RUNS 2");
-    console.log("formulas: ", formulas);
+    // console.log("THIS RUNS 2");
+    // console.log("formulas: ", formulas);
     res.json(formulas);
   }
 );
@@ -339,7 +350,7 @@ router.post("/", async (req: Request, res: Response) => {
 router.get("/GetSeries", async (req: Request, res: Response) => {
   const db = await createMongoDBConnection();
   const series = db.collection("series");
-  const allSeries = await series.find().sort({"seriesName":1}). toArray();
+  const allSeries = await series.find().sort({ "seriesName": 1 }).toArray();
 
   res.json(allSeries);
 });
@@ -502,8 +513,10 @@ router.post("/CreateOrEditFormula", async (req: Request, res: Response) => {
   const pigments = db.collection<PigmentInterface>("pigments");
   const allPigments = await pigments.find().toArray();
   const receivedComponents: FormulaComponentInterface[] =
-    req.body.formulaComponents;
+        normalizeComponents(req.body.formulaComponents);
 
+  console.info("receivedComponents[0]-->", receivedComponents[0])
+  console.info("req.body-->", req.body)
   try {
     const componentsHexValues = await returnHexColorPrepping(
       receivedComponents,
@@ -789,8 +802,8 @@ function calculateColorDistance(
 ): number {
   return Math.sqrt(
     Math.pow(color1.r - color2.r, 2) +
-      Math.pow(color1.g - color2.g, 2) +
-      Math.pow(color1.b - color2.b, 2)
+    Math.pow(color1.g - color2.g, 2) +
+    Math.pow(color1.b - color2.b, 2)
   );
 }
 
